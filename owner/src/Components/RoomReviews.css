@@ -1,0 +1,110 @@
+/* Room Reviews Container */
+.room-reviews-container {
+    width: 85%;
+    max-width: 900px;
+    margin: 30px auto;
+    padding: 25px;
+    background: linear-gradient(135deg, #ffffff, #f7f7f7);
+    border-radius: 12px;
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+    font-family: 'Poppins', sans-serif;
+  }
+  
+  /* Header */
+  .room-reviews-container h2 {
+    text-align: center;
+    color: #2c3e50;
+    font-size: 26px;
+    font-weight: bold;
+    margin-bottom: 20px;
+    text-transform: uppercase;
+  }
+  
+  /* Room Review Item */
+  .room-review-item {
+    background: #ffffff;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+    transition: transform 0.2s ease-in-out;
+  }
+  
+  .room-review-item:hover {
+    transform: scale(1.02);
+  }
+  
+  /* Room Name */
+  .room-review-item h3 {
+    color: #34495e;
+    font-size: 22px;
+    margin-bottom: 10px;
+  }
+  
+  /* Reviews */
+  .room-comments ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  .room-comments ul li {
+    background: #ecf0f1;
+    padding: 12px;
+    margin: 8px 0;
+    border-radius: 8px;
+    font-size: 15px;
+    color: #2c3e50;
+    display: flex;
+    align-items: center;
+  }
+  
+  .room-comments ul li::before {
+    content: "💬"; /* Chat icon */
+    margin-right: 10px;
+  }
+  
+  /* Average Rating */
+  .room-rating {
+    text-align: center;
+    font-size: 18px;
+    font-weight: bold;
+    color: #e67e22;
+    margin-top: 15px;
+  }
+  
+  /* Loading and Error Messages */
+  .loading, .error {
+    text-align: center;
+    font-weight: bold;
+    font-size: 18px;
+    margin-top: 20px;
+  }
+  
+  .error {
+    color: red;
+  }
+  
+  /* Responsive Design */
+  @media (max-width: 768px) {
+    .room-reviews-container {
+      width: 95%;
+      padding: 20px;
+    }
+  
+    .room-review-item {
+      padding: 15px;
+    }
+  
+    .room-review-item h3 {
+      font-size: 20px;
+    }
+  
+    .room-comments ul li {
+      font-size: 14px;
+    }
+  
+    .room-rating {
+      font-size: 16px;
+    }
+  }
+  

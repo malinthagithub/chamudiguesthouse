@@ -1,0 +1,207 @@
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  background-color: #323030;
+  color: white;
+  padding: 30px; /* Adjusted padding */
+  z-index: 1000;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-sizing: border-box;
+  height: 70px; /* Ensure navbar height remains constant */
+}
+
+.navbar-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  width: 100%;
+}
+
+/* Logo */
+.navbar-logo {
+  font-size: 24px;
+  color: white;
+  text-decoration: none;
+  font-weight: bold;
+  position: relative;
+  top: 4px;
+ 
+}
+/* Default styling for navbar-log */
+.navbar-log {
+  position: relative;
+  top: 6px;
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+/* Hover effect */
+.navbar-log:hover {
+  color: #ffcc00; /* Highlight color on hover */
+}
+
+/* Responsive design for smaller screens */
+@media (max-width: 768px) {
+  /* Adjust .navbar-log for mobile */
+  .navbar-log {
+    font-size: 18px; /* Slightly smaller font size */
+    margin-left: 10px; /* Reduce margin */
+    top: 10px; /* Adjust position for mobile */
+    gap: 5px; /* Reduce space between icon and text */
+  }
+
+  .navbar-log:hover {
+    color: #ff9900; /* Darker yellow on hover for mobile */
+  }
+}
+
+@media (max-width: 480px) {
+  /* Further adjustments for very small screens */
+  .navbar-log {
+    font-size: 14px; /* Make font even smaller for very small screens */
+    margin-left: 5px; /* Reduce margin for extra compact layout */
+    top: 5px; /* Adjust position further */
+  }
+
+  .navbar-log:hover {
+    color: #ff6600; /* Change hover color to a more noticeable shade */
+  }
+}
+
+
+/* Mobile Menu Icon */
+.menu-icon {
+  display: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: white;
+}
+
+/* Navigation Links */
+.navbar-links {
+  display: flex;
+  align-items: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-link {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
+  color: white;
+  text-decoration: none;
+  margin-left: 20px;
+  font-size: 18px;
+  transition: color 0.3s ease;
+}
+
+.nav-link:hover {
+  color: #ffcc00;
+}
+
+/* Logout Button */
+.logout-btn {
+  display: flex;
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
+  background-color: red;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  cursor: pointer;
+  margin-left: 10px;
+  transition: background 0.3s ease;
+  border-radius: 5px;
+}
+
+.logout-btn:hover {
+  background-color: darkred;
+}
+
+/* Username */
+.username {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: bold;
+  font-size: 18px;
+  margin-left: 20px;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .menu-icon {
+    display: block;
+  }
+
+  .navbar-links {
+    visibility: hidden;
+    opacity: 0;
+    flex-direction: column;
+    width: 100%;
+    background-color: #323030;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    padding: 10px;
+    transition: all 0.3s ease-in-out;
+  }
+
+  .navbar-links.active {
+    visibility: visible;
+    opacity: 1;
+    display: flex;
+  }
+
+  .nav-link {
+    margin: 10px 0;
+    font-size: 16px;
+    width: 100%;
+    text-align: center;
+  }
+
+  .username {
+    margin-left: 0;
+    margin-right: 0;
+    font-size: 16px;
+  }
+
+  .logout-btn {
+    width: 100%;
+    text-align: center;
+    margin: 10px 0;
+  }
+}
+
+/* Even smaller screens */
+@media (max-width: 480px) {
+  .navbar {
+    padding: 10px;
+  }
+
+  .navbar-logo {
+    font-size: 20px;
+  }
+
+  .nav-link {
+    font-size: 14px;
+  }
+
+  .username {
+    font-size: 14px;
+  }
+
+  .logout-btn {
+    font-size: 14px;
+    padding: 8px 10px;
+  }
+}

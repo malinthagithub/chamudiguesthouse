@@ -1,0 +1,85 @@
+/* UpdateRoom.css */
+
+/* Overall container styling */
+.update-room {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #ffffff;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Header styling */
+.update-room h1 {
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+    font-size: 2.2rem;
+}
+
+/* Form group styling */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    padding: 10px 20px;
+}
+
+/* Label styling */
+.form-group label {
+    font-weight: bold;
+    color: #555;
+    font-size: 1rem;
+}
+
+/* Input field styling */
+.form-group input[type="text"],
+.form-group input[type="number"],
+.form-group input[type="file"] {
+    padding: 12px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.form-group input:focus {
+    border-color: #007bff;
+    outline: none;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Button styling */
+.update-btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 10px;
+    width: 100%;
+    text-align: center;
+}
+
+.update-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Responsive design for mobile devices */
+@media (max-width: 600px) {
+    .update-room {
+        padding: 20px;
+        margin: 20px;
+    }
+
+    .update-btn {
+        font-size: 1rem;
+    }
+}

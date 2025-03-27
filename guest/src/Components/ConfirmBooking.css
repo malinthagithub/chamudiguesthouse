@@ -1,0 +1,183 @@
+/* Container for the entire page */
+.container {
+    position: relative;
+    top: 50px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f4f4f9;
+    font-family: 'Arial', sans-serif;
+}
+
+/* Heading styles */
+h1 {
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: #333;
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+h2 {
+    font-size: 2rem;
+    font-weight: 500;
+    color: #444;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+/* Styles for the list of bookings */
+ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+li {
+    background-color: #fff;
+    border: 1px solid #e1e1e1;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    padding: 20px;
+    transition: all 0.3s ease;
+}
+
+/* Hover effect for list items */
+li:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transform: translateY(-5px);
+}
+
+/* Details in each booking */
+li p {
+    font-size: 1rem;
+    color: #555;
+    margin: 5px 0;
+}
+
+/* Style the booking status */
+p.status {
+    font-weight: bold;
+    color: #28a745; /* Green for confirmed status */
+}
+
+/* Date and amount with emphasis */
+p.created_at, p.total_amount {
+    font-weight: 600;
+    color: #007bff; /* Blue for payment time and total amount */
+}
+
+/* Style for error message */
+.error {
+    color: #ff0000;
+    font-size: 1.2rem;
+    text-align: center;
+    margin-top: 30px;
+}
+
+/* Loading text */
+.loading {
+    font-size: 1.5rem;
+    color: #777;
+    text-align: center;
+    margin-top: 50px;
+}
+
+/* Review Form Styling */
+.review-form {
+    background: #fff;
+    padding: 16px;
+    margin-top: 10px;
+    border-radius: 8px;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+    transition: all 0.3s ease-in-out;
+}
+
+.review-form h3 {
+    font-size: 1.2rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+.rating label {
+    color: black !important;
+    font-weight: bold; /* Optional: Makes the text stand out */
+}
+
+.comment label{
+    color: black !important;
+    font-weight: bold; /* Optional: Makes the text stand out */
+}
+
+
+.rating, .comment {
+    margin-bottom: 12px;
+}
+
+.rating label, .comment label {
+    font-weight: 600;
+    display: block;
+    margin-bottom: 5px;
+    color: #444;
+}
+
+.rating input {
+    width: 20%;
+    padding: 8px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    outline: none;
+    transition: border 0.2s ease-in-out;
+}
+
+.rating input:focus, .comment textarea:focus {
+    border-color: #007bff;
+}
+
+.comment textarea {
+    width: 100%;
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 6px;
+    font-size: 1rem;
+    resize: none;
+    outline: none;
+}
+
+.submit-btn {
+    width:180px !important;
+    background: #007bff;
+    color: white;
+    border: none;
+    padding: 8px 10px !important;
+    font-size: 1rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.submit-btn:hover {
+    background: #0056b3;
+}
+
+/* Toggle Review Button */
+.toggle-review-btn {
+    width: 200px;
+    background: #313e34;
+    color: white;
+    border: none;
+    padding: 5px 2px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background 0.3s ease-in-out;
+    margin-top: 10px;
+}
+
+.toggle-review-btn:hover {
+    background: #218838;
+}

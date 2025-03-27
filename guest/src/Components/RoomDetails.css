@@ -1,0 +1,19 @@
+/* Add slick carousel styles */
+@import "~slick-carousel/slick/slick.css";
+@import "~slick-carousel/slick/slick-theme.css";
+
+.room-details img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    object-fit: cover;
+}
+
+.slick-slide {
+    text-align: center;
+    margin: 0 5px;
+}
+
+.slick-prev, .slick-next {
+    color: #000; /* Customize arrow color */
+}

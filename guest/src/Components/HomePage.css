@@ -1,0 +1,474 @@
+/* General Page Styles */
+.homepage {
+    font-family: Arial, sans-serif;
+    text-align: center;
+    padding: 20px;
+    background-color: #f4f4f4;
+}
+
+/* Card container styling */
+/* Card container styling */
+.card-container {
+    position: relative;
+    top: 80px;
+    width: 98%;  /* Adjust the width to your preference */
+    height: 250px; /* Set a fixed height for the card, adjust as needed */
+    background-color: #fff;
+    border-radius: 15px; /* Softer rounded corners */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1); /* Deeper shadow for a more elegant look */
+    overflow: hidden; /* Prevents any overflow */
+    margin: 20px;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Card hover effect */
+.card-container:hover {
+    transform: translateY(-10px); /* Slight lift effect */
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.2); /* Enhanced shadow effect */
+}
+
+/* Image styling */
+.homimages {
+    width: 100%;  /* The image will take up the full width of the container */
+    height: 100%; /* The image will take up 1/4 of the card height */
+    object-fit: cover; /* Ensures the image covers the area without distortion */
+    overflow: hidden;
+    border-bottom: 2px solid #271f1f; /* Adds a subtle border below the image */
+    border-radius: 15px 15px 0 0; /* Rounded corners at the top */
+    margin: 0;  /* Optional: Removes spacing above and below the image */
+    justify-content: center;
+}
+
+/* Optional: If you want to maintain the aspect ratio of the image */
+.homimages img {
+    
+    width: 100%;
+    height: 100%;  /* Ensures the image covers 100% of its container */
+    object-fit: cover; /* Ensures the image maintains its aspect ratio */
+}
+
+
+
+/* Hover effect on the image */
+.card-container:hover .hotel-image {
+    transform: scale(1.1); /* Slight zoom effect on hover */
+}
+
+/* Heading and Subtext */
+
+/* Room Container */
+.room-container {
+    position: relative;
+    top: 10px !important;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+}
+
+/* Individual Room Card */
+.room-card {
+    position: relative;
+    top: -130px !important;
+    width: 250px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin-bottom: 20px;
+}
+
+.room-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+}
+
+.room-card img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    transition: transform 0.3s ease;
+}
+
+.room-card:hover img {
+    transform: scale(1.05);
+}
+
+/* Room Info */
+.room-info {
+    padding: 15px;
+}
+
+.room-info h3 {
+    font-size: 22px;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.room-info p {
+    color: #555;
+    margin-bottom: 5px;
+}
+
+.room-info .book-btn,
+.room-info .view-btn {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px;
+    width: 100%;
+    margin-top: 10px;
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.room-info .book-btn:hover,
+.room-info .view-btn:hover {
+    background-color: #0056b3;
+}
+
+/* Modal Overlay */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
+
+/* Modal Content */
+.modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 700px;
+    text-align: center;
+    position: relative;
+    max-height: 90vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.3);
+}
+
+/* Slick Slider */
+.slick-slider {
+    width: 100%;
+    max-height: 400px;
+    overflow: visible;
+}
+
+/* Slick Slide Image */
+.slick-slide img {
+    width: 100%;
+    height: auto;
+    max-height: 400px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+/* Close Button */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    font-size: 28px;
+    cursor: pointer;
+    color: red;
+    font-weight: bold;
+    background: none;
+    border: none;
+}
+
+.close-btn:hover {
+    color: darkred;
+}
+
+/* Slick Arrows */
+.slick-prev, .slick-next {
+    font-size: 30px;
+    background-color: black !important; /* Ensure solid black background */
+    color: white !important; /* Arrows in white color */
+    position: absolute;
+    top: 50%;
+    z-index: 10; /* Ensure arrows are above the images */
+    transform: translateY(-50%);
+    border-radius: 50%;
+    padding: 12px;
+    cursor: pointer;
+    display: block;
+    border: 2px solid transparent; /* Initially no border, for smoother transition */
+    transition: background-color 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
+}
+
+.slick-prev:hover, .slick-next:hover {
+    background-color: #333 !important; /* Darker black on hover */
+    color: white !important; /* Arrow color stays white */
+    border-color: white; /* White border on hover */
+    transform: scale(1.1); /* Slightly scale up on hover for effect */
+}
+
+/* Optional: Add a glow effect to the arrows */
+.slick-prev:before, .slick-next:before {
+    color: white !important; /* Ensures the arrow icon stays white */
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.slick-next {
+    right: 10px;
+}
+
+/* Hover effect for arrows */
+.slick-prev:hover, .slick-next:hover {
+    background-color: rgba(0, 0, 0, 0.6); /* Darker background on hover */
+    color: rgb(17, 16, 16); /* Change arrow color to white on hover */
+}
+
+/* Slick Dots */
+.slick-dots li button:before {
+    font-size: 12px;
+    color: #999;
+}
+
+.slick-dots li.slick-active button:before {
+    color: #007bff;
+}
+
+/* Date Picker Container */
+
+.date-picker-container {
+    position: relative;
+    top: -130px ;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    padding: 10px 0;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    margin: 20px auto;
+    max-width: 800px;
+}
+
+/* Individual Date Picker */
+.date-picker {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: start;
+    width: 100%;
+    max-width: 300px;
+}
+
+/* Label Styling */
+.date-picker label {
+    font-size: 16px;
+    color: #333;
+    font-weight: 600;
+}
+
+/* Input Styling */
+.date-picker-input {
+    padding: 10px;
+    width: 100%;
+    font-size: 14px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    outline: none;
+    transition: border-color 0.3s ease;
+}
+
+.date-picker-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+/* Responsive Styling */
+@media (max-width: 768px) {
+    .date-picker-container {
+        flex-direction: column;
+        gap: 15px;
+        padding: 15px;
+    }
+
+    .date-picker {
+        width: 100%;
+    }
+}
+
+.date-picker-container .date-picker:nth-child(2) label {
+    color: #000 !important;
+}
+
+.date-picker-container .date-picker:nth-child(1) label {
+    color: #000 !important;
+}
+
+.react-datepicker__current-month {
+    color: #000 !important;
+}
+/* HomePage.css */
+
+.search-bar {
+    position: relative;
+    top: -250px;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    width: 300px;
+}
+
+.search-left{
+    position: relative;
+    top: 100px;
+    right: -90px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.search-right {
+    position: relative;
+    top: 100px;
+    right: -1050px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.search-left button,
+.search-right button {
+    padding: 8px 15px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+}
+
+.search-left button:hover,
+.search-right button:hover {
+    background-color: #45a049;
+}
+input-with-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 10px 35px 10px 10px; /* Add padding to make space for the icon */
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+.search-icon {
+    position: relative;
+    top: -38px;
+    right: -80px;
+    cursor: pointer;
+    color: #555;
+    font-size: 18px;
+}
+.home-page button {
+    position: relative;
+    top: 80px;
+    left: 600px;
+    padding: 2px 4px;  /* Minimal padding */
+    font-size: 10px;   /* Small font */
+    background-color: #3f7dba !important; /* Background color */
+    color: rgb(8, 39, 132) !important; /* Ensure text is visible */
+    border: 1px solid red; /* Small border */
+    border-radius: 3px; /* Slightly rounded edges */
+    cursor: pointer;
+    width: auto; /* Adjust to content */
+    height:30px; /* Keep it small */
+    line-height: normal; /* No extra spacing */
+}
+
+
+/* Responsive Modal */
+@media (max-width: 768px) {
+    .modal-content {
+        width: 95%;
+        padding: 15px;
+        max-width: 100%;
+    }
+}
+
+/* Responsive Slick Slider */
+@media (max-width: 768px) {
+    .slick-slider {
+        max-height: 300px;
+    }
+    .slick-slide img {
+        max-height: 300px;
+    }
+}
+
+/* Responsive Close Button */
+@media (max-width: 480px) {
+    .close-btn {
+        top: 5px;
+        right: 10px;
+        font-size: 24px;
+    }
+}
+
+/* Responsive Slick Arrows */
+@media (max-width: 768px) {
+    .slick-prev, .slick-next {
+        font-size: 24px;
+        padding: 8px;
+    }
+}
+
+/* Responsive Date Picker */
+@media (max-width: 768px) {
+    .date-picker-container {
+        flex-direction: column;
+        gap: 10px;
+        width: 90%;
+    }
+    .date-picker {
+        max-width: 100%;
+        align-items: center;
+    }
+}
+
+/* Responsive Search Bar */
+@media (max-width: 1024px) {
+    .search-bar {
+        flex-direction: column;
+        width: 90%;
+        align-items: center;
+        top: -150px;
+    }
+
+    .search-left, .search-right {
+        position: static;
+        width: 100%;
+        align-items: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .search-icon {
+        font-size: 16px;
+        right: -60px;
+    }
+}

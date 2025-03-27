@@ -1,0 +1,55 @@
+.box-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000; /* Ensure it appears on top */
+}
+
+.box-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    width: 500px; /* Adjust width as needed */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    position: relative; /* Allows for the close button to position correctly */
+}
+
+.close-btn {
+    cursor: pointer;
+    position: absolute; /* Position the close button in a predictable location */
+    top: 10px;
+    right: 10px;
+    font-size: 20px;
+    color: #333;
+}
+.sort-options label{
+    color: black !important;
+}
+/* Box.css */
+.review-item .star-rating {
+    font-size: 20px;
+    color: gold !important;
+}
+
+.review-item .empty-star {
+    color: #ccc;
+}
+/* Box.css */
+.star {
+    font-size: 20px;
+}
+
+.full-star {
+    color: gold; /* Set full stars to yellow (gold) */
+}
+
+.empty-star {
+    color: #ccc; /* Light gray for empty stars */
+}
+

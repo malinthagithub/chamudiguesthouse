@@ -1,0 +1,135 @@
+.room-customization {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  padding: 20px;
+  gap: 40px;
+  background-color: #6b6161; /* Light background for the whole section */
+}
+
+.room-customization h2 {
+  position: relative;
+ top: 50px;
+ left:600px;
+  text-align: center;
+  font-size: 2rem;
+  margin-bottom: 20px;
+  justify-content: space-between;
+}
+
+.room-customization img{
+  max-height: 10%;
+  position: relative;
+  left: -300px;
+  top: 200px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  max-width: 30%; 
+  
+ /* Ensure the parent allows full width */
+}
+
+
+.room-details {
+  flex: 1;
+  max-width: 45%; /* Take up 45% of the container's width */
+}
+
+.room-details h3 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
+}
+
+.room-details p {
+  font-size: 1.2rem;
+  color: #333;
+}
+.service{
+  position: relative;
+  top: -310px;
+  left: 230px;
+}
+.bed{
+  position: relative;
+  top: -20px;
+  left: -150px;
+}
+.customization-form {
+  position: relative;
+  top: 200px;
+  flex: 1;
+  max-width: 50%;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.customization-form label {
+  font-size: 1rem;
+  margin-bottom: 5px;
+}
+
+.customization-form input,
+.customization-form select {
+  width: 100%;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+.customization-form input[type="checkbox"] {
+  margin-right: 10px;
+}
+
+.customization-form button {
+  padding: 12px;
+  font-size: 1.2rem;
+  background-color: #28a745;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.customization-form button:hover {
+  background-color: #218838;
+}
+
+.customization-form button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.customization p {
+  font-size: 1.2rem;
+  font-weight: bold;
+  position: relative;
+  left: -500px;
+  top:500px !important;
+}
+
+.customization-form select {
+  padding: 12px;
+  font-size: 1rem;
+}
+.check{
+  position: relative;
+  left: -500px;
+  top: 200px;
+}
+.total {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-top: 20px;
+  position: relative;
+  left: -500px;
+  top: 200px;
+}

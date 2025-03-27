@@ -1,0 +1,92 @@
+/* Ensure the entire page fills the screen and centers content */
+body.login-page {
+    background-image: url("../images/banner3.jpg") !important;
+    background-size: cover;  /* Ensures the image covers the screen */
+    background-position: center;  /* Centers the background image */
+    background-repeat: no-repeat;
+    height: 100vh;  /* Full screen height */
+    margin: 0;
+}
+
+/* Global styling for the login container */
+.login-container {
+    position: relative;
+    left:100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;  /* Ensure it covers full screen height */
+    
+}
+
+/* Styling the login box */
+.login-box {
+    padding: 40px;
+    max-width: 400px;
+    width: 100%;
+    background: #ffffff;  /* White background for the login box */
+    border-radius: 12px;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.login-box h2 {
+    margin-bottom: 20px;
+    color: #333;
+    font-size: 28px;  /* Slightly larger font size */
+    font-weight: bold;
+}
+
+/* Input fields styling */
+.login-container input {
+    display: block;
+    width: 100%;
+    padding: 12px;  /* Increased padding for a larger input area */
+    margin-bottom: 18px;  /* Increased margin for better spacing between inputs */
+    border: 1px solid #ccc;
+    border-radius: 8px;  /* Rounded corners for inputs */
+    font-size: 16px;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+}
+
+.login-container input:focus {
+    outline: none;
+    border-color: #007bff;  /* Blue border on focus */
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);  /* Blue glow effect */
+}
+
+/* Button styling */
+.login-container button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 8px;  /* Rounded corners for button */
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.login-container button:hover {
+    background-color: #0056b3;  /* Darker blue on hover */
+    transform: scale(1.05);  /* Slight scaling effect on hover */
+}
+
+.login-container button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Error and success messages */
+.error-message {
+    color: red;
+    font-size: 14px;
+    margin-bottom: 12px;  /* Increased margin for better spacing */
+}
+
+.success-message {
+    color: green;
+    font-size: 14px;
+    margin-bottom: 12px;
+}

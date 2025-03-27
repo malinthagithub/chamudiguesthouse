@@ -1,0 +1,153 @@
+/* Login.css */
+.login-container {
+    width: 100vw; /* Full width of the viewport */
+    height: 100vh; /* Full height of the viewport */
+    display: flex;
+    justify-content: center;
+    z-index: 1 !important;
+    align-items: center;
+    background-image: url('../images/banner2.jpg'); /* Adjust the path if needed */
+    background-size: cover; /* Ensures the image covers the full container */
+    background-position: center; /* Centers the image */
+    background-repeat: no-repeat; /* Prevents repetition */
+    color: #fff; /* Text color to stand out on the background */
+    font-family: 'Arial', sans-serif; /* More modern font */
+    
+}
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+.login-container .login-box {
+    animation: fadeIn 1s forwards;
+  }
+  @keyframes slideIn {
+    from {
+      transform: translateY(-30px);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+.login-box {
+    width: 100%;
+    max-width: 450px; /* Slightly larger box */
+    padding: 50px;
+    background-color: rgba(46, 41, 41, 0.85); /* Semi-transparent white background */
+    border-radius: 12px; /* Rounded corners */
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.2); /* Larger shadow for better depth */
+    text-align: center; /* Center content inside */
+    backdrop-filter: blur(0px); /* No blur */
+ /* Subtle blur effect for the background */
+    
+}
+
+
+.input-group {
+    margin-bottom: 20px;
+    color: #f7f7f7;
+}
+
+label {
+    font-size: 16px;
+    color: #f6ebeb !important;
+    display: block;
+    margin-bottom: 8px;
+    text-align: left; /* Align labels to the left */
+}
+
+input {
+    width: 100%;
+    padding: 14px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 16px;
+    outline: none;
+    transition: border 0.3s ease, box-shadow 0.3s ease;
+    background-color: #f7f7f7;
+    margin-top: 8px;
+}
+
+input:focus {
+    border: 1px solid #007bff;
+    box-shadow: 0 0 8px rgba(0, 123, 255, 0.5);
+}
+
+button {
+    width: 100%;
+    padding: 14px;
+    background-color: #007bff;
+    color: white;
+    font-size: 18px;
+    font-weight: bold;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease;
+    margin-top: 15px;
+}
+
+button:hover {
+    background-color: #0056b3;
+    transform: translateY(-2px); /* Adds subtle hover effect */
+}
+
+button:active {
+    transform: translateY(0); /* Resets the hover effect */
+}
+
+.error {
+    color: #ff4d4d;
+    font-size: 14px;
+    text-align: center;
+    margin-bottom: 15px;
+    font-weight: bold;
+}
+
+/* Add responsiveness for smaller screens */
+@media (max-width: 480px) {
+    .login-box {
+        padding: 20px;
+        max-width: 95%; 
+        transition: all;/* Ensure it's not too wide on smaller screens */
+    }
+
+    h2 {
+        font-size: 24px;
+    }
+
+    input, button {
+        font-size: 16px;
+    }.login{
+        color: #fff !important;
+    }
+}
+.white-text {
+    color: white !important;
+}
+.login{
+    color: #fff !important;
+    width: 60%;
+
+}
+.image{
+    width: 10px;
+}
+.forgot-password-link {
+    color: #ffffff; /* Optional: Set the color of the link */
+    text-decoration: none; /* Remove the underline if you don't want it */
+    cursor: pointer; /* Make the cursor a hand when hovering */
+    transition: color 0.3s ease; /* Optional: Add a smooth transition for color change */
+  }
+  
+  .forgot-password-link:hover {
+    color: #0056b3; /* Optional: Change the color on hover */
+    text-decoration: underline; /* Optional: Underline on hover */
+  }
+  
