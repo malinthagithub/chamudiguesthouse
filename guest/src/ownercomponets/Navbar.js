@@ -31,8 +31,8 @@ const Navbar = ({ isAuthenticated, username, setIsAuthenticated }) => {
           
           {isAuthenticated ? (
             <>
-              {username && <span className="usernamei">Hello, {username}!</span>}
-              <button className="logout-btni" onClick={handleLogout}>
+              {username && <span className="username">Hello, {username}!</span>}
+              <button className="logout-btn" onClick={handleLogout}>
                 Logout
               </button>
             </>

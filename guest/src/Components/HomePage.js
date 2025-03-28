@@ -288,7 +288,7 @@ useEffect(() => {
                         <div className="room-info">
                             <h3>{room.name}</h3>
                             <p>Max Guests: {room.maxcount}</p>
-                            <p>Rent: <strong>${room.rentperday} / night</strong></p>
+                            <p>Rent: <strong>{room.rentperday} / night</strong></p>
                             {/* Display Average Rating */}
                             <div className="room-rating">
     <div className="rating-stars">
