@@ -18,6 +18,7 @@ const reportRoutes = require('./routes/reportRoutes');
 const reviewOwnerRoutes = require('./routes/reviewOwnerRoutes'); 
 const customizationroutes = require('./routes/customizationRoutes'); // Import the customization route
 const cancelBookingRoute = require("./routes/cancelBooking");
+const userProfileRoutes = require("./routes/userRoutes"); // Import user profile route
 
 // Create an Express app
 const app = express();
@@ -47,6 +48,7 @@ app.use('/api/reports', reportRoutes);
 app.use('/room', reviewOwnerRoutes);// Add owner route
 app.use('/api/customization', customizationroutes); // Add customization route
 app.use("/api", cancelBookingRoute);
+app.use("/api/user", userProfileRoutes); // User profile route
 // Connect to the database and start the server
 db.connect((err) => {
     if (err) {

@@ -61,12 +61,14 @@ const MainContent = ({ isAuthenticated, setIsAuthenticated, username, setUsernam
 
   // Check if we are on the owner routes
   const isOwnerRoute = location.pathname.startsWith('/owner');
+  const isUserProfileRoute = location.pathname === '/user-profile'; // Check if it's the /user-profile route
 
   return (
     
     <div className="App">
       {/* Conditionally render the correct Navbar */}
-      {location.pathname !== '/hotel' && (
+      
+      {location.pathname !== '/user-profile'&&location.pathname !== '/hotel' && (
         isOwnerRoute ? (
           <NavbarOwner 
             isAuthenticated={isAuthenticated} 

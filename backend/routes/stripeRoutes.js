@@ -34,6 +34,18 @@ router.post("/book-room", async (req, res) => {
       return res.status(400).json({ message: "Missing required fields." });
     }
 
+     // Get the user's current loyalty points from the database
+     const getUserPoints = `SELECT loyalty_points FROM users WHERE id = ?`;
+     const [userData] = await db.promise().query(getUserPoints, [user_id]);
+     const currentPoints = userData[0].loyalty_points;
+ 
+     // Apply a discount if the user has 100 or more points (e.g., 20% off)
+     let discount = 0;
+     if (currentPoints >= 100) {
+       discount = total_amount * 0.2;  // 20% discount
+       total_amount -= discount; // Apply discount to the total amount
+     }
+
     // Create PaymentIntent
     const paymentIntent = await stripe.paymentIntents.create({
       amount: total_amount * 100,
@@ -83,42 +95,62 @@ router.post("/book-room", async (req, res) => {
             console.error("Error updating payment status:", err);
             return res.status(500).json({ message: "Payment status update failed." });
           }
-          
-          // Send confirmation email
-          db.query('SELECT email FROM users WHERE id = ?', [user_id], (err, result) => {
-            if (err || result.length === 0) {
-              console.error("Error fetching user email:", err);
-              return res.status(500).json({ message: "Unable to send email." });
+         
+          // Add loyalty points to user (e.g., 10 points per successful booking)
+          const newPoints = currentPoints + 10;  // Add 10 points for each booking
+          const updateLoyaltyPoints = `UPDATE users SET loyalty_points = ? WHERE id = ?`;
+          db.query(updateLoyaltyPoints, [newPoints, user_id], (err) => {
+            if (err) {
+              console.error("Error updating loyalty points:", err);
+              return res.status(500).json({ message: "Loyalty points update failed." });
             }
 
-            const userEmail = result[0].email;
-
-            const mailOptions = {
-              from: process.env.EMAIL_USER, // Sender address
-              to: userEmail, // Receiver's email address
-              subject: "Booking Confirmation", // Email subject
-              text: `Dear user, your booking has been confirmed! 
-                     Room ID: ${room_id}
-                     Check-in Date: ${checkin_date}
-                     Check-out Date: ${checkout_date}
-                     Total Amount: $${total_amount}
-                     
-                     Payment Status: Completed
-                     
-                     Thank you for booking with us!`, // Email body
-            };
-
-            transporter.sendMail(mailOptions, (err, info) => {
-              if (err) {
-                console.error("Error sending email:", err);
-                return res.status(500).json({ message: "Email sending failed." });
+            // Send confirmation email
+            db.query('SELECT email FROM users WHERE id = ?', [user_id], (err, result) => {
+              if (err || result.length === 0) {
+                console.error("Error fetching user email:", err);
+                return res.status(500).json({ message: "Unable to send email." });
               }
 
-              console.log("Email sent:", info.response);
+              const userEmail = result[0].email;
+
+              const mailOptions = {
+                from: process.env.EMAIL_USER, // Sender address
+                to: userEmail, // Receiver's email address
+                subject: "Booking Confirmation", // Email subject
+                text: `Dear user, your booking has been confirmed! 
+                       Room ID: ${room_id}
+                       Check-in Date: ${checkin_date}
+                       Check-out Date: ${checkout_date}
+                       Total Amount: $${total_amount}
+                       Discount Applied: $${discount}
+                       
+                       Payment Status: Completed
+                       
+                       Loyalty Points Earned: 10
+                       Total Loyalty Points: ${newPoints}
+                       
+                       Thank you for booking with us!`, // Email body
+              };
+
+              transporter.sendMail(mailOptions, (err, info) => {
+                if (err) {
+                  console.error("Error sending email:", err);
+                  return res.status(500).json({ message: "Email sending failed." });
+                }
+
+                console.log("Email sent:", info.response);
+              });
+            });
+
+            res.json({
+              message: "Booking confirmed & payment successful!",
+              booking_id,
+              discount,
+              total_amount,
+              loyaltyPoints: newPoints,
             });
           });
-
-          res.json({ message: "Booking confirmed & payment successful!", booking_id });
         });
       });
     });
@@ -130,5 +162,4 @@ router.post("/book-room", async (req, res) => {
     });
   }
 });
-
 module.exports = router;
