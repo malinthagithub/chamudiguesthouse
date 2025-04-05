@@ -64,9 +64,11 @@ const Navbar = ({ isAuthenticated, username, setIsAuthenticated }) => {
           {isAuthenticated ? (
             <>
               {username && (
+                <Link to="/user-profile" className="nav-link" onClick={() => setMenuOpen(false)}>
                 <span className="username">
                   <FaUser /> {username}
                 </span>
+                </Link>
               )}
               <button className="logout-btn" onClick={handleLogout}>
                 <FaSignOutAlt /> Singout

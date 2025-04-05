@@ -30,7 +30,7 @@ const upload = multer({ storage: storage });
 router.get('/:id', (req, res) => {
   const userId = req.params.id;
   const query = `
-    SELECT id, username, email,loyalty_points,address1,address2,city, phone_number,country,
+    SELECT id, username, email,loyalty_points,address1,address2,city, phone_number,country,loyalty_points,
     COALESCE(profile_photo, '/uploads/profile_pics/default.png') AS profile_photo
     FROM users WHERE id = ?`;
 

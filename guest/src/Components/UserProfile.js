@@ -1,5 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import './UserProfile.css';
+import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
+import 'react-circular-progressbar/dist/styles.css';
 
 const UserProfile = () => {
   const user = JSON.parse(localStorage.getItem("userData"));
@@ -79,14 +81,14 @@ const UserProfile = () => {
             alt="Profile"
             className="profile-photo"
           />
-         
+
           <i 
             className="fas fa-camera" 
             onClick={() => document.getElementById('imageInput').click()}
             style={{
               position: 'relative',
-              top: '-30px',
-              left:'-20px',
+              top: '-60px',
+              left:'150px',
               fontSize: '24px',
               cursor: 'pointer',
               padding: '8px',
@@ -96,7 +98,7 @@ const UserProfile = () => {
               transition: 'all 0.3s ease'
             }}
           ></i>
-          
+
           <input
             type="file"
             id="imageInput"
@@ -105,7 +107,7 @@ const UserProfile = () => {
             accept="image/*"
           />
         </div>
-        
+
         <div className="profile-info">
           <h3>{userData.username}</h3>
           <p><i className="fas fa-envelope"></i> {userData.email}</p>
@@ -132,13 +134,41 @@ const UserProfile = () => {
         </div>
       </div>
 
-      {/* New Section for Cards */}
+      {/* Profile Cards Section */}
       <div className="profile-cards">
-        {[...Array(4)].map((_, index) => (
+        {[
+          { 
+            title: "CHAMUDI GUEST HOUSE", 
+            text: "Enjoy a comfortable stay with premium amenities.",
+            text1: "Discount Points",
+            showProgress: true,
+            progress: userData?.loyalty_points || 0
+          },
+          { title: "BOOKING ROOMS", text: "Enjoy a comfortable stay with premium amenities." },
+          { title: "Family Room", text: "Spacious room perfect for family vacations." },
+          { title: "Deluxe King", text: "Elegant room with a king-sized bed and city view." },
+          { title: "Budget Single", text: "Affordable stay with all essential facilities." },
+        ].map((item, index) => (
           <div key={index} className="card">
             <div className="card-body">
-              <h5 className="card-title">Book {index + 1}</h5>
-              <p className="card-text">Details about the booking will go here.</p>
+              <h5 className="card-title">{item.title}</h5>
+              <p className="card-text">{item.text}</p>
+              <p style={{ margin: "10px auto", position: "relative" ,top: "-170px",left: "400px",color:"white"}}>{item.text1}</p>
+              {item.showProgress && (
+                
+                <div style={{ width: 100, height: 60, margin: "10px auto", position: "relative" ,top: "-160px",left: "400px"}}>
+                  <CircularProgressbar
+                    value={item.progress}
+                    text={`${item.progress}%`}
+                    styles={buildStyles({
+                      pathColor: item.progress === 100 ? "#d4ff00" : "#6aff00",
+                      textColor: "white",
+                      trailColor: "#eee",
+                      backgroundColor: "#473939"
+                    })}
+                  />
+                </div>
+              )}
             </div>
           </div>
         ))}
