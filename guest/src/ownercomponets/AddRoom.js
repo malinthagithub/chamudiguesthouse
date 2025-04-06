@@ -1,19 +1,27 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import './AddRoom.css';  // Make sure to import the CSS file
+import './AddRoom.css';
 
 const AddRoom = () => {
+  const [activeStep, setActiveStep] = useState(1);
   const [roomData, setRoomData] = useState({
     name: '',
     maxcount: '',
     phonenumber: '',
     rentperday: '',
-    room_type: '', // Added room_type
-    room_size: '', // Added room_size
-    discount_percentage: '', // Added discount_percentage
+    room_type: '',
+    room_size: '',
+    discount_percentage: '',
   });
 
   const [files, setFiles] = useState({
+    image1: null,
+    image2: null,
+    image3: null,
+    video: null,
+  });
+
+  const [previews, setPreviews] = useState({
     image1: null,
     image2: null,
     image3: null,
@@ -25,12 +33,26 @@ const AddRoom = () => {
   };
 
   const handleFileChange = (e) => {
-    setFiles({ ...files, [e.target.name]: e.target.files[0] });
+    const file = e.target.files[0];
+    setFiles({ ...files, [e.target.name]: file });
+
+    // Create preview
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        setPreviews({
+          ...previews,
+          [e.target.name]: event.target.result,
+        });
+      };
+      reader.readAsDataURL(file);
+    }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  const nextStep = () => setActiveStep(activeStep + 1);
+  const prevStep = () => setActiveStep(activeStep - 1);
 
+  const handleSubmit = async () => {
     const formData = new FormData();
 
     // Append room data
@@ -40,20 +62,15 @@ const AddRoom = () => {
 
     // Append files
     Object.keys(files).forEach((key) => {
-      if (files[key]) {
-        formData.append(key, files[key]);
-      } else {
-        alert(`Please upload ${key}`);
-        return;
-      }
+      if (files[key]) formData.append(key, files[key]);
     });
 
     try {
-      const response = await axios.post('http://localhost:5000/api/rooms/add', formData, {
+      await axios.post('http://localhost:5000/api/rooms/add', formData, {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
-      alert(response.data.message);
-      // Reset form after submission
+      alert('Room added successfully!');
+      // Reset form
       setRoomData({
         name: '',
         maxcount: '',
@@ -64,153 +81,220 @@ const AddRoom = () => {
         discount_percentage: '',
       });
       setFiles({ image1: null, image2: null, image3: null, video: null });
+      setPreviews({ image1: null, image2: null, image3: null, video: null });
+      setActiveStep(1);
     } catch (error) {
-      console.error('Error adding room:', error.response?.data || error.message);
+      console.error('Error adding room:', error);
       alert('Failed to add room. Please try again.');
+    }
+  };
+
+  const renderStep = () => {
+    switch (activeStep) {
+      case 1:
+        return (
+          <div className="step-card">
+            <h2>Basic Information</h2>
+            <div className="input-group">
+              <input
+                type="text"
+                name="name"
+                value={roomData.name}
+                onChange={handleChange}
+                placeholder="Room Name"
+                required
+              />
+            </div>
+            <div className="input-group">
+              <input
+                type="number"
+                name="maxcount"
+                value={roomData.maxcount}
+                onChange={handleChange}
+                placeholder="Max Guests"
+                required
+              />
+            </div>
+            <div className="input-group">
+              <input
+                type="text"
+                name="phonenumber"
+                value={roomData.phonenumber}
+                onChange={handleChange}
+                placeholder="Contact Number"
+                required
+              />
+            </div>
+            <button className="next-btn" onClick={nextStep}>
+              Continue
+            </button>
+          </div>
+        );
+      case 2:
+        return (
+          <div className="step-card">
+            <h2>Pricing Details</h2>
+            <div className="input-group">
+              <input
+                type="number"
+                name="rentperday"
+                value={roomData.rentperday}
+                onChange={handleChange}
+                placeholder="Daily Rate ($)"
+                required
+              />
+            </div>
+            <div className="input-group">
+              <input
+                type="number"
+                name="discount_percentage"
+                value={roomData.discount_percentage}
+                onChange={handleChange}
+                placeholder="Discount Percentage"
+                required
+              />
+            </div>
+            <div className="input-group">
+              <input
+                type="text"
+                name="room_type"
+                value={roomData.room_type}
+                onChange={handleChange}
+                placeholder="Room Type (e.g., Deluxe)"
+                required
+              />
+            </div>
+            <div className="button-group">
+              <button className="back-btn" onClick={prevStep}>
+                Back
+              </button>
+              <button className="next-btn" onClick={nextStep}>
+                Continue
+              </button>
+            </div>
+          </div>
+        );
+      case 3:
+        return (
+          <div className="step-card">
+            <h2>Room Specifications</h2>
+            <div className="input-group">
+              <input
+                type="number"
+                name="room_size"
+                value={roomData.room_size}
+                onChange={handleChange}
+                placeholder="Size (sq ft)"
+                required
+              />
+            </div>
+            <div className="file-upload-group">
+              <h3>Upload Images</h3>
+              <div className="image-grid">
+                {[1, 2, 3].map((num) => (
+                  <div key={num} className="image-upload-card">
+                    {previews[`image${num}`] ? (
+                      <img src={previews[`image${num}`]} alt={`Preview ${num}`} />
+                    ) : (
+                      <div className="upload-placeholder">
+                        <span>+</span>
+                        <p>Image {num}</p>
+                      </div>
+                    )}
+                    <input
+                      type="file"
+                      name={`image${num}`}
+                      onChange={handleFileChange}
+                      accept="image/*"
+                      required={num === 1}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+            <div className="button-group">
+              <button className="back-btn" onClick={prevStep}>
+                Back
+              </button>
+              <button className="next-btn" onClick={nextStep}>
+                Continue
+              </button>
+            </div>
+          </div>
+        );
+      case 4:
+        return (
+          <div className="step-card">
+            <h2>Video Preview</h2>
+            <div className="video-upload">
+              {previews.video ? (
+                <video controls>
+                  <source src={previews.video} type="video/mp4" />
+                  Your browser does not support the video tag.
+                </video>
+              ) : (
+                <div className="video-placeholder">
+                  <span>🎥</span>
+                  <p>Upload Room Video</p>
+                </div>
+              )}
+              <input
+                type="file"
+                name="video"
+                onChange={handleFileChange}
+                accept="video/*"
+                required
+              />
+            </div>
+            <div className="review-section">
+              <h3>Review Details</h3>
+              <div className="review-grid">
+                <div>
+                  <p>Room Name</p>
+                  <span>{roomData.name}</span>
+                </div>
+                <div>
+                  <p>Max Guests</p>
+                  <span>{roomData.maxcount}</span>
+                </div>
+                <div>
+                  <p>Daily Rate</p>
+                  <span>${roomData.rentperday}</span>
+                </div>
+                <div>
+                  <p>Room Type</p>
+                  <span>{roomData.room_type}</span>
+                </div>
+              </div>
+            </div>
+            <div className="button-group">
+              <button className="back-btn" onClick={prevStep}>
+                Back
+              </button>
+              <button className="submit-btn" onClick={handleSubmit}>
+                Add Room
+              </button>
+            </div>
+          </div>
+        );
+      default:
+        return <div>Invalid step</div>;
     }
   };
 
   return (
     <div className="add-room-container">
-      <h2 className="form-title">Add New Room</h2>
-      <form className="add-room-form" onSubmit={handleSubmit} encType="multipart/form-data">
-        <div className="input-group">
-          <label htmlFor="name">Room Name</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            placeholder="Room Name"
-            value={roomData.name}
-            onChange={handleChange}
-            required
-          />
-        </div>
-        
-        <div className="input-group">
-          <label htmlFor="maxcount">Max Count</label>
-          <input
-            type="number"
-            id="maxcount"
-            name="maxcount"
-            placeholder="Max Count"
-            value={roomData.maxcount}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="phonenumber">Phone Number</label>
-          <input
-            type="text"
-            id="phonenumber"
-            name="phonenumber"
-            placeholder="Phone Number"
-            value={roomData.phonenumber}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="rentperday">Rent per Day</label>
-          <input
-            type="number"
-            id="rentperday"
-            name="rentperday"
-            placeholder="Rent per Day"
-            value={roomData.rentperday}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="room_type">Room Type</label>
-          <input
-            type="text"
-            id="room_type"
-            name="room_type"
-            placeholder="Room Type"
-            value={roomData.room_type}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="room_size">Room Size (in sq. ft.)</label>
-          <input
-            type="number"
-            id="room_size"
-            name="room_size"
-            placeholder="Room Size"
-            value={roomData.room_size}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="discount_percentage">Discount Percentage</label>
-          <input
-            type="number"
-            id="discount_percentage"
-            name="discount_percentage"
-            placeholder="Discount Percentage"
-            value={roomData.discount_percentage}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="image1">Room Image 1</label>
-          <input
-            type="file"
-            id="image1"
-            name="image1"
-            onChange={handleFileChange}
-            required
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="image2">Room Image 2</label>
-          <input
-            type="file"
-            id="image2"
-            name="image2"
-            onChange={handleFileChange}
-            required
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="image3">Room Image 3</label>
-          <input
-            type="file"
-            id="image3"
-            name="image3"
-            onChange={handleFileChange}
-            required
-          />
-        </div>
-
-        <div className="input-group">
-          <label htmlFor="video">Room Video</label>
-          <input
-            type="file"
-            id="video"
-            name="video"
-            onChange={handleFileChange}
-            required
-          />
-        </div>
-
-        <button type="submit" className="submit-btn">Add Room</button>
-      </form>
+      <div className="progress-bar">
+        {[1, 2, 3, 4].map((step) => (
+          <div
+            key={step}
+            className={`progress-step ${activeStep >= step ? 'active' : ''}`}
+          >
+            <div className="step-number">{step}</div>
+          </div>
+        ))}
+      </div>
+      {renderStep()}
     </div>
   );
 };

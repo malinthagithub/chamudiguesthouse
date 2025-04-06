@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import './UserProfile.css';
 import { CircularProgressbar, buildStyles } from 'react-circular-progressbar';
 import 'react-circular-progressbar/dist/styles.css';
+import { useNavigate } from 'react-router-dom'; // ✅ Import navigate
 
 const UserProfile = () => {
   const user = JSON.parse(localStorage.getItem("userData"));
   const userId = user ? user.userId : null;
+  const navigate = useNavigate(); // ✅ Initialize navigate
 
   const [userData, setUserData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -64,13 +66,35 @@ const UserProfile = () => {
     }
   };
 
-  if (loading) {
-    return <div className="user-profile">Loading...</div>;
-  }
+  if (loading) return <div className="user-profile">Loading...</div>;
+  if (error) return <div className="user-profile">{error}</div>;
 
-  if (error) {
-    return <div className="user-profile">{error}</div>;
-  }
+  // Card data
+  const cards = [
+    {
+      title: "CHAMUDI GUEST HOUSE",
+      text: "Enjoy a comfortable stay with premium amenities.",
+      text1: "Discount Points",
+      showProgress: true,
+      progress: userData?.loyalty_points || 0
+    },
+    {
+      title: "BOOKING ROOMS",
+      text: "Enjoy a comfortable stay with premium amenities."
+    },
+    {
+      title: "customization Room",
+      text: "Spacious room perfect for family vacations."
+    },
+    {
+      title: "Deluxe King",
+      text: "Elegant room with a king-sized bed and city view."
+    },
+    {
+      title: "Budget Single",
+      text: "Affordable stay with all essential facilities."
+    }
+  ];
 
   return (
     <div className="user-profile">
@@ -81,14 +105,13 @@ const UserProfile = () => {
             alt="Profile"
             className="profile-photo"
           />
-
-          <i 
-            className="fas fa-camera" 
+          <i
+            className="fas fa-camera"
             onClick={() => document.getElementById('imageInput').click()}
             style={{
               position: 'relative',
               top: '-60px',
-              left:'150px',
+              left: '150px',
               fontSize: '24px',
               cursor: 'pointer',
               padding: '8px',
@@ -98,7 +121,6 @@ const UserProfile = () => {
               transition: 'all 0.3s ease'
             }}
           ></i>
-
           <input
             type="file"
             id="imageInput"
@@ -136,27 +158,26 @@ const UserProfile = () => {
 
       {/* Profile Cards Section */}
       <div className="profile-cards">
-        {[
-          { 
-            title: "CHAMUDI GUEST HOUSE", 
-            text: "Enjoy a comfortable stay with premium amenities.",
-            text1: "Discount Points",
-            showProgress: true,
-            progress: userData?.loyalty_points || 0
-          },
-          { title: "BOOKING ROOMS", text: "Enjoy a comfortable stay with premium amenities." },
-          { title: "Family Room", text: "Spacious room perfect for family vacations." },
-          { title: "Deluxe King", text: "Elegant room with a king-sized bed and city view." },
-          { title: "Budget Single", text: "Affordable stay with all essential facilities." },
-        ].map((item, index) => (
-          <div key={index} className="card">
+        {cards.map((item, index) => (
+          <div 
+            key={index}
+            className="card"
+            onClick={() => {
+              if (item.title === "BOOKING ROOMS") {
+                navigate('/confirm'); // ✅ Navigate when this card is clicked
+              }
+              else if (item.title === "customization Room") {
+                navigate('/room-customization'); // ✅ Navigate when this card is clicked
+              }
+            }}
+            style={{ cursor: item.title === "BOOKING ROOMS" || item.title === "customization Room"? 'pointer' : 'default' }}
+          >
             <div className="card-body">
               <h5 className="card-title">{item.title}</h5>
               <p className="card-text">{item.text}</p>
-              <p style={{ margin: "10px auto", position: "relative" ,top: "-170px",left: "400px",color:"white"}}>{item.text1}</p>
+              <p style={{ margin: "10px auto", position: "relative", top: "-170px", left: "400px", color: "white" }}>{item.text1}</p>
               {item.showProgress && (
-                
-                <div style={{ width: 100, height: 60, margin: "10px auto", position: "relative" ,top: "-160px",left: "400px"}}>
+                <div style={{ width: 100, height: 60, margin: "10px auto", position: "relative", top: "-160px", left: "400px" }}>
                   <CircularProgressbar
                     value={item.progress}
                     text={`${item.progress}%`}
