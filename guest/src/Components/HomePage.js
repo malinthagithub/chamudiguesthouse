@@ -333,17 +333,36 @@ useEffect(() => {
                     <div className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <span className="close-btn" onClick={closeModal}>✖</span>
                         <h2>{selectedRoom.name}</h2>
+                        
                         <Slider {...sliderSettings}>
-                            {selectedRoom.imageurl1 && (
-                                <div><img src={`http://localhost:5000${selectedRoom.imageurl1}`} alt={selectedRoom.name} /></div>
-                            )}
-                            {selectedRoom.imageurl2 && (
-                                <div><img src={`http://localhost:5000${selectedRoom.imageurl2}`} alt={selectedRoom.name} /></div>
-                            )}
-                            {selectedRoom.imageurl3 && (
-                                <div><img src={`http://localhost:5000${selectedRoom.imageurl3}`} alt={selectedRoom.name} /></div>
-                            )}
-                        </Slider>
+  {/* First image with description */}
+  {selectedRoom.imageurl1 && (
+    <div className="first-slide-with-description">
+      <img 
+        src={`http://localhost:5000${selectedRoom.imageurl1}`} 
+        alt={selectedRoom.name} 
+      />
+      {selectedRoom.description && (
+        <div className="image-description">
+          <p>{selectedRoom.description}</p>
+        </div>
+      )}
+    </div>
+  )}
+
+  {/* Other images without description */}
+  {selectedRoom.imageurl2 && (
+    <div>
+      <img src={`http://localhost:5000${selectedRoom.imageurl2}`} alt={selectedRoom.name} />
+    </div>
+  )}
+  
+  {selectedRoom.imageurl3 && (
+    <div>
+      <img src={`http://localhost:5000${selectedRoom.imageurl3}`} alt={selectedRoom.name} />
+    </div>
+  )}
+</Slider>
                     </div>
                 </div>
             )}

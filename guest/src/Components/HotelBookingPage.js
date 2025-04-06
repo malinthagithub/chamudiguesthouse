@@ -134,7 +134,7 @@ function HotelBookingPage() {
           BEST RATE GUARANTEED
         </h2>
         <p style={{ fontSize: "18px", color: "#555", marginBottom: "40px" }}>
-          If you find a lower rate elsewhere, we will match it and add an additional 15% off. On top of that, enjoy the
+          If you find a lower rate elsewhere, we will match it and add an additional 10% off. On top of that, enjoy the
           best free benefit selection and more, when you Book Direct.
         </p>
         <div

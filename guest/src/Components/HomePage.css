@@ -199,18 +199,18 @@
 
 /* Slick Arrows */
 .slick-prev, .slick-next {
-    font-size: 30px;
-    background-color: black !important; /* Ensure solid black background */
-    color: white !important; /* Arrows in white color */
+    font-size: 3px;
+   
+    color: rgb(9, 8, 8) !important; /* Arrows in white color */
     position: absolute;
     top: 50%;
     z-index: 10; /* Ensure arrows are above the images */
     transform: translateY(-50%);
     border-radius: 50%;
-    padding: 12px;
+   
     cursor: pointer;
-    display: block;
-    border: 2px solid transparent; /* Initially no border, for smoother transition */
+   
+    
     transition: background-color 0.3s ease, transform 0.3s ease, border-color 0.3s ease;
 }
 
@@ -234,8 +234,8 @@
 
 /* Hover effect for arrows */
 .slick-prev:hover, .slick-next:hover {
-    background-color: rgba(0, 0, 0, 0.6); /* Darker background on hover */
-    color: rgb(17, 16, 16); /* Change arrow color to white on hover */
+    background-color: rgba(238, 228, 228, 0.6); /* Darker background on hover */
+    color: rgb(214, 193, 193); /* Change arrow color to white on hover */
 }
 
 /* Slick Dots */
@@ -472,3 +472,30 @@ input-with-icon {
         right: -60px;
     }
 }
+
+.first-slide-with-description {
+    position: relative;
+  }
+  
+  .image-description {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: rgba(0, 0, 0, 0.7);
+    color: white;
+    padding: 15px;
+  }
+  
+  .image-description p {
+    margin: 0;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+  
+  /* Ensure all slider images have consistent sizing */
+  .slick-slide img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+  }
