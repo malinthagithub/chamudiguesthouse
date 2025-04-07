@@ -1,135 +1,382 @@
-.room-customization {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  padding: 20px;
-  gap: 40px;
-  background-color: #6b6161; /* Light background for the whole section */
+:root {
+  --primary-color: #4361ee;
+  --secondary-color: #3f37c9;
+  --accent-color: #4cc9f0;
+  --success-color: #4caf50;
+  --danger-color: #f44336;
+  --warning-color: #ff9800;
+  --light-color: #f8f9fa;
+  --dark-color: #212529;
+  --gray-color: #6c757d;
+  --border-radius: 12px;
+  --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+  --transition: all 0.3s ease;
 }
 
-.room-customization h2 {
-  position: relative;
- top: 50px;
- left:600px;
-  text-align: center;
-  font-size: 2rem;
-  margin-bottom: 20px;
-  justify-content: space-between;
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
 }
 
-.room-customization img{
-  max-height: 10%;
-  position: relative;
-  left: -300px;
-  top: 200px;
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f5f7fa;
+  color: var(--dark-color);
+  line-height: 1.6;
+}
+
+/* Loading and Error States */
+.loading-container, .error-container, .not-found-container {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  max-width: 30%; 
-  
- /* Ensure the parent allows full width */
+  min-height: 300px;
+  text-align: center;
 }
 
-
-.room-details {
-  flex: 1;
-  max-width: 45%; /* Take up 45% of the container's width */
+.spinner {
+  width: 50px;
+  height: 50px;
+  border: 5px solid rgba(0, 0, 0, 0.1);
+  border-radius: 50%;
+  border-top-color: var(--primary-color);
+  animation: spin 1s ease-in-out infinite;
+  margin-bottom: 1rem;
 }
 
-.room-details h3 {
-  font-size: 1.5rem;
-  margin-bottom: 10px;
+@keyframes spin {
+  to { transform: rotate(360deg); }
 }
 
-.room-details p {
+.error-message {
   font-size: 1.2rem;
-  color: #333;
+  color: var(--danger-color);
 }
-.service{
+
+/* Main Container */
+.customization-container {
   position: relative;
-  top: -310px;
-  left: 230px;
+  top: 29px;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
-.bed{
-  position: relative;
-  top: -20px;
-  left: -150px;
+
+.customization-header {
+  text-align: center;
+  margin-bottom: 2.5rem;
 }
-.customization-form {
-  position: relative;
-  top: 200px;
-  flex: 1;
-  max-width: 50%;
-  background-color: #fff;
-  padding: 20px;
-  border-radius: 10px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+.customization-header h1 {
+  font-size: 2.5rem;
+  color: var(--primary-color);
+  margin-bottom: 0.5rem;
+  font-weight: 700;
+}
+
+.subtitle {
+  font-size: 1.1rem;
+  color: var(--gray-color);
+}
+
+.customization-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 2rem;
+}
+
+/* Room Display Section */
+.room-display {
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 1.5rem;
 }
 
-.customization-form label {
-  font-size: 1rem;
-  margin-bottom: 5px;
+.room-image-container {
+  position: relative;
+  border-radius: var(--border-radius);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
 }
 
-.customization-form input,
-.customization-form select {
+.room-image {
   width: 100%;
-  padding: 10px;
+  height: 300px;
+  object-fit: cover;
+  transition: var(--transition);
+}
+
+.room-image:hover {
+  transform: scale(1.02);
+}
+
+.room-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: linear-gradient(transparent, rgba(0, 0, 0, 0.8));
+  color: white;
+  padding: 1.5rem;
+}
+
+.room-overlay h2 {
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
+}
+
+.base-price {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.room-features {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--box-shadow);
+}
+
+.room-features h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+}
+
+.room-features ul {
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0.8rem;
+}
+
+.room-features li {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: var(--transition);
+}
+
+.room-features li.active {
+  background-color: rgba(76, 201, 240, 0.1);
+  color: var(--primary-color);
+  font-weight: 500;
+}
+
+/* Customization Form */
+.customization-form {
+  background: white;
+  border-radius: var(--border-radius);
+  padding: 1.5rem;
+  box-shadow: var(--box-shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.form-section {
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid #eee;
+}
+.form-section h3{
+  color: #212529;
+}
+
+.form-section:last-child {
+  border-bottom: none;
+}
+
+.form-section h3 {
+  font-size: 1.3rem;
+  margin-bottom: 1rem;
+  color: var(--primary-color);
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.date-inputs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.input-group {
+  margin-bottom: 1rem;
+}
+
+.input-group label  {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #000  !important;
+  color: var(--dark-color);
+}
+
+.input-group input,
+.input-group select {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
   font-size: 1rem;
-  border-radius: 5px;
-  border: 1px solid #ccc;
+  transition: var(--transition);
 }
 
-.customization-form input[type="checkbox"] {
-  margin-right: 10px;
+.input-group input:focus,
+.input-group select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
 }
 
-.customization-form button {
-  padding: 12px;
-  font-size: 1.2rem;
-  background-color: #28a745;
+.amenities-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.checkbox-option {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 6px;
+  transition: var(--transition);
+}
+.checkbox-option label{
+  color: #000 !important;
+}
+.amenities-grid label{
+  color: #000 !important;
+}
+
+.checkbox-option:hover {
+  background-color: #f5f5f5;
+}
+
+.checkbox-option input {
+  position: absolute;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.checkmark {
+  position: relative;
+  height: 18px;
+  width: 18px;
+  background-color: #eee;
+  border-radius: 4px;
+  transition: var(--transition);
+}
+
+.checkbox-option input:checked ~ .checkmark {
+  background-color: var(--primary-color);
+}
+
+.checkmark:after {
+  content: "";
+  position: absolute;
+  display: none;
+  left: 6px;
+  top: 2px;
+  width: 5px;
+  height: 10px;
+  border: solid white;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.checkbox-option input:checked ~ .checkmark:after {
+  display: block;
+}
+
+/* Payment Section */
+.payment-section {
+  margin-top: auto;
+}
+
+.total-display {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 1rem;
+  background-color: #f8f9fa;
+  border-radius: var(--border-radius);
+}
+
+.total-amount {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color);
+}
+
+.card-element-container {
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: var(--border-radius);
+  margin-bottom: 1.5rem;
+}
+
+.submit-button {
+  width: 100%;
+  padding: 1rem;
+  background-color: var(--primary-color);
   color: white;
   border: none;
-  border-radius: 5px;
+  border-radius: var(--border-radius);
+  font-size: 1.1rem;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: var(--transition);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
 }
 
-.customization-form button:hover {
-  background-color: #218838;
+.submit-button:hover {
+  background-color: var(--secondary-color);
 }
 
-.customization-form button:disabled {
+.submit-button:disabled {
   background-color: #ccc;
   cursor: not-allowed;
 }
 
-.customization p {
-  font-size: 1.2rem;
-  font-weight: bold;
-  position: relative;
-  left: -500px;
-  top:500px !important;
+.submit-button .spinner {
+  width: 20px;
+  height: 20px;
+  border-width: 3px;
+  margin: 0;
 }
 
-.customization-form select {
-  padding: 12px;
-  font-size: 1rem;
+/* Responsive Design */
+@media (max-width: 992px) {
+  .customization-content {
+    grid-template-columns: 1fr;
+  }
+  
+  .room-features ul,
+  .amenities-grid {
+    grid-template-columns: 1fr;
+  }
 }
-.check{
-  position: relative;
-  left: -500px;
-  top: 200px;
-}
-.total {
-  font-size: 1.5rem;
-  font-weight: bold;
-  margin-top: 20px;
-  position: relative;
-  left: -500px;
-  top: 200px;
+
+@media (max-width: 768px) {
+  .customization-header h1 {
+    font-size: 2rem;
+  }
+  
+  .date-inputs {
+    grid-template-columns: 1fr;
+  }
 }

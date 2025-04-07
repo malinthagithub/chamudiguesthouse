@@ -78,7 +78,7 @@ const UpdateRoom = () => {
             // Send request to update room details
             await axios.put(`http://localhost:5000/api/rooms/update/${roomId}`, formData);
             alert('Room updated successfully!');
-            navigate('/owner-dashboard');
+            navigate('/dashboard');
         } catch (error) {
             console.error('Error updating room:', error);
             alert('Failed to update room. Please try again.');

@@ -72,7 +72,7 @@ const Login = ({ setIsAuthenticated, setUsername }) => {
         {error && <p className="error">{error}</p>}
 
         <form onSubmit={handleSubmit}>
-          <div className="input-group">
+          <div className="input-grou">
             <label>Email</label>
             <input
               type="email"
@@ -84,7 +84,7 @@ const Login = ({ setIsAuthenticated, setUsername }) => {
 
           {/* Password input field will only be displayed when not in "Forgot Password" mode */}
           {!isForgotPassword && (
-            <div className="input-group">
+            <div className="input-grou">
               <label>Password</label>
               <input
                 type="password"

@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { Modal, Button } from "react-bootstrap";
+import { FiStar, FiCalendar, FiDollarSign, FiUser, FiClock, FiX, FiEdit2 } from "react-icons/fi";
+import { FaHotel, FaRegSadTear } from "react-icons/fa";
 import "./ConfirmBooking.css";
 
 function ConfirmBooking() {
@@ -12,8 +14,6 @@ function ConfirmBooking() {
     const [error, setError] = useState(null);
     const [showReviewForm, setShowReviewForm] = useState(null);
     const [commentData, setCommentData] = useState({ rating: 0, comment: "" });
-
-    // State for the cancel confirmation modal
     const [showCancelModal, setShowCancelModal] = useState(false);
     const [selectedBookingId, setSelectedBookingId] = useState(null);
 
@@ -25,13 +25,13 @@ function ConfirmBooking() {
                     setBookings(response.data);
                     setLoading(false);
                 } catch (err) {
-                    setError("Failed to fetch bookings.");
+                    setError("Failed to fetch bookings. Please try again later.");
                     setLoading(false);
                 }
             };
             fetchBookings();
         } else {
-            setError("No user logged in.");
+            setError("Please login to view your bookings.");
             setLoading(false);
         }
     }, [userId]);
@@ -41,6 +41,10 @@ function ConfirmBooking() {
     };
 
     const handleSubmit = async (roomId) => {
+        if (!commentData.rating || !commentData.comment) {
+            alert("Please provide both rating and comment.");
+            return;
+        }
         try {
             const response = await axios.post("http://localhost:5000/api/reviews/add", {
                 id: userId,
@@ -50,122 +54,172 @@ function ConfirmBooking() {
             });
             alert(response.data.message);
             setShowReviewForm(null);
+            setCommentData({ rating: 0, comment: "" });
         } catch (error) {
             console.error("Error adding review:", error.response?.data || error.message);
-            alert("Failed to add review.");
+            alert("Failed to add review. Please try again.");
         }
     };
 
-    // Open cancel confirmation modal
     const openCancelModal = (bookingId) => {
         setSelectedBookingId(bookingId);
         setShowCancelModal(true);
     };
 
     const handleCancelBooking = async () => {
-        if (!selectedBookingId) {
-            alert("Booking ID is missing.");
-            return;
-        }
         try {
             const response = await axios.post("http://localhost:5000/api/cancel-booking", {
                 user_id: userId,
-                booking_id: selectedBookingId, // Send booking_id from the frontend
+                booking_id: selectedBookingId,
             });
             alert(response.data.message);
-
-            // Refresh bookings after cancellation
-            setBookings(bookings.filter((booking) => booking.booking_id !== selectedBookingId)); // Corrected to booking_id
+            setBookings(bookings.filter((booking) => booking.booking_id !== selectedBookingId));
             setShowCancelModal(false);
         } catch (error) {
             console.error("Error cancelling booking:", error.response?.data || error.message);
-            alert("Failed to cancel booking.");
+            alert("Failed to cancel booking. Please try again.");
         }
     };
 
-    if (loading) return <p className="loading">Loading...</p>;
-    if (error) return <p className="error">{error}</p>;
+    if (loading) return (
+        <div className="loading-container">
+            <div className="spinner"></div>
+            <p>Loading your bookings...</p>
+        </div>
+    );
+
+    if (error) return (
+        <div className="error-container">
+            <FaRegSadTear className="error-icon" />
+            <p className="error-message">{error}</p>
+        </div>
+    );
 
     return (
-        <div className="container">
-            <h1>Welcome, {user ? user.username : "User"}</h1>
-            <h2>Your Confirmed Bookings</h2>
-            {bookings.length > 0 ? (
-                <ul>
-                    {bookings.map((booking) => (
-                        <li key={booking.booking_id} className="booking-card">
-                            <p><strong>Room:</strong> {booking.room_name}</p>
-                            <p><strong>Check-in:</strong> {booking.checkin_date}</p>
-                            <p><strong>Check-out:</strong> {booking.checkout_date}</p>
-                            <p><strong>Total Amount:</strong> ${booking.total_amount}</p>
-                            <p className="status"><strong>Status:</strong> {booking.status}</p>
-                            <p><strong>Username:</strong> {booking.user_name}</p>
-                            <p><strong>Payment Created At:</strong> {new Date(booking.created_at).toLocaleString()}</p>
+        <div className="booking-container">
+            <header className="booking-header">
+                <h1>Welcome back, {user ? user.username : "Guest"}!</h1>
+                <p className="subtitle">Here are your current bookings</p>
+            </header>
 
-                            {booking.status === "confirmed" && (
-                                <button
-                                    className="cancel-booking-btn"
-                                    onClick={() => openCancelModal(booking.booking_id)} // Corrected to booking_id
-                                >
-                                    Cancel Booking
-                                </button>
-                            )}
-
-                            <button
-                                className="toggle-review-btn"
-                                onClick={() => setShowReviewForm(showReviewForm === booking.room_id ? null : booking.room_id)}
-                            >
-                                {showReviewForm === booking.room_id ? "Hide Review Form" : "Leave a Review"}
-                            </button>
-
-                            {showReviewForm === booking.room_id && (
-                                <div className="review-form">
-                                    <label>Rating (1-5):
-                                        <input
-                                            type="number"
-                                            name="rating"
-                                            value={commentData.rating}
-                                            onChange={handleChange}
-                                            min="1"
-                                            max="5"
-                                        />
-                                    </label>
-                                    <label>Comment:
-                                        <textarea
-                                            name="comment"
-                                            value={commentData.comment}
-                                            onChange={handleChange}
-                                        />
-                                    </label>
-                                    <button onClick={() => handleSubmit(booking.room_id)}>Submit Review</button>
+            <main className="booking-content">
+                {bookings.length > 0 ? (
+                    <div className="booking-grid">
+                        {bookings.map((booking) => (
+                            <div key={booking.booking_id} className="booking-card">
+                                <div className="card-header">
+                                    <FaHotel className="hotel-icon" />
+                                    <h3>{booking.room_name}</h3>
+                                    <span className={`status-badge ${booking.status}`}>
+                                        {booking.status}
+                                    </span>
                                 </div>
-                            )}
-                        </li>
-                    ))}
-                </ul>
-            ) : (
-                <p>No confirmed bookings found.</p>
-            )}
 
-            {/* Cancellation Confirmation Modal */}
-            <Modal show={showCancelModal} onHide={() => setShowCancelModal(false)}>
+                                <div className="card-details">
+                                    <div className="detail-item">
+                                        <FiCalendar className="icon" />
+                                        <span>Check-in: {new Date(booking.checkin_date).toLocaleDateString()}</span>
+                                    </div>
+                                    <div className="detail-item">
+                                        <FiCalendar className="icon" />
+                                        <span>Check-out: {new Date(booking.checkout_date).toLocaleDateString()}</span>
+                                    </div>
+                                    <div className="detail-item">
+                                        <FiDollarSign className="icon" />
+                                        <span>Total: ${booking.total_amount}</span>
+                                    </div>
+                                    <div className="detail-item">
+                                        <FiUser className="icon" />
+                                        <span>Booked by: {booking.user_name}</span>
+                                    </div>
+                                    <div className="detail-item">
+                                        <FiClock className="icon" />
+                                        <span>Booked on: {new Date(booking.created_at).toLocaleString()}</span>
+                                    </div>
+                                </div>
+
+                                <div className="card-actions">
+                                    {booking.status === "confirmed" && (
+                                        <button 
+                                            className="action-btn cancel-btn"
+                                            onClick={() => openCancelModal(booking.booking_id)}
+                                        >
+                                            <FiX /> Cancel
+                                        </button>
+                                    )}
+                                    <button
+                                        className="action-btn review-btn"
+                                        onClick={() => setShowReviewForm(showReviewForm === booking.room_id ? null : booking.room_id)}
+                                    >
+                                        <FiEdit2 /> {showReviewForm === booking.room_id ? "Close Review" : "Leave Review"}
+                                    </button>
+                                </div>
+
+                                {showReviewForm === booking.room_id && (
+                                    <div className="review-form">
+                                        <h4>Share your experience</h4>
+                                        <div className="rating-input">
+                                            <label>Rating (1-5):</label>
+                                            <div className="stars">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <FiStar 
+                                                        key={star}
+                                                        className={`star ${star <= commentData.rating ? "filled" : ""}`}
+                                                        onClick={() => setCommentData({...commentData, rating: star})}
+                                                    />
+                                                ))}
+                                            </div>
+                                        </div>
+                                        <div className="comment-input">
+                                            <label>Your Review:</label>
+                                            <textarea
+                                                name="comment"
+                                                value={commentData.comment}
+                                                onChange={handleChange}
+                                                placeholder="Share details about your stay..."
+                                            />
+                                        </div>
+                                        <button 
+                                            className="submit-review-btn"
+                                            onClick={() => handleSubmit(booking.room_id)}
+                                        >
+                                            Submit Review
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+                ) : (
+                    <div className="no-bookings">
+                        <img src="/images/no-bookings.svg" alt="No bookings" />
+                        <h3>No bookings found</h3>
+                        <p>You don't have any confirmed bookings yet.</p>
+                    </div>
+                )}
+            </main>
+
+            <Modal show={showCancelModal} onHide={() => setShowCancelModal(false)} centered>
                 <Modal.Header closeButton>
-                    <Modal.Title>Cancellation Policy</Modal.Title>
+                    <Modal.Title>Cancel Booking</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
-                    <p>
-                        - Cancellations within 24 hours of check-in are non-refundable. <br />
-                        - A processing fee of 10% may apply. <br />
-                        - Once canceled, this booking cannot be restored.
-                    </p>
-                    <p>Do you still want to cancel this booking?</p>
+                    <div className="policy-container">
+                        <h5>Cancellation Policy</h5>
+                        <ul className="policy-list">
+                            <li><span>•</span> Cancellations within 24 hours of check-in are non-refundable</li>
+                            <li><span>•</span> 10% processing fee applies to all cancellations</li>
+                            <li><span>•</span> Cancelled bookings cannot be restored</li>
+                        </ul>
+                        <p className="confirmation-text">Are you sure you want to cancel this booking?</p>
+                    </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="secondary" onClick={() => setShowCancelModal(false)}>
-                        No, Keep Booking
+                    <Button variant="outline-secondary" onClick={() => setShowCancelModal(false)}>
+                        Keep Booking
                     </Button>
                     <Button variant="danger" onClick={handleCancelBooking}>
-                        Yes, Cancel Booking
+                        Confirm Cancellation
                     </Button>
                 </Modal.Footer>
             </Modal>

@@ -1,183 +1,382 @@
-/* Container for the entire page */
-.container {
+/* Base Styles */
+:root {
+    --primary-color: #4361ee;
+    --secondary-color: #3f37c9;
+    --accent-color: #4cc9f0;
+    --success-color: #4caf50;
+    --danger-color: #f44336;
+    --warning-color: #ff9800;
+    --light-color: #f8f9fa;
+    --dark-color: #212529;
+    --gray-color: #6c757d;
+    --border-radius: 12px;
+    --box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+    --transition: all 0.3s ease;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f5f7fa;
+    color: var(--dark-color);
+    line-height: 1.6;
+}
+
+/* Container Styles */
+.booking-container {
     position: relative;
-    top: 50px;
+    top: 29px;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 20px;
-    background-color: #f4f4f9;
-    font-family: 'Arial', sans-serif;
+    padding: 2rem 1rem;
 }
 
-/* Heading styles */
-h1 {
+.booking-header {
+    text-align: center;
+    margin-bottom: 2.5rem;
+}
+
+.booking-header h1 {
     font-size: 2.5rem;
-    font-weight: 600;
-    color: #333;
+    color: var(--primary-color);
+    margin-bottom: 0.5rem;
+    font-weight: 700;
+}
+
+.subtitle {
+    font-size: 1.1rem;
+    color: var(--gray-color);
+}
+
+/* Loading and Error States */
+.loading-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(0, 0, 0, 0.1);
+    border-radius: 50%;
+    border-top-color: var(--primary-color);
+    animation: spin 1s ease-in-out infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    to { transform: rotate(360deg); }
+}
+
+.error-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 300px;
     text-align: center;
-    margin-bottom: 20px;
 }
 
-h2 {
-    font-size: 2rem;
-    font-weight: 500;
-    color: #444;
-    text-align: center;
-    margin-bottom: 30px;
+.error-icon {
+    font-size: 3rem;
+    color: var(--danger-color);
+    margin-bottom: 1rem;
 }
 
-/* Styles for the list of bookings */
-ul {
-    list-style-type: none;
-    padding: 0;
+.error-message {
+    font-size: 1.2rem;
+    color: var(--dark-color);
 }
 
-li {
-    background-color: #fff;
-    border: 1px solid #e1e1e1;
-    border-radius: 8px;
-    margin-bottom: 20px;
-    padding: 20px;
-    transition: all 0.3s ease;
+/* Booking Grid */
+.booking-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
 }
 
-/* Hover effect for list items */
-li:hover {
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+.booking-card {
+    background: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--box-shadow);
+    overflow: hidden;
+    transition: var(--transition);
+}
+
+.booking-card:hover {
     transform: translateY(-5px);
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
 }
 
-/* Details in each booking */
-li p {
-    font-size: 1rem;
-    color: #555;
-    margin: 5px 0;
+.card-header {
+    background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+    color: white;
+    padding: 1.2rem;
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
 }
 
-/* Style the booking status */
-p.status {
-    font-weight: bold;
-    color: #28a745; /* Green for confirmed status */
-}
-
-/* Date and amount with emphasis */
-p.created_at, p.total_amount {
+.card-header h3 {
+    font-size: 1.3rem;
     font-weight: 600;
-    color: #007bff; /* Blue for payment time and total amount */
+    margin: 0;
+    flex-grow: 1;
 }
 
-/* Style for error message */
-.error {
-    color: #ff0000;
-    font-size: 1.2rem;
-    text-align: center;
-    margin-top: 30px;
-}
-
-/* Loading text */
-.loading {
+.hotel-icon {
     font-size: 1.5rem;
-    color: #777;
-    text-align: center;
-    margin-top: 50px;
 }
 
-/* Review Form Styling */
+.status-badge {
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: capitalize;
+}
+
+.status-badge.confirmed {
+    background-color: var(--success-color);
+}
+
+.status-badge.cancelled {
+    background-color: var(--danger-color);
+}
+
+.status-badge.pending {
+    background-color: var(--warning-color);
+}
+
+/* Card Details */
+.card-details {
+    padding: 1.5rem;
+}
+
+.detail-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 0.8rem;
+    font-size: 0.95rem;
+}
+
+.detail-item:last-child {
+    margin-bottom: 0;
+}
+
+.detail-item .icon {
+    margin-right: 0.8rem;
+    color: var(--primary-color);
+    min-width: 20px;
+}
+
+/* Card Actions */
+.card-actions {
+    display: flex;
+    border-top: 1px solid #eee;
+    padding: 1rem;
+    gap: 0.8rem;
+}
+
+.action-btn {
+    flex: 1;
+    padding: 0.7rem;
+    border: none;
+    border-radius: var(--border-radius);
+    font-weight: 600;
+    cursor: pointer;
+    transition: var(--transition);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+}
+
+.action-btn svg {
+    font-size: 1.1rem;
+}
+
+.cancel-btn {
+    background-color: #fff;
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+.cancel-btn:hover {
+    background-color: var(--danger-color);
+    color: white;
+}
+
+.review-btn {
+    background-color: #fff;
+    color: var(--primary-color);
+    border: 1px solid var(--primary-color);
+}
+
+.review-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+/* Review Form */
 .review-form {
-    background: #fff;
-    padding: 16px;
-    margin-top: 10px;
-    border-radius: 8px;
-    box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    transition: all 0.3s ease-in-out;
+    padding: 1.5rem;
+    border-top: 1px solid #eee;
+    background-color: #f9f9f9;
 }
 
-.review-form h3 {
-    font-size: 1.2rem;
-    color: #333;
-    margin-bottom: 10px;
-}
-.rating label {
-    color: black !important;
-    font-weight: bold; /* Optional: Makes the text stand out */
+.review-form h4 {
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+    font-size: 1.1rem;
 }
 
-.comment label{
-    color: black !important;
-    font-weight: bold; /* Optional: Makes the text stand out */
+.rating-input {
+    margin-bottom: 1rem;
 }
 
-
-.rating, .comment {
-    margin-bottom: 12px;
-}
-
-.rating label, .comment label {
-    font-weight: 600;
+.rating-input label {
     display: block;
-    margin-bottom: 5px;
-    color: #444;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--dark-color);
 }
 
-.rating input {
-    width: 20%;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 1rem;
-    outline: none;
-    transition: border 0.2s ease-in-out;
+.stars {
+    display: flex;
+    gap: 0.5rem;
 }
 
-.rating input:focus, .comment textarea:focus {
-    border-color: #007bff;
+.star {
+    font-size: 1.5rem;
+    color: #ddd;
+    cursor: pointer;
+    transition: var(--transition);
 }
 
-.comment textarea {
+.star.filled {
+    color: #ffc107;
+}
+
+.comment-input {
+    margin-bottom: 1.5rem;
+}
+
+.comment-input label {
+    display: block;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    color: var(--dark-color);
+}
+
+.comment-input textarea {
     width: 100%;
-    padding: 10px;
+    min-height: 100px;
+    padding: 0.8rem;
     border: 1px solid #ddd;
-    border-radius: 6px;
-    font-size: 1rem;
-    resize: none;
-    outline: none;
+    border-radius: var(--border-radius);
+    font-family: inherit;
+    resize: vertical;
+    transition: var(--transition);
 }
 
-.submit-btn {
-    width:180px !important;
-    background: #007bff;
+.comment-input textarea:focus {
+    outline: none;
+    border-color: var(--primary-color);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+}
+
+.submit-review-btn {
+    width: 100%;
+    padding: 0.8rem;
+    background-color: var(--primary-color);
     color: white;
     border: none;
-    padding: 8px 10px !important;
-    font-size: 1rem;
+    border-radius: var(--border-radius);
     font-weight: 600;
-    border-radius: 6px;
     cursor: pointer;
-    transition: background 0.3s ease-in-out;
-    display: block;
-    width: 100%;
-    margin-top: 10px;
+    transition: var(--transition);
 }
 
-.submit-btn:hover {
-    background: #0056b3;
+.submit-review-btn:hover {
+    background-color: var(--secondary-color);
 }
 
-/* Toggle Review Button */
-.toggle-review-btn {
-    width: 200px;
-    background: #313e34;
-    color: white;
-    border: none;
-    padding: 5px 2px;
-    font-size: 0.9rem;
+/* No Bookings State */
+.no-bookings {
+    text-align: center;
+    padding: 3rem 0;
+}
+
+.no-bookings img {
+    max-width: 300px;
+    margin-bottom: 1.5rem;
+    opacity: 0.8;
+}
+
+.no-bookings h3 {
+    font-size: 1.5rem;
+    color: var(--dark-color);
+    margin-bottom: 0.5rem;
+}
+
+.no-bookings p {
+    color: var(--gray-color);
+    font-size: 1.1rem;
+}
+
+/* Modal Styles */
+.policy-container {
+    padding: 0.5rem;
+}
+
+.policy-container h5 {
+    font-size: 1.1rem;
+    margin-bottom: 1rem;
+    color: var(--dark-color);
+}
+
+.policy-list {
+    list-style: none;
+    margin-bottom: 1.5rem;
+}
+
+.policy-list li {
+    margin-bottom: 0.5rem;
+    display: flex;
+    align-items: flex-start;
+}
+
+.policy-list li span {
+    margin-right: 0.5rem;
+    color: var(--danger-color);
+}
+
+.confirmation-text {
     font-weight: 600;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: background 0.3s ease-in-out;
-    margin-top: 10px;
+    text-align: center;
+    margin-top: 1.5rem;
 }
 
-.toggle-review-btn:hover {
-    background: #218838;
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    .booking-header h1 {
+        font-size: 2rem;
+    }
+    
+    .booking-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .card-actions {
+        flex-direction: column;
+    }
 }

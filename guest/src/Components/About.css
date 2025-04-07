@@ -1,4 +1,6 @@
 .about-page {
+  position: relative;
+  top: 28px;
   font-family: Arial, sans-serif;
   padding: 65px;
   max-width: 1200px;
