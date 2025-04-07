@@ -1,55 +1,180 @@
+/* Box.css */
+
+/* Overlay styling */
 .box-overlay {
     position: fixed;
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.7);
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 1000; /* Ensure it appears on top */
+    z-index: 1000;
+    backdrop-filter: blur(0px);
 }
 
+/* Content box styling */
 .box-content {
-    background: white;
-    padding: 20px;
-    border-radius: 8px;
-    width: 500px; /* Adjust width as needed */
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    position: relative; /* Allows for the close button to position correctly */
+    position: relative;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 25px;
+    width: 80%;
+    max-width: 700px;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+    animation: fadeIn 0.3s ease-out;
 }
 
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Close button */
 .close-btn {
-    cursor: pointer;
-    position: absolute; /* Position the close button in a predictable location */
-    top: 10px;
-    right: 10px;
+    position: absolute;
+    top: 15px;
+    right: 15px;
     font-size: 20px;
+    cursor: pointer;
+    color: #888;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
     color: #333;
 }
-.sort-options label{
-    color: black !important;
-}
-/* Box.css */
-.review-item .star-rating {
-    font-size: 20px;
-    color: gold !important;
+
+/* Headings */
+.box-content h2 {
+    color: #2c3e50;
+    margin-bottom: 15px;
+    text-align: center;
+    font-size: 24px;
 }
 
-.review-item .empty-star {
-    color: #ccc;
-}
-/* Box.css */
-.star {
-    font-size: 20px;
+.box-content h2:first-of-type {
+    margin-top: 0;
+    color: #3498db;
+    font-size: 28px;
 }
 
+/* Sort options */
+.sort-options {
+    margin: 20px 0;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.sort-options label {
+    font-weight: 500;
+    color: #0f0e0e  !important;
+}
+
+.sort-options select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.sort-options select:hover {
+    border-color: #3498db;
+}
+
+.sort-options select:focus {
+    outline: none;
+    border-color: #3498db;
+    box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+/* Reviews list */
+.reviews-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.review-item {
+    background-color: #f8f9fa;
+    padding: 18px;
+    border-radius: 8px;
+    border-left: 4px solid #3498db;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.review-item:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.review-item strong {
+    color: #2c3e50;
+    font-size: 16px;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.review-item p {
+    margin: 8px 0;
+    color: #555;
+    line-height: 1.5;
+}
+
+.review-date {
+    display: block;
+    font-size: 12px;
+    color: #888;
+    margin-top: 10px;
+    text-align: right;
+}
+
+/* Star ratings */
 .full-star {
-    color: gold; /* Set full stars to yellow (gold) */
+    color: #f39c12;
+    font-size: 18px;
 }
 
 .empty-star {
-    color: #ccc; /* Light gray for empty stars */
+    color: #ddd;
+    font-size: 18px;
 }
 
+/* No reviews message */
+.box-content > p {
+    text-align: center;
+    color: #777;
+    font-style: italic;
+    padding: 20px 0;
+}
+
+/* Scrollbar styling */
+.box-content::-webkit-scrollbar {
+    width: 8px;
+}
+
+.box-content::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 0 12px 12px 0;
+}
+
+.box-content::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+.box-content::-webkit-scrollbar-thumb:hover {
+    background: #aaa;
+}

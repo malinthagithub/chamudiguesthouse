@@ -175,7 +175,7 @@ const UserProfile = () => {
             <div className="card-body">
               <h5 className="card-title">{item.title}</h5>
               <p className="card-text">{item.text}</p>
-              <p style={{ margin: "10px auto", position: "relative", top: "-170px", left: "400px", color: "white" }}>{item.text1}</p>
+              <p style={{ margin: "10px auto", position: "relative", top: "-10px", left: "400px", color: "white" }}>{item.text1}</p>
               {item.showProgress && (
                 <div style={{ width: 100, height: 60, margin: "10px auto", position: "relative", top: "-160px", left: "400px" }}>
                   <CircularProgressbar
