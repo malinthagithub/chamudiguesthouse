@@ -380,3 +380,115 @@ body {
         flex-direction: column;
     }
 }
+/* Modal Container */
+.modal-content {
+    position: relative;
+    top: 150px;
+    left: 25%;
+    border-radius: 12px;
+    border: none;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+    overflow: hidden;
+}
+
+/* Modal Header */
+.modal-header {
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #e9ecef;
+    padding: 1.2rem 1.5rem;
+}
+
+.modal-title {
+    font-weight: 600;
+    color: #2d3436;
+    font-size: 1.3rem;
+}
+
+
+
+/* Modal Body */
+.modal-body {
+    padding: 1.5rem;
+}
+
+.policy-container {
+    color: #495057;
+}
+
+.policy-container h5 {
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: #2d3436;
+    font-size: 1.1rem;
+}
+
+.policy-list {
+    list-style: none;
+    padding-left: 0;
+    margin-bottom: 1.5rem;
+}
+
+.policy-list li {
+    padding: 0.3rem 0;
+    display: flex;
+    align-items: flex-start;
+    line-height: 1.5;
+}
+
+.policy-list li span {
+    color: #e74c3c;
+    margin-right: 0.5rem;
+    font-weight: bold;
+}
+
+.confirmation-text {
+    font-weight: 500;
+    color: #2d3436;
+    margin-bottom: 0;
+    font-size: 1rem;
+}
+
+/* Modal Footer */
+.modal-footer {
+    border-top: 1px solid #e9ecef;
+    padding: 1rem 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.modal-footer .btn {
+    padding: 0.5rem 1.25rem;
+    border-radius: 8px;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-outline-secondary {
+    border: 1px solid #6c757d;
+    color: #6c757d;
+}
+
+.btn-outline-secondary:hover {
+    background-color: #f8f9fa;
+    border-color: #6c757d;
+}
+
+.btn-danger {
+    background-color: #e74c3c;
+    border: none;
+}
+
+.btn-danger:hover {
+    background-color: #c0392b;
+}
+
+/* Animation for modal appearance */
+.modal.fade .modal-dialog {
+    transform: translateY(-20px);
+    transition: transform 0.3s ease-out;
+}
+
+.modal.show .modal-dialog {
+    transform: translateY(0);
+}

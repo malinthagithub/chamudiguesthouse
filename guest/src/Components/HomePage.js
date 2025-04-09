@@ -329,8 +329,8 @@ useEffect(() => {
 
             {/* Modal for Room Images */}
             {isModalOpen && selectedRoom && (
-                <div className="modal-overlay" onClick={closeModal}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                <div  className="modal-overlay" onClick={closeModal}>
+                    <div style={{position:"relative",top:"20px",left:"20px",}} className="modal-content" onClick={(e) => e.stopPropagation()}>
                         <span className="close-btn" onClick={closeModal}>✖</span>
                         <h2>{selectedRoom.name}</h2>
                         

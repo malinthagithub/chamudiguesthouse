@@ -1,110 +1,231 @@
-/* Room Reviews Container */
+/* Main Container */
 .room-reviews-container {
-    width: 85%;
-    max-width: 900px;
-    margin: 30px auto;
-    padding: 25px;
-    background: linear-gradient(135deg, #ffffff, #f7f7f7);
-    border-radius: 12px;
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
-    font-family: 'Poppins', sans-serif;
+  width: 90%;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+/* Header */
+.room-reviews-header {
+  text-align: center;
+  margin-bottom: 3rem;
+}
+
+.room-reviews-header h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  background: linear-gradient(90deg, #4f46e5, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.room-reviews-subtitle {
+  font-size: 1.1rem;
+  color: #718096;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* Grid Layout */
+.room-reviews-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: 2rem;
+  margin-top: 2rem;
+}
+
+/* Room Card */
+.room-review-card {
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  transition: all 0.3s ease;
+  animation: fadeIn 0.5s ease-out forwards;
+  opacity: 0;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.room-review-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* Card Header */
+.room-review-card-header {
+  padding: 1.5rem;
+  background: linear-gradient(135deg, #4f46e5, #7c3aed);
+  color: white;
+  display: flex;
+  align-items: center;
+}
+
+.room-icon {
+  margin-right: 1rem;
+  font-size: 1.5rem;
+}
+
+.room-review-card-header h3 {
+  font-size: 1.4rem;
+  font-weight: 600;
+  margin: 0;
+}
+
+/* Card Body */
+.room-review-card-body {
+  padding: 1.5rem;
+}
+
+/* Rating Section */
+.room-rating-container {
+  display: flex;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  padding: 0.75rem;
+  background: #f0f9ff;
+  border-radius: 8px;
+}
+
+.rating-icon {
+  color: #f59e0b;
+  margin-right: 0.5rem;
+  font-size: 1.2rem;
+}
+
+.room-rating-text {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #1e3a8a;
+}
+
+/* Reviews Section */
+.room-reviews-section {
+  margin-top: 1rem;
+}
+
+.room-reviews-title {
+  font-size: 1.1rem;
+  color: #4a5568;
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+}
+
+.message-icon {
+  margin-right: 0.5rem;
+  color: #4f46e5;
+}
+
+/* Comments List */
+.room-comments-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.room-comment-item {
+  padding: 1rem;
+  margin-bottom: 0.75rem;
+  background: #f8fafc;
+  border-radius: 8px;
+  border-left: 3px solid #4f46e5;
+  animation: fadeIn 0.3s ease-out forwards;
+  opacity: 0;
+}
+
+.room-comment-item:last-child {
+  margin-bottom: 0;
+}
+
+/* Empty States */
+.room-reviews-empty, .room-no-comments {
+  text-align: center;
+  padding: 1.5rem;
+  color: #718096;
+  font-style: italic;
+}
+
+.room-reviews-empty svg {
+  color: #cbd5e0;
+  margin-bottom: 1rem;
+}
+
+/* Loading State */
+.room-reviews-loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 300px;
+  flex-direction: column;
+}
+
+.loading-spinner {
+  width: 40px;
+  height: 40px;
+  border: 4px solid #f3f3f3;
+  border-top: 4px solid #4f46e5;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.room-reviews-loading p {
+  margin-top: 1rem;
+  color: #4f46e5;
+  font-weight: 500;
+}
+
+/* Error State */
+.room-reviews-error {
+  text-align: center;
+  padding: 2rem;
+  background: #fff5f5;
+  border-radius: 8px;
+  color: #dc2626;
+  font-weight: 500;
+  border: 1px solid #fecaca;
+  max-width: 500px;
+  margin: 2rem auto;
+  animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .room-reviews-container {
+    width: 95%;
+    padding: 1.5rem;
   }
   
-  /* Header */
-  .room-reviews-container h2 {
-    text-align: center;
-    color: #2c3e50;
-    font-size: 26px;
-    font-weight: bold;
-    margin-bottom: 20px;
-    text-transform: uppercase;
+  .room-reviews-header h2 {
+    font-size: 2rem;
   }
   
-  /* Room Review Item */
-  .room-review-item {
-    background: #ffffff;
-    padding: 20px;
-    margin-bottom: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
-    transition: transform 0.2s ease-in-out;
+  .room-reviews-grid {
+    grid-template-columns: 1fr;
   }
   
-  .room-review-item:hover {
-    transform: scale(1.02);
+  .room-review-card-header h3 {
+    font-size: 1.2rem;
   }
   
-  /* Room Name */
-  .room-review-item h3 {
-    color: #34495e;
-    font-size: 22px;
-    margin-bottom: 10px;
+  .room-rating-text {
+    font-size: 1rem;
   }
-  
-  /* Reviews */
-  .room-comments ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .room-comments ul li {
-    background: #ecf0f1;
-    padding: 12px;
-    margin: 8px 0;
-    border-radius: 8px;
-    font-size: 15px;
-    color: #2c3e50;
-    display: flex;
-    align-items: center;
-  }
-  
-  .room-comments ul li::before {
-    content: "💬"; /* Chat icon */
-    margin-right: 10px;
-  }
-  
-  /* Average Rating */
-  .room-rating {
-    text-align: center;
-    font-size: 18px;
-    font-weight: bold;
-    color: #e67e22;
-    margin-top: 15px;
-  }
-  
-  /* Loading and Error Messages */
-  .loading, .error {
-    text-align: center;
-    font-weight: bold;
-    font-size: 18px;
-    margin-top: 20px;
-  }
-  
-  .error {
-    color: red;
-  }
-  
-  /* Responsive Design */
-  @media (max-width: 768px) {
-    .room-reviews-container {
-      width: 95%;
-      padding: 20px;
-    }
-  
-    .room-review-item {
-      padding: 15px;
-    }
-  
-    .room-review-item h3 {
-      font-size: 20px;
-    }
-  
-    .room-comments ul li {
-      font-size: 14px;
-    }
-  
-    .room-rating {
-      font-size: 16px;
-    }
-  }
-  
+}

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './AddRoom.css';
 
@@ -27,6 +27,12 @@ const AddRoom = () => {
     image3: null,
     video: null,
   });
+  useEffect(() => {
+    document.body.classList.add('addroom-background');
+    return () => {
+      document.body.classList.remove('addroom-background');
+    };
+  }, []);
 
   const handleChange = (e) => {
     setRoomData({ ...roomData, [e.target.name]: e.target.value });
@@ -90,6 +96,7 @@ const AddRoom = () => {
   };
 
   const renderStep = () => {
+  
     switch (activeStep) {
       case 1:
         return (
@@ -283,7 +290,7 @@ const AddRoom = () => {
   };
 
   return (
-    <div className="add-room-container">
+    <div className=" add-room-page add-room-container">
       <div className="progress-bar">
         {[1, 2, 3, 4].map((step) => (
           <div
@@ -294,9 +301,13 @@ const AddRoom = () => {
           </div>
         ))}
       </div>
+     
       {renderStep()}
     </div>
+   
   );
+  
 };
+
 
 export default AddRoom;

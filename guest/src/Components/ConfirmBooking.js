@@ -200,7 +200,7 @@ function ConfirmBooking() {
             </main>
 
             <Modal show={showCancelModal} onHide={() => setShowCancelModal(false)} centered>
-                <Modal.Header closeButton>
+                <Modal.Header >
                     <Modal.Title>Cancel Booking</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
