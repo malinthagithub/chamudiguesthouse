@@ -380,115 +380,90 @@ body {
         flex-direction: column;
     }
 }
-/* Modal Container */
+/* Add these styles to your ConfirmBooking.css */
+
+/* Modal styles */
+.cancel-modal {
+    position: fixed;
+    top: 200px;
+    left: 400px;
+    width: 100%;
+    height: 100%;
+    z-index: 1050;
+    overflow: hidden;
+    outline: 0;
+}
+
+.modal-dialog {
+    position: relative;
+    width: auto;
+    margin: 0.5rem;
+    pointer-events: none;
+}
+
 .modal-content {
     position: relative;
-    top: 150px;
-    left: 25%;
-    border-radius: 12px;
-    border: none;
-    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    pointer-events: auto;
+    background-color: #fff;
+    background-clip: padding-box;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    border-radius: 0.3rem;
+    outline: 0;
 }
 
-/* Modal Header */
-.modal-header {
-    background-color: #f8f9fa;
-    border-bottom: 1px solid #e9ecef;
-    padding: 1.2rem 1.5rem;
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1040;
+    width: 100vw;
+    height: 100vh;
+    background-color: #000;
 }
 
-.modal-title {
-    font-weight: 600;
-    color: #2d3436;
-    font-size: 1.3rem;
+.modal-backdrop.show {
+    opacity: 0.5;
 }
 
-
-
-/* Modal Body */
-.modal-body {
-    padding: 1.5rem;
-}
-
+/* Policy styles */
 .policy-container {
-    color: #495057;
-}
-
-.policy-container h5 {
-    font-weight: 600;
-    margin-bottom: 1rem;
-    color: #2d3436;
-    font-size: 1.1rem;
+    padding: 15px;
 }
 
 .policy-list {
-    list-style: none;
-    padding-left: 0;
-    margin-bottom: 1.5rem;
+    padding-left: 20px;
+    margin-bottom: 20px;
 }
 
 .policy-list li {
-    padding: 0.3rem 0;
-    display: flex;
-    align-items: flex-start;
-    line-height: 1.5;
+    margin-bottom: 8px;
 }
 
 .policy-list li span {
-    color: #e74c3c;
-    margin-right: 0.5rem;
-    font-weight: bold;
+    margin-right: 10px;
+    color: #dc3545;
 }
 
 .confirmation-text {
     font-weight: 500;
-    color: #2d3436;
-    margin-bottom: 0;
-    font-size: 1rem;
+    margin-top: 15px;
 }
 
-/* Modal Footer */
-.modal-footer {
-    border-top: 1px solid #e9ecef;
-    padding: 1rem 1.5rem;
-    display: flex;
-    justify-content: flex-end;
-    gap: 0.75rem;
+/* Button styles */
+.modal-keep-btn {
+    text-size-adjust: 20px;
+    position: relative;
+    left: -200px;
+    top: 40px;
+   
 }
 
-.modal-footer .btn {
-    padding: 0.5rem 1.25rem;
-    border-radius: 8px;
-    font-weight: 500;
-    transition: all 0.2s ease;
-}
-
-.btn-outline-secondary {
-    border: 1px solid #6c757d;
-    color: #6c757d;
-}
-
-.btn-outline-secondary:hover {
-    background-color: #f8f9fa;
-    border-color: #6c757d;
-}
-
-.btn-danger {
-    background-color: #e74c3c;
-    border: none;
-}
-
-.btn-danger:hover {
-    background-color: #c0392b;
-}
-
-/* Animation for modal appearance */
-.modal.fade .modal-dialog {
-    transform: translateY(-20px);
-    transition: transform 0.3s ease-out;
-}
-
-.modal.show .modal-dialog {
-    transform: translateY(0);
+.modal-cancel-btn {
+    position: relative;
+    left: 140px;
+    
+    
 }

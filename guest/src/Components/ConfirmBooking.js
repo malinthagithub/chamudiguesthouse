@@ -199,8 +199,15 @@ function ConfirmBooking() {
                 )}
             </main>
 
-            <Modal show={showCancelModal} onHide={() => setShowCancelModal(false)} centered>
-                <Modal.Header >
+            {/* Modal for cancellation */}
+            <Modal 
+                show={showCancelModal} 
+                onHide={() => setShowCancelModal(false)}
+                centered
+                backdrop="static"
+                className="cancel-modal"
+            >
+                <Modal.Header closeButton>
                     <Modal.Title>Cancel Booking</Modal.Title>
                 </Modal.Header>
                 <Modal.Body>
@@ -215,12 +222,36 @@ function ConfirmBooking() {
                     </div>
                 </Modal.Body>
                 <Modal.Footer>
-                    <Button variant="outline-secondary" onClick={() => setShowCancelModal(false)}>
-                        Keep Booking
-                    </Button>
-                    <Button variant="danger" onClick={handleCancelBooking}>
-                        Confirm Cancellation
-                    </Button>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '10px', marginTop: '10px' }}>
+    <Button
+        variant="outline-secondary"
+        onClick={() => setShowCancelModal(false)}
+        style={{
+            position: 'relative',
+            left: '20px',
+            padding: '4px 10px',
+            fontSize: '14px',
+            borderRadius: '6px',
+        }}
+    >
+        Keep Booking
+    </Button>
+
+    <Button
+        variant="danger"
+        onClick={handleCancelBooking}
+        style={{
+            position: 'relative',
+            left: '20px',
+            padding: '4px 10px',
+            fontSize: '14px',
+            borderRadius: '6px',
+        }}
+    >
+        Confirm Cancellation
+    </Button>
+</div>
+
                 </Modal.Footer>
             </Modal>
         </div>
