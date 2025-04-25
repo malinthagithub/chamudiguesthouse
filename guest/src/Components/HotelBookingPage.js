@@ -311,17 +311,17 @@ function HotelBookingPage() {
           {[
             {
               image:
-                "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/66bde0ac2a3e7.jpg/600x800/fit/80/2af68f4285a8bfaf379feeb96aa695ff.jpg",
+                "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/667e45c5cc530.jpg/1440x800/fit;c:0,1056,2551,2578;fp:59,53/80/8b9df4935145afd703da89205ddcb9ac.jpg",
               title: "Top Travel Destinations",
             },
             {
               image:
-                "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/66bde0b9db05f.jpg/600x800/fit/80/1ed53531ae1f9454f02924d1c225dcc8.jpg",
+                "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/667e45c5cc530.jpg/1440x800/fit;c:0,1056,2551,2578;fp:59,53/80/8b9df4935145afd703da89205ddcb9ac.jpg",
               title: "Guest Experience: Feedback & Reviews",
             },
             {
               image:
-                "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/66bde0b9db05f.jpg/600x800/fit/c:2270,0,4918,3647;fp:50,50/80/1ed53531ae1f9454f02924d1c225dcc8.jpg",
+                "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/667e45c5cc530.jpg/1440x800/fit;c:0,1056,2551,2578;fp:59,53/80/8b9df4935145afd703da89205ddcb9ac.jpg",
               title: "Exploring Sri Lanka's Rich Culture",
             },
           ].map((blog, index) => (

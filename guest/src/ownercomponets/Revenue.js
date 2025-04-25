@@ -109,26 +109,27 @@ const Revenue = () => {
           <h3>Dashboard</h3>
           <ul style={{ listStyle: 'none', padding: 0 }}>
             <li style={{ marginBottom: '10px' }}>
-              <Link to="/revenue" style={{ textDecoration: 'none', color: 'white' }}>
-                Home
-              </Link>
+            <Link to="/revenue" style={{ textDecoration: 'none', color: 'white' }}>
+  <i className="fas fa-sign-out-alt"></i> Home
+</Link>
             </li>
             <li style={{ marginBottom: '10px' }}>
               <Link to="/dashboard" style={{ textDecoration: 'none', color: 'white' }}>
-                Manage Rooms
+              <i className="fas fa-hotel"></i>  Manage Rooms
               </Link>
             </li>
             <li style={{ marginBottom: '10px' }}>
               <Link to="/add-room" style={{ textDecoration: 'none', color: 'white' }}>
-                Add-Room
+              <i className="fas fa-calendar-check"></i>    Add-Room
               </Link>
             </li>
             <li style={{ marginBottom: '10px' }}>
               <Link to="/comment" style={{ textDecoration: 'none', color: 'white' }}>
-                Coment
+              <i className="fas fa-users"> </i>  Coment
               </Link>
             </li>
-            <li style={{ marginBottom: '10px' }}>Settings</li>
+            <li style={{ marginBottom: '10px' }}> <i className="fas fa-cog"></i>
+            Settings</li>
             <div>
           <button style={{ marginBottom: '10px',position:"relative", top:"300px" }} onClick={handleDownload}>Download Report</button>
         </div>

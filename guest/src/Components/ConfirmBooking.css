@@ -385,10 +385,10 @@ body {
 /* Modal styles */
 .cancel-modal {
     position: fixed;
-    top: 200px;
+    top: 100px;
     left: 400px;
-    width: 100%;
-    height: 100%;
+    width: 100% !important;
+    height: 100% !important;
     z-index: 1050;
     overflow: hidden;
     outline: 0;

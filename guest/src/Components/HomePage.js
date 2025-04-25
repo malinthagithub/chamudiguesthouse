@@ -150,8 +150,25 @@ useEffect(() => {
 
     const handleBookNow = async (room) => {
         if (!checkInDate || !checkOutDate) {
-            alert('Please select both check-in and check-out dates.');
+            openModal('Date Selection Required', 'Please select both check-in and check-out dates.');
             return;
+        }
+        
+        // Modal implementation
+        function openModal(title, message) {
+            const modal = document.createElement('div');
+            modal.className = 'modal-overlay';
+            modal.innerHTML = `
+                <div class="modal">
+                    <h3>${title}</h3>
+                    <p>${message}</p>
+                    <button class="modal-close">OK</button>
+                </div>
+            `;
+            modal.querySelector('.modal-close').addEventListener('click', () => {
+                modal.remove();
+            });
+            document.body.appendChild(modal);
         }
 
         const formattedCheckInDate = checkInDate.toLocaleDateString('en-CA');
@@ -175,8 +192,32 @@ useEffect(() => {
                     },
                 });
             } else {
-                alert('This room is already booked for the selected dates. Please choose different dates.');
+                showDateConflictMessage();
             }
+            
+            function showDateConflictMessage() {
+                const modal = document.createElement('div');
+                modal.className = 'modal-overlay';
+                modal.innerHTML = `
+                    <div class="modal">
+                        <svg class="conflict-icon" viewBox="0 0 24 24">
+                            <path fill="#cc0000" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 
+                            10 10 10-4.48 10-10S17.52 2 12 2zm1 
+                            15h-2v-2h2v2zm0-4h-2V7h2v6z"/>
+                        </svg>
+                        <h3>Date Conflict</h3>
+                        <p>This room is unavailable for your selected dates. Try adjusting your stay period.</p>
+                        <button class="modal-close">OK</button>
+                    </div>
+                `;
+            
+                modal.querySelector('.modal-close').addEventListener('click', () => {
+                    modal.remove();
+                });
+            
+                document.body.appendChild(modal);
+            }
+            
         } catch (error) {
             console.error('Error checking availability:', error);
             alert('Something went wrong. Please try again.');

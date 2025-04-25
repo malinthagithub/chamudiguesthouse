@@ -206,6 +206,7 @@ function ConfirmBooking() {
                 centered
                 backdrop="static"
                 className="cancel-modal"
+                size="lg !important"
             >
                 <Modal.Header closeButton>
                     <Modal.Title>Cancel Booking</Modal.Title>

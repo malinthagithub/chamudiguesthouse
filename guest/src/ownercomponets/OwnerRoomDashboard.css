@@ -1,9 +1,14 @@
 .owner-dashboard {
     position: relative;
-    top: 150px;
+    top: 200px;
     text-align: center;
     padding: 20px;
     
+}
+.owner-dashboard h1 {
+    font-size: 2rem;
+    position: relative;
+    top: -130px;
 }
 
 .room-container {
@@ -64,7 +69,7 @@ button {
 }
 
 .delete-btn {
-    background-color: #dc3545 !important;
+    background-color: #ea5463 !important;
     color: white;
 }
 
@@ -100,3 +105,40 @@ button {
 .owner-dashboard .update-btn {
     width: 100px !important;
 }
+/* Add Room Button */
+/* Add this to your OwnerRoomDashboard.css */
+
+.add-room-btn {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    width: 60px;
+    height: 60px;
+    border-radius: 50%;
+    background-color: #3498db;
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    font-weight: bold;
+    cursor: pointer;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+    z-index: 100;
+  }
+  
+  .add-room-btn:hover {
+    background-color: #2980b9;
+    transform: scale(1.1) translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
+  }
+  
+  .add-room-btn::before {
+    content: '+';
+    display: block;
+    line-height: 1;
+  }
+  
+  /* Remove any existing text from the button in your JSX */

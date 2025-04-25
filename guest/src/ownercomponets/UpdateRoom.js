@@ -86,36 +86,174 @@ const UpdateRoom = () => {
     };
 
     return (
-        <div className="update-room">
-            <h1>Update Room</h1>
-            <div className="form-group">
-                <label>Room Name:</label>
-                <input type="text" name="name" value={roomData.name} onChange={handleChange} />
+        
+                
+              
+              
+              
 
-                <label>Max Guests:</label>
-                <input type="number" name="maxcount" value={roomData.maxcount} onChange={handleChange} />
+            <div className="main-content">
+                <div className="content-header">
+                    <h1>Update Room Details</h1>
+                   
+                </div>
 
-                <label>Phone Number:</label>
-                <input type="text" name="phonenumber" value={roomData.phonenumber} onChange={handleChange} />
+                <div className="update-room-card">
+                    <div className="card-header">
+                        <h2>Room Information</h2>
+                        <div className="room-id">ID: ROOM {roomId}</div>
+                    </div>
 
-                <label>Rent per Day:</label>
-                <input type="number" name="rentperday" value={roomData.rentperday} onChange={handleChange} />
+                    <div className="card-body">
+                        <div className="form-grid">
+                            <div className="form-group">
+                                <label className="form-label">
+                                    <i className="fas fa-door-open"></i> Room Name
+                                </label>
+                                <input 
+                                    type="text" 
+                                    name="name" 
+                                    value={roomData.name} 
+                                    onChange={handleChange}
+                                    className="form-input"
+                                />
+                            </div>
 
-                <label>Image 1:</label>
-                <input type="file" name="imageFile1" onChange={handleFileChange} />
+                            <div className="form-group">
+                                <label className="form-label">
+                                    <i className="fas fa-user-friends"></i> Max Guests
+                                </label>
+                                <input 
+                                    type="number" 
+                                    name="maxcount" 
+                                    value={roomData.maxcount} 
+                                    onChange={handleChange}
+                                    className="form-input"
+                                />
+                            </div>
 
-                <label>Image 2:</label>
-                <input type="file" name="imageFile2" onChange={handleFileChange} />
+                            <div className="form-group">
+                                <label className="form-label">
+                                    <i className="fas fa-phone"></i> Phone Number
+                                </label>
+                                <input 
+                                    type="text" 
+                                    name="phonenumber" 
+                                    value={roomData.phonenumber} 
+                                    onChange={handleChange}
+                                    className="form-input"
+                                />
+                            </div>
 
-                <label>Image 3:</label>
-                <input type="file" name="imageFile3" onChange={handleFileChange} />
+                            <div className="form-group">
+                                <label className="form-label">
+                                    <i className="fas fa-dollar-sign"></i> Rent per Day
+                                </label>
+                                <input 
+                                    type="number" 
+                                    name="rentperday" 
+                                    value={roomData.rentperday} 
+                                    onChange={handleChange}
+                                    className="form-input"
+                                />
+                            </div>
+                        </div>
 
-                <label>Video:</label>
-                <input type="file" name="videoFile" onChange={handleFileChange} />
+                        <div className="media-upload-section">
+                            <h3>Media Uploads</h3>
+                            <div className="upload-grid">
+                                <div className="upload-box">
+                                    <label className="upload-label">
+                                        <input 
+                                            type="file" 
+                                            name="imageFile1" 
+                                            onChange={handleFileChange}
+                                            className="file-input"
+                                        />
+                                        <i className="fas fa-image"></i>
+                                        <span>Primary Image</span>
+                                        {roomData.imageFile1 && (
+                                            <span className="file-selected">
+                                                <i className="fas fa-check-circle"></i> Selected
+                                            </span>
+                                        )}
+                                    </label>
+                                </div>
 
-                <button onClick={handleUpdate} className="update-btn">Update Room</button>
+                                <div className="upload-box">
+                                    <label className="upload-label">
+                                        <input 
+                                            type="file" 
+                                            name="imageFile2" 
+                                            onChange={handleFileChange}
+                                            className="file-input"
+                                        />
+                                        <i className="fas fa-image"></i>
+                                        <span>Secondary Image</span>
+                                        {roomData.imageFile2 && (
+                                            <span className="file-selected">
+                                                <i className="fas fa-check-circle"></i> Selected
+                                            </span>
+                                        )}
+                                    </label>
+                                </div>
+
+                                <div className="upload-box">
+                                    <label className="upload-label">
+                                        <input 
+                                            type="file" 
+                                            name="imageFile3" 
+                                            onChange={handleFileChange}
+                                            className="file-input"
+                                        />
+                                        <i className="fas fa-image"></i>
+                                        <span>Additional Image</span>
+                                        {roomData.imageFile3 && (
+                                            <span className="file-selected">
+                                                <i className="fas fa-check-circle"></i> Selected
+                                            </span>
+                                        )}
+                                    </label>
+                                </div>
+
+                                <div className="upload-box">
+                                    <label className="upload-label">
+                                        <input 
+                                            type="file" 
+                                            name="videoFile" 
+                                            onChange={handleFileChange}
+                                            className="file-input"
+                                        />
+                                        <i className="fas fa-video"></i>
+                                        <span>Room Video</span>
+                                        {roomData.videoFile && (
+                                            <span className="file-selected">
+                                                <i className="fas fa-check-circle"></i> Selected
+                                            </span>
+                                        )}
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div className="form-actions">
+                            <button 
+                                onClick={() => navigate('/dashboard')} 
+                                className="cancel-btn"
+                            >
+                                Cancel
+                            </button>
+                            <button 
+                                onClick={handleUpdate} 
+                                className="update-btn"
+                            >
+                                <i className="fas fa-save"></i> Update Room
+                            </button>
+                        </div>
+                    </div>
+                </div>
             </div>
-        </div>
+       
     );
 };
 

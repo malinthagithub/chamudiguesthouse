@@ -61,6 +61,9 @@ const OwnerRoomDashboard = () => {
     return (
         <div className="owner-dashboard">
             <h1>Manage Your Rooms</h1>
+            <button className="add-room-btn" onClick={() => navigate('/add-room')} 
+        aria-label="Add new room" title="Add new room">
+</button>
             <div className="room-container">
                 {rooms.map((room) => (
                     <div className="room-card" key={room.room_id}>
@@ -69,11 +72,12 @@ const OwnerRoomDashboard = () => {
                             <h3>{room.name}</h3>
                             <p>Max Guests: {room.maxcount}</p>
                             <p>Rent: <strong>${room.rentperday} / night</strong></p>
-                            <button className="view-btn" onClick={() => viewBookings(room.room_id)}>View Bookings</button>
-                            <button className="update-btn" onClick={() => updateRoom(room.room_id)}>Update</button>
-                            <button className="delete-btn" onClick={() => deleteRoom(room.room_id)}>Delete</button>
+                            <button className="view-btn" onClick={() => viewBookings(room.room_id)}>  <i className="fas fa-calendar-alt"></i> View Bookings</button>
+                            <button className="update-btn" onClick={() => updateRoom(room.room_id)}>  <i className="fas fa-edit"> </i>Update</button>
+                            <button className="delete-btn" onClick={() => deleteRoom(room.room_id)}> <i className="fas fa-trash"></i>Delete</button>
                         </div>
                     </div>
+                    
                 ))}
             </div>
 
