@@ -22,6 +22,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import ResetPassword from './Components/ResetPassword';
 import Revenueclerk from './clerkcomponets/Revenueclerk';
 import UserProfile from './Components/UserProfile';
+import RoomSelection from './Components/RoomSelection';
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
@@ -107,10 +108,13 @@ const MainContent = ({ isAuthenticated, setIsAuthenticated, username, setUsernam
         <Route path="/room-bookings/:roomId" element={<RoomBookings />} />
         <Route path="/revenue" element={<Revenue />} />
         <Route path="/comment" element={<RoomReview />} />
-        <Route path="/room-customization" element={<RoomCustomization />} />
+        <Route path="/room-customization/:roomId" element={<RoomCustomization />} />
         <Route path="/reset-password/:token" element={<ResetPassword />} />
         <Route path="/revenueclerk" element={<Revenueclerk />} />
         <Route path="/user-profile" element={<UserProfile />} />
+        <Route path="/room-selection" element={<RoomSelection />} />
+
+        {/* Clerk routes */}
       </Routes>
     </div>
   );

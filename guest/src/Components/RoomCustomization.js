@@ -5,6 +5,7 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 import { FiWifi, FiDroplet, FiWind, FiCoffee, FiSun, FiWatch, FiHome, FiCalendar } from 'react-icons/fi';
 import { FaSwimmingPool, FaBed, FaMoneyBillWave } from 'react-icons/fa';
 import { IoWaterOutline } from 'react-icons/io5';
+import { useParams } from 'react-router-dom';
 import './RoomCustomization.css';
 
 const stripePromise = loadStripe('pk_test_51QwQDmEE05ueOOCKzSNPSRQgBaePuf5CZOibhqOKrcxgw8JGtv5JW7iJWYmzWiRSZ4UvjX3FgNZ8omZS1tDduvFG00P1Xd2j5Y');
@@ -14,7 +15,7 @@ const RoomCustomization = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [user_id] = useState(1);
-  const [room_id] = useState(2);
+  const { roomId } = useParams();
   const [beds, setBeds] = useState(1);
   const [hot_water, setHotWater] = useState(false);
   const [wifi, setWifi] = useState(false);
@@ -34,7 +35,7 @@ const RoomCustomization = () => {
   useEffect(() => {
     const fetchRoomDetails = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/rooms/${room_id}`);
+        const response = await axios.get(`http://localhost:5000/api/rooms/${roomId}`);
         setRoom(response.data);
         setLoading(false);
       } catch (error) {
@@ -44,7 +45,7 @@ const RoomCustomization = () => {
       }
     };
     fetchRoomDetails();
-  }, [room_id]);
+  }, [roomId]);
 
   const calculateTotalDays = () => {
     if (!checkin || !checkout) return 1;
@@ -71,7 +72,6 @@ const RoomCustomization = () => {
   
     return price * calculateTotalDays();
   };
-  
 
   const totalAmount = calculateTotalAmount();
 
@@ -104,7 +104,7 @@ const RoomCustomization = () => {
 
       const response = await axios.post('http://localhost:5000/api/customization/customize', {
         user_id,
-        room_id,
+        room_id: roomId,
         beds,
         hot_water,
         wifi,
@@ -240,8 +240,7 @@ const RoomCustomization = () => {
           <div className="form-section">
             <h3><FaBed /> Room Configuration</h3>
             <div className="input-group">
-              <label style={{ color:"black"
-              }}>Number of Beds</label>
+              <label style={{ color:"black" }}>Number of Beds</label>
               <input 
                 type="number" 
                 value={beds} 

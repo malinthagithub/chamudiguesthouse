@@ -10,9 +10,7 @@ router.post('/customize', async (req, res) => {
         breakfast, pool_access, view, payment_method_id, checkin_date, checkout_date 
     } = req.body;
  
-    if (room_id !== 2) {
-        return res.status(403).json({ message: 'Customization is only allowed for room_id 2' });
-    }
+   
 
     // Step 1: Check if the room is already booked for the selected dates
     const checkAvailabilityQuery = `

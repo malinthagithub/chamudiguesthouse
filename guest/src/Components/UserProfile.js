@@ -167,7 +167,7 @@ const UserProfile = () => {
                 navigate('/confirm'); // ✅ Navigate when this card is clicked
               }
               else if (item.title === "customization Room") {
-                navigate('/room-customization'); // ✅ Navigate when this card is clicked
+                navigate('/Room-Selection'); // ✅ Navigate when this card is clicked
               }
             }}
             style={{ cursor: item.title === "BOOKING ROOMS" || item.title === "customization Room"? 'pointer' : 'default' }}

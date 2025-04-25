@@ -54,7 +54,7 @@ const Navbar = ({ isAuthenticated, username, setIsAuthenticated }) => {
           {isAuthenticated && userRole === 'guest' && (
             <>
             
-              <Link to="/room-customization" className="nav-link" onClick={() => setMenuOpen(false)}>
+              <Link to="/Room-Selection" className="nav-link" onClick={() => setMenuOpen(false)}>
                 <FaBook /> Room Customization
               </Link>
               <Link to="/confirm" className="nav-link" onClick={() => setMenuOpen(false)}>
