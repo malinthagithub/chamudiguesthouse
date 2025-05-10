@@ -23,6 +23,10 @@ import ResetPassword from './Components/ResetPassword';
 import Revenueclerk from './clerkcomponets/Revenueclerk';
 import UserProfile from './Components/UserProfile';
 import RoomSelection from './Components/RoomSelection';
+import AllBookings from './ownercomponets/allbooking';
+import FaqForm from './Components/FaqForm';
+import ClerkFAQDashboard from './clerkcomponets/ClerkFAQDashboard';
+import TodayBookings from './clerkcomponets/TodayBookings';
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
@@ -113,7 +117,10 @@ const MainContent = ({ isAuthenticated, setIsAuthenticated, username, setUsernam
         <Route path="/revenueclerk" element={<Revenueclerk />} />
         <Route path="/user-profile" element={<UserProfile />} />
         <Route path="/room-selection" element={<RoomSelection />} />
-
+        <Route path="/all-bookings" element={<AllBookings />} />
+        <Route path="/faq" element={<FaqForm />} />
+        <Route path="/clerk-faq-dashboard" element={<ClerkFAQDashboard />} />
+        <Route path="/today-bookings" element={<TodayBookings />} />
         {/* Clerk routes */}
       </Routes>
     </div>

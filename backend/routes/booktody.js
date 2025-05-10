@@ -18,7 +18,7 @@ router.get('/today-and-week-bookings', async (req, res) => {
         FROM bookings b
         JOIN rooms r ON b.room_id = r.room_id
         JOIN users u ON b.user_id = u.id
-        WHERE b.status = 'confirmed' 
+        WHERE b.status IN ('confirmed', 'arrived')
         AND DATE(b.checkin_date) = ?  -- Ensure checkin_date is compared in 'YYYY-MM-DD' format
     `;
 
@@ -33,23 +33,29 @@ router.get('/today-and-week-bookings', async (req, res) => {
         FROM bookings b
         JOIN rooms r ON b.room_id = r.room_id
         JOIN users u ON b.user_id = u.id
-        WHERE b.status = 'confirmed' 
+        WHERE b.status IN ('confirmed', 'arrived')
         AND YEARWEEK(b.checkin_date, 1) = YEARWEEK(CURDATE(), 1) -- Filter for this week
     `;
 
     try {
-        // Execute both queries in parallel
+        // Execute both queries in parallel using Promise.all
         const [todayBookings, weekBookings] = await Promise.all([
             new Promise((resolve, reject) => {
                 db.query(todayQuery, [localDate], (err, rows) => {
-                    if (err) reject(err);
-                    resolve(rows);
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
                 });
             }),
             new Promise((resolve, reject) => {
                 db.query(weekQuery, (err, rows) => {
-                    if (err) reject(err);
-                    resolve(rows);
+                    if (err) {
+                        reject(err);
+                    } else {
+                        resolve(rows);
+                    }
                 });
             })
         ]);
@@ -81,6 +87,7 @@ router.get('/room/:roomId', async (req, res) => {
             WHERE bookings.room_id = ?
         `;
 
+        // Execute the query
         db.query(query, [roomId], (err, results) => {
             if (err) {
                 console.error("Database error:", err);

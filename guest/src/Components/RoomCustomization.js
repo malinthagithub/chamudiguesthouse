@@ -116,7 +116,7 @@ const RoomCustomization = () => {
         view,
         checkin_date: checkin,
         checkout_date: checkout,
-        total_amount: totalAmount,
+        total_price: totalAmount,
         payment_method_id: paymentMethod.id,
       });
 

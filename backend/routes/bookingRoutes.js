@@ -1,7 +1,77 @@
 const express = require("express");
 const router = express.Router();
 const db = require("../db"); // Import your MySQL connection
+router.get('/all-bookings', async (req, res) => {
+    try {
+        // Get query parameters
+        const { filter, search } = req.query;
+        
+        let baseQuery = `
+            SELECT 
+                b.booking_id,
+                r.name AS room_name,
+                r.room_id,
+                u.username,
+                u.email,
+                b.checkin_date,
+                b.checkout_date,
+                b.status,
+                b.created_at,
+                p.amount AS payment_amount,
+                p.payment_method,
+                p.payment_status
+            FROM bookings b
+            JOIN rooms r ON b.room_id = r.room_id
+            JOIN users u ON b.user_id = u.id
+            LEFT JOIN payments p ON b.booking_id = p.booking_id
+        `;
 
+        // Add WHERE clauses based on filters
+        const whereClauses = [];
+        const params = [];
+
+        // Date filters
+        if (filter === 'today') {
+            whereClauses.push('DATE(b.checkin_date) = CURDATE()');
+        } else if (filter === 'week') {
+            whereClauses.push('YEARWEEK(b.checkin_date, 1) = YEARWEEK(CURDATE(), 1)');
+        } else if (filter === 'month') {
+            whereClauses.push('YEAR(b.checkin_date) = YEAR(CURDATE()) AND MONTH(b.checkin_date) = MONTH(CURDATE())');
+        }
+
+        // Search functionality
+        if (search) {
+            whereClauses.push(`
+                (r.name LIKE ? OR 
+                u.username LIKE ? OR 
+                u.email LIKE ? OR 
+                b.status LIKE ?)
+            `);
+            const searchTerm = `%${search}%`;
+            params.push(searchTerm, searchTerm, searchTerm, searchTerm);
+        }
+
+        // Combine WHERE clauses
+        if (whereClauses.length > 0) {
+            baseQuery += ' WHERE ' + whereClauses.join(' AND ');
+        }
+
+        // Add sorting
+        baseQuery += ' ORDER BY b.checkin_date DESC';
+
+        db.query(baseQuery, params, (err, results) => {
+            if (err) {
+                console.error("Database error:", err);
+                return res.status(500).json({ message: "Database error", error: err });
+            }
+
+            res.json(results);
+        });
+    } catch (error) {
+        console.error('Error fetching all bookings:', error);
+        res.status(500).json({ message: 'Server error fetching all bookings', error });
+    }
+});
 // Get bookings for a specific user
 router.get("/:user_id", async (req, res) => {
     const { user_id } = req.params;
@@ -74,5 +144,64 @@ router.get('/room/:roomId', async (req, res) => {
         res.status(500).json({ message: 'Server error fetching bookings', error });
     }
 });
-
+const query = (sql, params) => {
+    return new Promise((resolve, reject) => {
+      db.query(sql, params, (err, results) => {
+        if (err) return reject(err);
+        resolve(results);
+      });
+    });
+  };
+  
+  router.put('/update-booking-status/:bookingId', async (req, res) => {
+    try {
+      const { bookingId } = req.params;  // This will get the '90' from the URL
+      const { status } = req.body;
+  
+      // Validate input
+      if (!bookingId || isNaN(bookingId)) {
+        return res.status(400).json({ 
+          success: false,
+          error: 'Invalid booking ID' 
+        });
+      }
+  
+      if (!status || !['arrived', 'confirmed', 'cancelled'].includes(status)) {
+        return res.status(400).json({ 
+          success: false,
+          error: 'Invalid status provided',
+          validStatuses: ['arrived', 'confirmed', 'cancelled']
+        });
+      }
+  
+      // Update the booking status in the database
+      const result = await query(
+        `UPDATE bookings SET status = ? WHERE booking_id = ?`,
+        [status, bookingId]
+      );
+  
+      if (result.affectedRows === 0) {
+        return res.status(404).json({ 
+          success: false,
+          error: 'Booking not found' 
+        });
+      }
+  
+      res.json({ 
+        success: true,
+        message: 'Booking status updated successfully',
+        bookingId,
+        newStatus: status
+      });
+    } catch (error) {
+      console.error('Error updating booking status:', error);
+      res.status(500).json({ 
+        success: false,
+        error: 'Database operation failed',
+        details: error.message 
+      });
+    }
+  });
+  
+  
 module.exports = router;

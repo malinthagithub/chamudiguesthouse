@@ -1,45 +1,197 @@
-.container {
-    max-width: 800px;
-    margin: 20px auto;
-    padding: 20px;
-    font-family: Arial, sans-serif;
+.room-bookings-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 2rem;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
-h1 {
+.header-section {
+    margin-bottom: 2.5rem;
     text-align: center;
-    color: #333;
-    margin-bottom: 20px;
 }
 
-.bookings-list {
-    list-style: none;
-    padding: 0;
+.page-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #1a1a1a;
+    margin-bottom: 0.5rem;
+}
+
+.page-subtitle {
+    font-size: 1rem;
+    color: #666;
+}
+
+.loading-spinner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 300px;
+}
+
+.spinner {
+    width: 50px;
+    height: 50px;
+    border: 4px solid #f3f3f3;
+    border-top: 4px solid #4f46e5;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.bookings-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 1.5rem;
 }
 
 .booking-card {
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 15px;
-    margin-bottom: 15px;
-    border-left: 5px solid #4CAF50;
-    transition: transform 0.2s ease-in-out;
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .booking-card:hover {
-    transform: scale(1.02);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
 }
 
-.booking-card p {
-    margin: 5px 0;
-    color: #555;
+.card-header {
+    display: flex;
+    align-items: center;
+    padding: 1.25rem;
+    background: linear-gradient(135deg, #f9fafb 0%, #f3f4f6 100%);
+    border-bottom: 1px solid #e5e7eb;
 }
 
-.booking-card p strong {
-    color: #333;
+.guest-avatar {
+    width: 40px;
+    height: 40px;
+    background-color: #4f46e5;
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    margin-right: 1rem;
 }
 
-.booking-card .highlight {
-    font-weight: bold;
-    color: #4CAF50;
+.guest-info {
+    flex: 1;
+}
+
+.guest-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    margin: 0;
+    color: #1f2937;
+}
+
+.guest-email {
+    font-size: 0.85rem;
+    color: #6b7280;
+    margin: 0;
+}
+
+.booking-status {
+    margin-left: auto;
+}
+
+.card-body {
+    padding: 1.25rem;
+}
+
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.75rem;
+}
+
+.info-label {
+    font-size: 0.85rem;
+    color: #6b7280;
+    font-weight: 500;
+}
+
+.info-value {
+    font-size: 0.9rem;
+    color: #374151;
+    font-weight: 500;
+    text-align: right;
+}
+
+.card-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.25rem;
+    border-top: 1px solid #e5e7eb;
+    background-color: #f9fafb;
+}
+
+.payment-amount {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #1f2937;
+    display: flex;
+    flex-direction: column;
+}
+
+.payment-label {
+    font-size: 0.75rem;
+    font-weight: 500;
+    color: #6b7280;
+}
+
+.action-button {
+    background-color: white;
+    color: #4f46e5;
+    border: 1px solid #e0e7ff;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.action-button:hover {
+    background-color: #f5f7ff;
+    border-color: #c7d2fe;
+}
+
+.empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 0;
+    text-align: center;
+}
+
+.empty-image {
+    width: 200px;
+    height: 200px;
+    margin-bottom: 1.5rem;
+    opacity: 0.7;
+}
+
+.empty-state h3 {
+    font-size: 1.25rem;
+    color: #1f2937;
+    margin-bottom: 0.5rem;
+}
+
+.empty-state p {
+    color: #6b7280;
+    margin: 0;
 }

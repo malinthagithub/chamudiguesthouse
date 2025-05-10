@@ -114,18 +114,18 @@ const Revenue = () => {
               </Link>
             </li>
             <li style={{ marginBottom: '10px' }}>
-              <Link to="/dashboard" style={{ textDecoration: 'none', color: 'white' }}>
+              <Link to="/all-bookings" style={{ textDecoration: 'none', color: 'white' }}>
                 All Bookings
               </Link>
             </li>
             <li style={{ marginBottom: '10px' }}>
-              <Link to="/add-room" style={{ textDecoration: 'none', color: 'white' }}>
+              <Link to="/cancelled-room" style={{ textDecoration: 'none', color: 'white' }}>
               Cancelled Bookings
               </Link>
             </li>
             <li style={{ marginBottom: '10px' }}>
-              <Link to="/comment" style={{ textDecoration: 'none', color: 'white' }}>
-                Coment
+              <Link to="/massenger" style={{ textDecoration: 'none', color: 'white' }}>
+                massenger
               </Link>
             </li>
             <li style={{ marginBottom: '10px' }}>Settings</li>
