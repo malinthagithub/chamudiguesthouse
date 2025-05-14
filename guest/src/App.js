@@ -27,6 +27,7 @@ import AllBookings from './ownercomponets/allbooking';
 import FaqForm from './Components/FaqForm';
 import ClerkFAQDashboard from './clerkcomponets/ClerkFAQDashboard';
 import TodayBookings from './clerkcomponets/TodayBookings';
+import RegisterClerk from './ownercomponets/RegisterClerk';
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
@@ -121,6 +122,7 @@ const MainContent = ({ isAuthenticated, setIsAuthenticated, username, setUsernam
         <Route path="/faq" element={<FaqForm />} />
         <Route path="/clerk-faq-dashboard" element={<ClerkFAQDashboard />} />
         <Route path="/today-bookings" element={<TodayBookings />} />
+        <Route path="/register-clerk" element={<RegisterClerk />} />
         {/* Clerk routes */}
       </Routes>
     </div>

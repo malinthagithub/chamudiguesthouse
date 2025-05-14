@@ -9,7 +9,7 @@ import 'slick-carousel/slick/slick-theme.css';
 import './HomePage.css';
 import aboutImage from '../images/about.jpg';
 import Homeimage from '../images/home.jpg';
-import { FaSearch } from 'react-icons/fa';
+import { FaSearch,FaTimes } from 'react-icons/fa';
 import { FaStar ,FaStarHalfAlt } from 'react-icons/fa';
 import Box from './Box'; // Assuming Box.js is in the same directory as HomePage.js
 
@@ -18,6 +18,9 @@ import Box from './Box'; // Assuming Box.js is in the same directory as HomePage
 const Search = ({ onResults }) => {
     const [roomType, setRoomType] = useState('');
     const [minPrice, setMinPrice] = useState('');
+    
+const [maxPrice, setMaxPrice] = useState(500);
+
 
     const handleRoomTypeSearch = async () => {
         const params = { room_type: roomType };
@@ -29,6 +32,28 @@ const Search = ({ onResults }) => {
             console.error('Error fetching rooms:', error);
         }
     };
+const handlePriceRangeSearch = async () => {
+    const params = { min_price: minPrice, max_price: maxPrice };
+
+    try {
+        const response = await axios.get('http://localhost:5000/api/search', { params });
+        onResults(response.data);
+    } catch (error) {
+        console.error('Error fetching rooms:', error);
+    }
+};
+const handleResetSearch = async () => {
+    setMinPrice('');
+    setMaxPrice('');
+
+    try {
+        const response = await axios.get('http://localhost:5000/api/search');
+        onResults(response.data);
+    } catch (error) {
+        console.error('Error fetching rooms:', error);
+    }
+};
+
 
     const handleMinPriceSearch = async () => {
         const params = { min_price: minPrice };
@@ -57,15 +82,29 @@ const Search = ({ onResults }) => {
                     </div>
                 </div>
                 <div className="search-right">
-                    <div className="input-with-icon">
-                        <input
-                            type="number"
-                            value={minPrice}
-                            onChange={(e) => setMinPrice(e.target.value)}
-                            placeholder="Min Price:$. "
-                        />
-                        <FaSearch onClick={handleMinPriceSearch} className="search-icon" />
-                    </div>
+                    <div className="slider-container">
+    <label>Price Range: ${minPrice} - ${maxPrice}</label>
+    <input
+        type="range"
+        min="0"
+        max="1000"
+        step="10"
+        value={minPrice}
+        onChange={(e) => setMinPrice(Number(e.target.value))}
+    />
+    <input
+        type="range"
+        min="0"
+        max="1000"
+        step="10"
+        value={maxPrice}
+        onChange={(e) => setMaxPrice(Number(e.target.value))}
+    />
+     <FaSearch onClick={handlePriceRangeSearch} className="search-icon1" />
+    
+    <FaTimes onClick={handleResetSearch} className="reset-button" /> 
+</div>
+
                 </div>
             </div>
         </div>

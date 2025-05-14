@@ -1,58 +1,88 @@
 import React, { useState, useEffect } from 'react';
-
+import './TodayBookings.css'; // Assuming you have a CSS file for styling
 const TodayBookings = () => {
   const [todayBookings, setTodayBookings] = useState([]);
   const [weekBookings, setWeekBookings] = useState([]);
+  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // Fetch the bookings for today and this week from the backend
+  // 🔥 Function to fetch fresh bookings from DB
+  const fetchBookings = () => {
     fetch('http://localhost:5000/api/booktody/today-and-week-bookings')
       .then((response) => response.json())
       .then((data) => {
+        console.log('Fetched bookings:', data); // Debugging
         setTodayBookings(data.todayBookings || []);
         setWeekBookings(data.weekBookings || []);
       })
       .catch((error) => console.error('Error fetching bookings:', error));
+  };
+
+  // Load bookings on first render
+  useEffect(() => {
+    fetchBookings();
   }, []);
 
-  const handleMarkArrival = (bookingId, isToday) => {
-    const updatedBookings = isToday
-      ? todayBookings.map((booking) =>
-          booking.booking_id === bookingId
-            ? { ...booking, status: booking.status === 'Arrived' ? 'Not Arrived' : 'Arrived' }
-            : booking
-        )
-      : weekBookings.map((booking) =>
-          booking.booking_id === bookingId
-            ? { ...booking, status: booking.status === 'Arrived' ? 'Not Arrived' : 'Arrived' }
-            : booking
-        );
-
-    if (isToday) {
-      setTodayBookings(updatedBookings);
-    } else {
-      setWeekBookings(updatedBookings);
+  const handleMarkArrival = (bookingId) => {
+    if (!bookingId) {
+      console.error('❌ Booking ID is undefined!');
+      return;
     }
 
-    // Send a PUT request to update the status on the server
+    setLoading(true);
+
+    // Find the booking in todayBookings list
+    const booking = todayBookings.find((b) => b.booking_id === bookingId);
+
+    if (!booking) {
+      console.error('❌ Booking not found for ID:', bookingId);
+      setLoading(false);
+      return;
+    }
+
+    // Toggle status logic
+    let newStatus;
+    if (booking.status?.toLowerCase() === 'arrived') {
+      newStatus = 'cancelled'; // or 'confirmed' based on your business logic
+    } else {
+      newStatus = 'arrived';
+    }
+
+    // Send PUT request to backend
     fetch(`http://localhost:5000/api/bookings/update-booking-status/${bookingId}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({
-        status: updatedBookings.find((b) => b.booking_id === bookingId).status,
-      }),
+      body: JSON.stringify({ status: newStatus }),
     })
       .then((response) => response.json())
       .then((data) => {
         console.log('Status updated successfully:', data);
+
+        if (data.success) {
+          // Update the status locally without refetching
+          setTodayBookings((prevBookings) =>
+            prevBookings.map((b) =>
+              b.booking_id === bookingId ? { ...b, status: newStatus } : b
+            )
+          );
+        } else {
+          console.error('❌ Error from backend:', data.error);
+        }
+
+        setLoading(false);
       })
-      .catch((error) => console.error('Error updating booking status:', error));
+      .catch((error) => {
+        console.error('Error updating booking status:', error);
+        setLoading(false);
+      });
   };
 
   return (
     <div className="today-bookings">
+      {loading && <p style={{ color: 'green' }}>Updating booking status...</p>}
+
+      {/* Today's Bookings */}
       <h2>Today's Bookings</h2>
       <table className="booking-table">
         <thead>
@@ -79,12 +109,22 @@ const TodayBookings = () => {
                 <td>{booking.payment_amount}</td>
                 <td>{booking.status || 'Not Arrived'}</td>
                 <td>
-                  <button
-                    onClick={() => handleMarkArrival(booking.booking_id, true)} // Mark today's booking as arrived
-                    className={`mark-arrival-btn ${booking.status === 'Arrived' ? 'arrived' : 'not-arrived'}`}
-                  >
-                    Mark as {booking.status === 'Arrived' ? 'Not Arrived' : 'Arrived'}
-                  </button>
+                  {/* Mark as Arrived or Cancelled */}
+                  {booking.status?.toLowerCase() !== 'arrived' && booking.status?.toLowerCase() !== 'cancelled' && (
+                    <button
+                      onClick={() => handleMarkArrival(booking.booking_id)}
+                      className={`mark-arrival-btn ${
+                        booking.status?.toLowerCase() === 'arrived' ? 'arrived' : 'not-arrived'
+                      }`}
+                      disabled={loading}
+                    >
+                      Mark as {booking.status?.toLowerCase() === 'arrived' ? 'Cancelled' : 'Arrived'}
+                    </button>
+                  )}
+                  {/* Hide or disable the button after marking */}
+                  {(booking.status?.toLowerCase() === 'arrived' || booking.status?.toLowerCase() === 'cancelled') && (
+                    <span className="status-completed">Status: {booking.status}</span>
+                  )}
                 </td>
               </tr>
             ))
@@ -96,6 +136,7 @@ const TodayBookings = () => {
         </tbody>
       </table>
 
+      {/* Week's Bookings */}
       <h2>This Week's Bookings</h2>
       <table className="booking-table">
         <thead>
@@ -107,7 +148,6 @@ const TodayBookings = () => {
             <th>Check-out Date</th>
             <th>Payment Amount</th>
             <th>Status</th>
-            <th>Action</th>
           </tr>
         </thead>
         <tbody>
@@ -121,19 +161,11 @@ const TodayBookings = () => {
                 <td>{new Date(booking.checkout_date).toLocaleDateString()}</td>
                 <td>{booking.payment_amount}</td>
                 <td>{booking.status || 'Not Arrived'}</td>
-                <td>
-                  <button
-                    onClick={() => handleMarkArrival(booking.booking_id, false)} // Mark week's booking as arrived
-                    className={`mark-arrival-btn ${booking.status === 'Arrived' ? 'arrived' : 'not-arrived'}`}
-                  >
-                    Mark as {booking.status === 'Arrived' ? 'Not Arrived' : 'Arrived'}
-                  </button>
-                </td>
               </tr>
             ))
           ) : (
             <tr>
-              <td colSpan="8">No bookings for this week</td>
+              <td colSpan="7">No bookings for this week</td>
             </tr>
           )}
         </tbody>

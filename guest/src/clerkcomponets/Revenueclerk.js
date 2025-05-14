@@ -124,8 +124,13 @@ const Revenue = () => {
               </Link>
             </li>
             <li style={{ marginBottom: '10px' }}>
-              <Link to="/massenger" style={{ textDecoration: 'none', color: 'white' }}>
-                massenger
+              <Link to="/clerk-faq-dashboard" style={{ textDecoration: 'none', color: 'white' }}>
+               FQA
+              </Link>
+            </li>
+            <li style={{ marginBottom: '10px' }}>
+              <Link to="/today-bookings" style={{ textDecoration: 'none', color: 'white' }}>
+               Atendence
               </Link>
             </li>
             <li style={{ marginBottom: '10px' }}>Settings</li>
@@ -151,9 +156,48 @@ const Revenue = () => {
         </div>
 
         <div>
-          <h3>Active Guest Count</h3>
-          <Pie data={{ labels: ['Active Guests'], datasets: [{ label: 'Current Guest Count', data: [analyticsData.currentGuestCount], backgroundColor: ['rgba(54, 162, 235, 0.6)'] }] }} options={{ responsive: true }} />
-        </div>
+      <h3>Active Guest Count</h3>
+      <Bar
+        data={{
+          labels: ['Active Guests'], // x-axis label
+          datasets: [
+            {
+              label: 'Current Guest Count',
+              data: [analyticsData.currentGuestCount], // y-axis data
+              backgroundColor: ['rgba(54, 162, 235, 0.6)'], // Bar color
+              borderColor: ['rgba(54, 162, 235, 1)'], // Border color
+              borderWidth: 1, // Border width
+            },
+          ],
+        }}
+        options={{
+          responsive: true,
+          scales: {
+            x: {
+              title: {
+                display: true,
+                text: 'Guest Status', // x-axis title
+              },
+            },
+            y: {
+              title: {
+                display: true,
+                text: 'Count', // y-axis title
+              },
+              beginAtZero: true, // Start y-axis from 0
+            },
+          },
+          plugins: {
+            tooltip: {
+              enabled: true,
+            },
+            legend: {
+              position: 'top',
+            },
+          },
+        }}
+      />
+    </div>
 
         {/* Today's Bookings Section */}
         <div>
@@ -166,6 +210,7 @@ const Revenue = () => {
                 <th style={{ padding: '10px', backgroundColor: '#f4f4f4' }}>Check-in Date</th>
                 <th style={{ padding: '10px', backgroundColor: '#f4f4f4' }}>Checkout Date</th>
                 <th style={{ padding: '10px', backgroundColor: '#f4f4f4' }}>Payment Amount</th>
+                <th style={{ padding: '10px', backgroundColor: '#f4f4f4' }}>status</th>
               </tr>
             </thead>
             <tbody>
@@ -176,6 +221,7 @@ const Revenue = () => {
                   <td style={{ padding: '10px', textAlign: 'center' }}>{formatDate(booking.checkin_date)}</td>
                   <td style={{ padding: '10px', textAlign: 'center' }}>{formatDate(booking.checkout_date)}</td>
                   <td style={{ padding: '10px', textAlign: 'center' }}>{formatCurrency(booking.payment_amount)}</td>
+                  <td style={{ padding: '10px', textAlign: 'center' }}>{booking.status}</td>
                 </tr>
               )) : (
                 <tr>

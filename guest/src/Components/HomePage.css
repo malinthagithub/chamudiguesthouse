@@ -73,7 +73,7 @@
 /* Individual Room Card */
 .room-card {
     position: relative;
-    top: -130px !important;
+    top: -190px !important;
     width: 250px;
     background: #fff;
     border-radius: 8px;
@@ -252,7 +252,7 @@
 
 .date-picker-container {
     position: relative;
-    top: -130px ;
+    top: -210px ;
     display: flex;
     gap: 20px;
     justify-content: center;
@@ -370,7 +370,7 @@ input-with-icon {
 }
 
 .input-with-icon input {
-    width: 100%;
+    width: 140%;
     padding: 10px 35px 10px 10px; /* Add padding to make space for the icon */
     border: 1px solid #ccc;
     border-radius: 4px;
@@ -378,11 +378,34 @@ input-with-icon {
 
 .search-icon {
     position: relative;
-    top: -38px;
-    right: -65px;
+    top: 35px !important;
+    left: 130px !important;
     cursor: pointer;
-    color: #555;
+    color: #110f0f !important;
     font-size: 18px;
+}
+.search-icon1 {
+    position: relative;
+    top: -150px;
+   left: 130px;
+    cursor: pointer;
+    color: #dacece !important;
+    font-size: 18px;
+}
+.reset-button{
+    position: relative;
+    top: -150px;
+    left: 160px;
+   background-color: #f44336;
+    color: white;
+    width: 60px;
+    height: 20px;
+    border: none;
+    padding: 0px 3px;  /* ultra small */
+    font-size: 9px;    /* tiny text */
+    border-radius: 3px;
+    cursor: pointer;
+    margin-left: 3px;
 }
 .home-page button {
     position: relative;

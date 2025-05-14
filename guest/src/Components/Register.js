@@ -32,7 +32,7 @@ const Register = () => {
     e.preventDefault();
 
     try {
-      const response = await axios.post('http://localhost:5000/api/users/register', formData);
+      const response = await axios.post('http://localhost:5000/api/users/register-guest', formData);
       console.log(response.data);
       setIsSuccess(true);
       setFormData({

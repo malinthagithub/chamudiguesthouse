@@ -125,24 +125,23 @@ router.post('/forgot-password', (req, res) => {
   });
   
 // 🔹 Register Route (Registers as 'guest' by default, unless 'owner' or 'clerk' is specified)
-router.post('/register', async (req, res) => {
+// Register guest (only into users table)
+router.post('/register-guest', async (req, res) => {
     const {
         username, 
         email, 
         password, 
         phoneNumber,
-        lastname, // This should be phone_number
+        lastname,
         address1, 
         address2, 
         city, 
         zipCode, 
-        country,
-        role,
-        security_key
+        country
     } = req.body;
 
     // Validation
-    if (!username || !email || !password || !phoneNumber||!lastname || !address1 || !city || !zipCode || !country) {
+    if (!username || !email || !password || !phoneNumber || !lastname || !address1 || !city || !zipCode || !country) {
         return res.status(400).json({ message: 'Please provide all required fields' });
     }
 
@@ -157,25 +156,18 @@ router.post('/register', async (req, res) => {
                 return res.status(400).json({ message: 'User already exists' });
             }
 
-            // Set default role to 'guest' if not provided or if role is not valid
-            let userRole = role && (role === 'owner' || role === 'clerk') ? role : 'guest';
-
-            // Security key check for certain roles
-            if ((userRole === 'owner' || userRole === 'clerk') && !security_key) {
-                return res.status(400).json({ message: 'Security key is required for this role' });
-            }
-
             const hashedPassword = await bcrypt.hash(password, 10);
 
-            // Insert new user into the database
+            // Insert into users table
             db.query(
-                'INSERT INTO users (username, email, password, phone_number, last_name, address1, address2, city, zip_code, country, role, security_key) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,?)',
-                [username, email, hashedPassword, phoneNumber, lastname, address1, address2, city, zipCode, country, userRole, security_key || ''],
-                (err, result) => {
+                'INSERT INTO users (username, email, password, phone_number, last_name, address1, address2, city, zip_code, country) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+                [username, email, hashedPassword, phoneNumber, lastname, address1, address2, city, zipCode, country],
+                (err, userResult) => {
                     if (err) {
                         return res.status(500).json({ message: `Database error: ${err.message}` });
                     }
-                    return res.status(201).json({ message: `Registration successful! You are registered as ${userRole}.` });
+
+                    return res.status(201).json({ message: 'Guest registered successfully!' });
                 }
             );
         });
@@ -185,46 +177,130 @@ router.post('/register', async (req, res) => {
     }
 });
 
+// Register owner/clerk (into both users and owner_clerk tables)
+router.post('/register-ownerclerk', async (req, res) => {
+    const {
+        username, 
+        email, 
+        password, 
+        phoneNumber,
+        last_name, // Changed from lastname to match your frontend
+        address1, 
+        address2,
+        role = 'clerk' // Default to clerk if not provided
+    } = req.body;
+
+    // Validation for required fields
+    if (!username || !email || !password || !phoneNumber || !last_name || !address1) {
+        return res.status(400).json({ message: 'Please provide all required fields' });
+    }
+
+    try {
+        // Hash password before saving
+        const hashedPassword = await bcrypt.hash(password, 10);
+
+        // Insert clerk into the owner_clerk table
+        db.query(
+            'INSERT INTO owner_clerk (username, email, password, phone_number, last_name, address1, address2, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+            [username, email, hashedPassword, phoneNumber, last_name, address1, address2, role],
+            (err, result) => {
+                if (err) {
+                    console.error('Database error:', err);
+                    if (err.code === 'ER_DUP_ENTRY') {
+                        return res.status(400).json({ message: 'Username or email already exists' });
+                    }
+                    return res.status(500).json({ message: 'Database error occurred' });
+                }
+
+                return res.status(201).json({ 
+                    success: true,
+                    message: 'Clerk registered successfully!',
+                    clerkId: result.insertId 
+                });
+            }
+        );
+    } catch (err) {
+        console.error('Server error:', err);
+        res.status(500).json({ message: 'Internal server error' });
+    }
+});
+
+
 // 🔹 Login Route (No security key required for login regardless of role)
 router.post('/login', (req, res) => {
-    const { email, password } = req.body; // Removed security_key here
+    const { email, password } = req.body;
 
     if (!email || !password) {
         return res.status(400).json({ message: 'Please provide email and password' });
     }
 
+    // First, check if the user is a guest (in the 'users' table)
     db.query('SELECT * FROM users WHERE email = ?', [email], async (err, result) => {
         if (err) {
             return res.status(500).json({ message: `Database error: ${err.message}` });
         }
 
+        // If not found in 'users' table, check if they are a clerk or owner in 'owner_clerk' table
         if (result.length === 0) {
-            return res.status(400).json({ message: 'Invalid email or password' });
+            db.query('SELECT * FROM owner_clerk WHERE email = ?', [email], async (err, result) => {
+                if (err) {
+                    return res.status(500).json({ message: `Database error: ${err.message}` });
+                }
+
+                if (result.length === 0) {
+                    return res.status(400).json({ message: 'Invalid email or password' });
+                }
+
+                const user = result[0];
+
+                // 🔹 Check password for owner/clerk
+                const isMatch = await bcrypt.compare(password, user.password);
+                if (!isMatch) {
+                    return res.status(400).json({ message: 'Invalid email or password' });
+                }
+
+                // 🔹 Generate JWT token (for owner/clerk)
+                const token = jwt.sign(
+                    { id: user.id, username: user.username, email: user.email, role: user.role },
+                    process.env.JWT_SECRET,
+                    { expiresIn: '1h' }
+                );
+
+                return res.json({
+                    message: 'Login successful',
+                    token,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role,
+                    id: user.id
+                });
+            });
+        } else {
+            // If found in 'users' table (guest)
+            const user = result[0];
+
+            // 🔹 Check password for guest
+            const isMatch = await bcrypt.compare(password, user.password);
+            if (!isMatch) {
+                return res.status(400).json({ message: 'Invalid email or password' });
+            }
+
+            // 🔹 Generate JWT token (for guest)
+            const token = jwt.sign(
+                { id: user.id, username: user.username, email: user.email, role: user.role },
+                process.env.JWT_SECRET,
+                { expiresIn: '1h' }
+            );
+
+            return res.json({
+                message: 'Login successful',
+                token,
+                username: user.username,
+                email: user.email,
+                role: user.role,
+                id: user.id
+            });
         }
-
-        const user = result[0];
-
-        // 🔹 Check password
-        const isMatch = await bcrypt.compare(password, user.password);
-        if (!isMatch) {
-            return res.status(400).json({ message: 'Invalid email or password' });
-        }
-
-        // 🔹 Generate JWT token (No security key check)
-        const token = jwt.sign(
-            { id: user.id, username: user.username, email: user.email, role: user.role },
-            process.env.JWT_SECRET,
-            { expiresIn: '1h' }
-        );
-
-        return res.json({
-            message: 'Login successful',
-            token,
-            username: user.username,
-            email: user.email,
-            role: user.role,
-            id: user.id
-        });
     });
 });
 

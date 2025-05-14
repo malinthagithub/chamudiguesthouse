@@ -10,11 +10,13 @@ router.get('/today-and-week-bookings', async (req, res) => {
     // Query to get today's bookings (now comparing only the date part)
     const todayQuery = `
         SELECT
+            b.booking_id,  -- ✅ Include booking_id
             r.name AS room_name,
             u.username,
             b.checkin_date,
             b.checkout_date,
-            b.total_amount AS payment_amount
+            b.total_amount AS payment_amount,
+            b.status  -- Optional: include status if needed
         FROM bookings b
         JOIN rooms r ON b.room_id = r.room_id
         JOIN users u ON b.user_id = u.id
@@ -25,11 +27,13 @@ router.get('/today-and-week-bookings', async (req, res) => {
     // Query to get this week's bookings
     const weekQuery = `
         SELECT
+            b.booking_id,  -- ✅ Include booking_id
             r.name AS room_name,
             u.username,
             b.checkin_date,
             b.checkout_date,
-            b.total_amount AS payment_amount
+            b.total_amount AS payment_amount,
+            b.status  -- Optional: include status if needed
         FROM bookings b
         JOIN rooms r ON b.room_id = r.room_id
         JOIN users u ON b.user_id = u.id
