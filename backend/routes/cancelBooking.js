@@ -28,7 +28,7 @@ const sendRefundEmail = async (email, bookingId, refundAmount) => {
       html: `
         <h2>Booking Cancellation Confirmation</h2>
         <p>Your booking (ID: <strong>${bookingId}</strong>) has been successfully cancelled.</p>
-        <p>Refund Amount: <strong>$${refundAmount}</strong></p>
+        <p>Refund Amount: <strong>$${(refundAmount / 100).toFixed(2)}</strong></p>
         <p>Thank you for choosing our service. We hope to see you again!</p>
       `,
     };
@@ -39,13 +39,14 @@ const sendRefundEmail = async (email, bookingId, refundAmount) => {
     console.error("Error sending refund email:", error);
   }
 };
+
 // Function to record cancellation in cancellations table
 const recordCancellation = (booking_id, user_id, refundAmount) => {
   const insertCancellation = `
     INSERT INTO cancellations (booking_id, user_id, refund_amount)
     VALUES (?, ?, ? )
   `;
-  db.query(insertCancellation, [booking_id, user_id, refundAmount,], (err) => {
+  db.query(insertCancellation, [booking_id, user_id, refundAmount], (err) => {
     if (err) {
       console.error("Error inserting cancellation record:", err);
     } else {
@@ -107,20 +108,25 @@ router.post("/cancel-booking", async (req, res) => {
           const today = new Date();
           const timeDiff = (today - paymentDate) / (1000 * 60 * 60 * 24);
 
-          let refundAmount = 0;
+          let refundAmount = 0; // refundAmount is in cents
+
           if (3 < timeDiff && timeDiff <= 7) {
-            refundAmount = payment.amount;
+            refundAmount = Math.floor(payment.amount * 0.5);
           } else if (timeDiff <= 3) {
-            refundAmount = payment.amount * 0.5;
+            refundAmount = Math.floor(payment.amount); // Use Math.floor or Math.round here
           } else {
             refundAmount = 0;
           }
+
+          // DEBUG LOGS
+          console.log("Original payment amount (cents):", payment.amount);
+          console.log("Calculated refund amount (cents):", refundAmount);
 
           if (refundAmount > 0) {
             try {
               const refund = await stripe.refunds.create({
                 payment_intent: payment.transaction_id,
-                amount: refundAmount * 100,
+                amount: refundAmount, // Integer cents only, no decimals
               });
 
               if (!refund || refund.status !== "succeeded") {
@@ -134,8 +140,10 @@ router.post("/cancel-booking", async (req, res) => {
                   console.error("Error updating booking status:", err);
                   return res.status(500).json({ message: "Failed to update booking status." });
                 }
-// Record cancellation
-recordCancellation(booking_id, user_id, refundAmount);
+
+                // Record cancellation
+                recordCancellation(booking_id, user_id, refundAmount);
+
                 // Insert refund record in payments table
                 const insertRefund = `INSERT INTO payments (booking_id, amount, payment_status, payment_method, transaction_id, payment_date)
                                       VALUES (?, ?, 'refunded', 'card', ?, NOW())`;
@@ -150,8 +158,8 @@ recordCancellation(booking_id, user_id, refundAmount);
                   await sendRefundEmail(userEmail, booking_id, refundAmount);
 
                   res.json({
-                    message: `Booking cancelled. Refund issued: $${refundAmount}`,
-                    refundAmount,
+                    message: `Booking cancelled. Refund issued: $${(refundAmount ).toFixed(2)}`,
+                    refundAmount: refundAmount / 100,
                   });
                 });
               });

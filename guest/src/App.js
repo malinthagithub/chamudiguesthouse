@@ -28,6 +28,8 @@ import FaqForm from './Components/FaqForm';
 import ClerkFAQDashboard from './clerkcomponets/ClerkFAQDashboard';
 import TodayBookings from './clerkcomponets/TodayBookings';
 import RegisterClerk from './ownercomponets/RegisterClerk';
+import CancellationsPage from './clerkcomponets/CancellationsPage';
+import BookingCustomizations from './clerkcomponets/Bookingcustomization';
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
@@ -123,6 +125,8 @@ const MainContent = ({ isAuthenticated, setIsAuthenticated, username, setUsernam
         <Route path="/clerk-faq-dashboard" element={<ClerkFAQDashboard />} />
         <Route path="/today-bookings" element={<TodayBookings />} />
         <Route path="/register-clerk" element={<RegisterClerk />} />
+        <Route path="/cancellations" element={<CancellationsPage />} />
+        <Route path="/booking-customizations" element={<BookingCustomizations />} />
         {/* Clerk routes */}
       </Routes>
     </div>

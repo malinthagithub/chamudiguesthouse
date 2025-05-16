@@ -134,6 +134,7 @@ body {
 
 .hotel-icon {
     font-size: 1.5rem;
+    color: #000;
 }
 
 .status-badge {
@@ -333,137 +334,128 @@ body {
     font-size: 1.1rem;
 }
 
-/* Modal Styles */
-.policy-container {
-    padding: 0.5rem;
-}
-
-.policy-container h5 {
-    font-size: 1.1rem;
-    margin-bottom: 1rem;
-    color: var(--dark-color);
-}
-
-.policy-list {
-    list-style: none;
-    margin-bottom: 1.5rem;
-}
-
-.policy-list li {
-    margin-bottom: 0.5rem;
-    display: flex;
-    align-items: flex-start;
-}
-
-.policy-list li span {
-    margin-right: 0.5rem;
-    color: var(--danger-color);
-}
-
-.confirmation-text {
-    font-weight: 600;
-    text-align: center;
-    margin-top: 1.5rem;
-}
-
-/* Responsive Adjustments */
-@media (max-width: 768px) {
-    .booking-header h1 {
-        font-size: 2rem;
-    }
-    
-    .booking-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .card-actions {
-        flex-direction: column;
-    }
-}
-/* Add these styles to your ConfirmBooking.css */
-
-/* Modal styles */
+/* Cancel Modal */
 .cancel-modal {
     position: fixed;
-    top: 100px;
+    top: 30px;
     left: 400px;
-    width: 100% !important;
-    height: 100% !important;
+    width: 500% !important;
+    height: 80% !important;
     z-index: 1050;
     overflow: hidden;
     outline: 0;
 }
 
-.modal-dialog {
-    position: relative;
-    width: auto;
-    margin: 0.5rem;
-    pointer-events: none;
+.cancel-modal .modal-dialog {
+    z-index: 1060 !important;
 }
 
-.modal-content {
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    pointer-events: auto;
-    background-color: #fff;
-    background-clip: padding-box;
-    border: 1px solid rgba(0, 0, 0, 0.2);
-    border-radius: 0.3rem;
-    outline: 0;
+.cancel-modal .modal-backdrop {
+    z-index: 1050 !important;
 }
 
-.modal-backdrop {
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 1040;
-    width: 100vw;
-    height: 100vh;
-    background-color: #000;
+.cancel-modal .modal-content {
+    border-radius: 16px;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+    padding: 10px;
+    border: none;
+    background-color: #191818;
 }
 
-.modal-backdrop.show {
-    opacity: 0.5;
+.cancel-modal .modal-header {
+    border-bottom: none;
+    padding-bottom: 0;
 }
 
-/* Policy styles */
+.cancel-modal .modal-title {
+    font-size: 1.5rem;
+    font-weight: bold;
+    color: #d9534f;
+}
+
 .policy-container {
-    padding: 15px;
+    padding: 20px;
+}
+
+.policy-container h5 {
+    font-weight: 600;
+    margin-bottom: 15px;
+    color: #343a40;
 }
 
 .policy-list {
-    padding-left: 20px;
-    margin-bottom: 20px;
+    list-style: none;
+    padding: 0;
+    margin-bottom: 15px;
 }
 
 .policy-list li {
-    margin-bottom: 8px;
+    font-size: 0.95rem;
+    margin-bottom: 10px;
+    color: #495057;
+    display: flex;
+    align-items: start;
 }
 
 .policy-list li span {
-    margin-right: 10px;
-    color: #dc3545;
+    color: #d9534f;
+    font-weight: bold;
+    margin-right: 8px;
+    font-size: 1.2rem;
 }
 
 .confirmation-text {
+    margin-top: 10px;
     font-weight: 500;
-    margin-top: 15px;
+    color: #dc3545;
 }
 
-/* Button styles */
-.modal-keep-btn {
-    text-size-adjust: 20px;
-    position: relative;
-    left: -200px;
-    top: 40px;
-   
+.cancel-modal .modal-footer {
+    border-top: none;
+    padding-top: 0;
+    justify-content: space-between;
+}
+.cancel-modal .modal-content {
+  background-color: white;  /* Solid background */
+  opacity: 1;               /* Fully visible */
+  border-radius: 10px;
+  padding: 20px;
+  color: black;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+.cancel-modal .modal-content {
+  backdrop-filter: none; /* Or reduce blur */
+}
+.cancel-modal {
+  opacity: 1 !important;
 }
 
-.modal-cancel-btn {
+.btn-keep {
     position: relative;
-    left: 140px;
-    
-    
+    top: 100px;
+    background-color: #6c757d;
+    color: #fff;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.btn-keep:hover {
+    background-color: #5a6268;
+}
+
+.btn-confirm-cancel {
+    background-color: #d9534f;
+    color: #fff;
+    font-weight: 500;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 8px;
+    transition: var(--transition);
+}
+
+.btn-confirm-cancel:hover {
+    background-color: #c9302c;
 }

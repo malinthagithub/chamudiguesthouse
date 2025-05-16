@@ -126,5 +126,19 @@ router.post('/customize', async (req, res) => {
         });
     });
 });
+// GET /api/rooms/customizable - get only customizable rooms
+router.get('/customizable', async (req, res) => {
+  try {
+    const query = 'SELECT * FROM rooms WHERE customizable = TRUE';
+    const [rooms] = await db.promise().query(query);
+    res.json(rooms);
+  } catch (err) {
+    console.error('Error fetching customizable rooms:', err);
+    res.status(500).json({ error: 'Failed to fetch customizable rooms' });
+  }
+});
+
+
+
 
 module.exports = router;

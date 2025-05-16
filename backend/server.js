@@ -20,6 +20,9 @@ const customizationroutes = require('./routes/customizationRoutes'); // Import t
 const cancelBookingRoute = require("./routes/cancelBooking");
 const userProfileRoutes = require("./routes/userRoutes"); // Import user profile route
 const faqRoutes = require("./routes/faqRoutes"); // Import FAQ route
+const cancellationsRouter = require('./routes/cancellations');
+const customizationbookingRoutes = require('./routes/customizationbooking');
+
 // Create an Express app
 const app = express();
 
@@ -50,7 +53,10 @@ app.use('/api/customization', customizationroutes); // Add customization route
 app.use("/api", cancelBookingRoute);
 app.use("/api/user", userProfileRoutes); // User profile route
 app.use("/api/faqs", faqRoutes); // FAQ route
+app.use('/api/customizationbooking', customizationbookingRoutes);
 
+// Routes
+app.use('/api/cancellations', cancellationsRouter); 
 // Connect to the database and start the server
 db.connect((err) => {
     if (err) {

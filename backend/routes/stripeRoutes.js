@@ -2,23 +2,25 @@ const express = require("express");
 const mysql = require("mysql2");
 const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
 const cors = require("cors");
+const nodemailer = require("nodemailer");
 
 const router = express.Router();
 const db = require("../db");
-const nodemailer = require("nodemailer"); // Import nodemailer
-// Enable CORS for all origins
+
 router.use(cors());
-// Create a Nodemailer transporter
+
+// Nodemailer transporter setup
 const transporter = nodemailer.createTransport({
-  service: "gmail", // You can use any email service provider here
+  service: "gmail",
   auth: {
-    user: process.env.EMAIL_USER, // Your email address (sender)
-    pass: process.env.EMAIL_PASS, // Your email password (or app password)
+    user: process.env.EMAIL_USER,
+    pass: process.env.EMAIL_PASS,
   },
 });
 
+// Route: POST /api/book-room
 router.post("/book-room", async (req, res) => {
-  const {
+  let {
     user_id,
     room_id,
     checkin_date,
@@ -26,7 +28,7 @@ router.post("/book-room", async (req, res) => {
     total_amount,
     payment_method_id,
   } = req.body;
-  
+
   console.log("Received data:", req.body);
 
   try {
@@ -34,24 +36,29 @@ router.post("/book-room", async (req, res) => {
       return res.status(400).json({ message: "Missing required fields." });
     }
 
-     // Get the user's current loyalty points from the database
-     const getUserPoints = `SELECT loyalty_points FROM users WHERE id = ?`;
-     const [userData] = await db.promise().query(getUserPoints, [user_id]);
-     const currentPoints = userData[0].loyalty_points;
- 
-     // Apply a discount if the user has 100 or more points (e.g., 20% off)
-     let discount = 0;
-     if (currentPoints >= 100) {
-       discount = total_amount * 0.2;  // 20% discount
-       total_amount -= discount; // Apply discount to the total amount
-     }
+    // Get current loyalty points
+    const [userData] = await db.promise().query(
+      `SELECT loyalty_points FROM users WHERE id = ?`,
+      [user_id]
+    );
 
-    // Create PaymentIntent
+    let currentPoints = userData[0].loyalty_points;
+    let discount = 0;
+    let usedPoints = false;
+
+    // Apply 20% discount if eligible
+    if (currentPoints >= 100) {
+      discount = total_amount * 0.2;
+      total_amount = total_amount - discount;
+      usedPoints = true;
+    }
+
+    // Stripe payment
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: total_amount * 100,
+      amount: total_amount,
       currency: "usd",
       payment_method_data: {
-        type: 'card',
+        type: "card",
         card: {
           token: payment_method_id,
         },
@@ -59,7 +66,7 @@ router.post("/book-room", async (req, res) => {
       confirm: true,
       automatic_payment_methods: {
         enabled: true,
-        allow_redirects: 'never',
+        allow_redirects: "never",
       },
     });
 
@@ -67,99 +74,126 @@ router.post("/book-room", async (req, res) => {
       return res.status(400).json({ message: "Payment failed!" });
     }
 
-    const insertBooking = `INSERT INTO bookings (user_id, room_id, checkin_date, checkout_date, total_amount, status, created_at, updated_at)
-                           VALUES (?, ?, ?, ?, ?, 'confirmed', NOW(), NOW())`;
+    // Insert booking
+    const insertBooking = `
+      INSERT INTO bookings (user_id, room_id, checkin_date, checkout_date, total_amount, status, created_at, updated_at)
+      VALUES (?, ?, ?, ?, ?, 'confirmed', NOW(), NOW())
+    `;
 
-    db.query(insertBooking, [user_id, room_id, checkin_date, checkout_date, total_amount], (err, result) => {
-      if (err) {
-        console.error("Error inserting booking:", err);
-        return res.status(500).json({ message: "Booking failed due to database error." });
-      }
-
-      const booking_id = result.insertId;
-
-      const insertPayment = `INSERT INTO payments (booking_id, amount, payment_status, payment_method, transaction_id, payment_date)
-                             VALUES (?, ?, 'pending', 'card', ?, NOW())`;
-
-      db.query(insertPayment, [booking_id, total_amount, paymentIntent.id], (err) => {
+    db.query(
+      insertBooking,
+      [user_id, room_id, checkin_date, checkout_date, total_amount],
+      (err, result) => {
         if (err) {
-          console.error("Error inserting payment:", err);
-          return res.status(500).json({ message: "Payment record failed." });
+          console.error("Error inserting booking:", err);
+          return res.status(500).json({ message: "Booking failed." });
         }
 
-        // Update payment status after confirmation
-        const updatePaymentStatus = `UPDATE payments SET payment_status = 'completed' WHERE transaction_id = ?`;
+        const booking_id = result.insertId;
 
-        db.query(updatePaymentStatus, [paymentIntent.id], (err) => {
+        // Insert payment record
+        const insertPayment = `
+          INSERT INTO payments (booking_id, amount, payment_status, payment_method, transaction_id, payment_date)
+          VALUES (?, ?, 'pending', 'card', ?, NOW())
+        `;
+
+        db.query(insertPayment, [booking_id, total_amount, paymentIntent.id], (err) => {
           if (err) {
-            console.error("Error updating payment status:", err);
-            return res.status(500).json({ message: "Payment status update failed." });
+            console.error("Error inserting payment:", err);
+            return res.status(500).json({ message: "Payment record failed." });
           }
-         
-          // Add loyalty points to user (e.g., 10 points per successful booking)
-          const newPoints = currentPoints + 10;  // Add 10 points for each booking
-          const updateLoyaltyPoints = `UPDATE users SET loyalty_points = ? WHERE id = ?`;
-          db.query(updateLoyaltyPoints, [newPoints, user_id], (err) => {
-            if (err) {
-              console.error("Error updating loyalty points:", err);
-              return res.status(500).json({ message: "Loyalty points update failed." });
-            }
 
-            // Send confirmation email
-            db.query('SELECT email FROM users WHERE id = ?', [user_id], (err, result) => {
-              if (err || result.length === 0) {
-                console.error("Error fetching user email:", err);
-                return res.status(500).json({ message: "Unable to send email." });
+          // Mark payment completed
+          db.query(
+            `UPDATE payments SET payment_status = 'completed' WHERE transaction_id = ?`,
+            [paymentIntent.id],
+            (err) => {
+              if (err) {
+                console.error("Error updating payment status:", err);
+                return res.status(500).json({ message: "Failed to update payment status." });
               }
 
-              const userEmail = result[0].email;
+              // Calculate new loyalty points
+              let newPoints;
+              if (usedPoints) {
+                newPoints = 10;
+              } else {
+                newPoints = Math.min(currentPoints + 10, 100);
+              }
 
-              const mailOptions = {
-                from: process.env.EMAIL_USER, // Sender address
-                to: userEmail, // Receiver's email address
-                subject: "Booking Confirmation", // Email subject
-                text: `Dear user, your booking has been confirmed! 
-                       Room ID: ${room_id}
-                       Check-in Date: ${checkin_date}
-                       Check-out Date: ${checkout_date}
-                       Total Amount: $${total_amount}
-                       Discount Applied: $${discount}
-                       
-                       Payment Status: Completed
-                       
-                       Loyalty Points Earned: 10
-                       Total Loyalty Points: ${newPoints}
-                       
-                       Thank you for booking with us!`, // Email body
-              };
+              // Update user loyalty points
+              db.query(
+                `UPDATE users SET loyalty_points = ? WHERE id = ?`,
+                [newPoints, user_id],
+                (err) => {
+                  if (err) {
+                    console.error("Error updating loyalty points:", err);
+                    return res.status(500).json({ message: "Failed to update loyalty points." });
+                  }
 
-              transporter.sendMail(mailOptions, (err, info) => {
-                if (err) {
-                  console.error("Error sending email:", err);
-                  return res.status(500).json({ message: "Email sending failed." });
+                  // Get user email
+                  db.query(`SELECT email FROM users WHERE id = ?`, [user_id], (err, result) => {
+                    if (err || result.length === 0) {
+                      console.error("Error fetching email:", err);
+                      return res.status(500).json({ message: "Email fetch failed." });
+                    }
+
+                    const userEmail = result[0].email;
+
+                    // Email options
+                    const mailOptions = {
+                      from: process.env.EMAIL_USER,
+                      to: userEmail,
+                      subject: "Booking Confirmation",
+                      text: `Dear user, your booking has been confirmed!
+
+Room ID: ${room_id}
+Check-in Date: ${checkin_date}
+Check-out Date: ${checkout_date}
+Total Amount: $${total_amount.toFixed(2)}
+Discount Applied: $${discount.toFixed(2)}
+
+Payment Status: Completed
+
+Loyalty Points Earned: 10
+Total Loyalty Points: ${newPoints}
+
+Thank you for booking with us!`,
+                    };
+
+                    // Send email
+                    transporter.sendMail(mailOptions, (err, info) => {
+                      if (err) {
+                        console.error("Email sending failed:", err);
+                        return res.status(500).json({ message: "Failed to send email." });
+                      }
+
+                      console.log("Email sent:", info.response);
+
+                      // ✅ Success response
+                      res.json({
+                        message: "Booking confirmed & payment successful!",
+                        booking_id,
+                        discount,
+                        total_amount,
+                        loyaltyPoints: newPoints,
+                      });
+                    });
+                  });
                 }
-
-                console.log("Email sent:", info.response);
-              });
-            });
-
-            res.json({
-              message: "Booking confirmed & payment successful!",
-              booking_id,
-              discount,
-              total_amount,
-              loyaltyPoints: newPoints,
-            });
-          });
+              );
+            }
+          );
         });
-      });
-    });
+      }
+    );
   } catch (error) {
-    console.error("Payment error:", error);
+    console.error("Error during booking:", error);
     res.status(500).json({
-      message: "Payment processing failed.",
+      message: "Payment or booking failed.",
       error: error.message || error,
     });
   }
 });
+
 module.exports = router;

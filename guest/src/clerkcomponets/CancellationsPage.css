@@ -1,0 +1,186 @@
+:root {
+  --primary-color: #4361ee;
+  --text-color: #2b2d42;
+  --light-gray: #f8f9fa;
+  --medium-gray: #e9ecef;
+  --dark-gray: #adb5bd;
+  --danger-color: #ef233c;
+  --border-radius: 8px;
+  --box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.cancellations-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  color: var(--text-color);
+}
+
+.header-section {
+  margin-bottom: 2rem;
+}
+
+.header-section h2 {
+  font-size: 1.8rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  color: var(--text-color);
+}
+
+.search-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.date-picker {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.date-picker label {
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+.date-input {
+  padding: 0.6rem 1rem;
+  border: 1px solid var(--medium-gray);
+  border-radius: var(--border-radius);
+  font-size: 1rem;
+  transition: all 0.2s ease;
+}
+
+.date-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px rgba(67, 97, 238, 0.2);
+}
+
+.reset-btn {
+  padding: 0.6rem 1rem;
+  background-color: var(--medium-gray);
+  color: var(--text-color);
+  border: none;
+  border-radius: var(--border-radius);
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.reset-btn:hover {
+  background-color: var(--dark-gray);
+}
+
+.results-count {
+  color: var(--dark-gray);
+  font-size: 0.9rem;
+}
+
+.table-wrapper {
+  background: white;
+  border-radius: var(--border-radius);
+  box-shadow: var(--box-shadow);
+  overflow: hidden;
+}
+
+.cancellations-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.cancellations-table th {
+  background-color: var(--light-gray);
+  padding: 1rem;
+  text-align: left;
+  font-weight: 600;
+  color: var(--text-color);
+  border-bottom: 1px solid var(--medium-gray);
+}
+
+.cancellations-table td {
+  padding: 1rem;
+  border-bottom: 1px solid var(--medium-gray);
+}
+
+.cancellations-table tr:last-child td {
+  border-bottom: none;
+}
+
+.cancellations-table tr:hover {
+  background-color: rgba(67, 97, 238, 0.03);
+}
+
+.id-cell {
+  font-weight: 500;
+  color: var(--primary-color);
+}
+
+.amount-cell {
+  font-weight: 500;
+  color: #2e7d32;
+}
+
+.status-badge {
+  display: inline-block;
+  padding: 0.3rem 0.6rem;
+  border-radius: 1rem;
+  font-size: 0.8rem;
+  font-weight: 500;
+}
+
+.status-badge.cancelled {
+  background-color: rgba(239, 35, 60, 0.1);
+  color: var(--danger-color);
+}
+
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  margin: 2rem auto;
+  border: 4px solid var(--light-gray);
+  border-top-color: var(--primary-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.no-results td {
+  padding: 3rem 1rem;
+  text-align: center;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.empty-state svg {
+  color: var(--dark-gray);
+}
+
+.empty-state p {
+  color: var(--dark-gray);
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  .search-controls {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  
+  .cancellations-table {
+    display: block;
+    overflow-x: auto;
+  }
+}

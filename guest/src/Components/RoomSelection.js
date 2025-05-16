@@ -13,7 +13,7 @@ function RoomSelection() {
   useEffect(() => {
     const fetchRooms = async () => {
       try {
-        const response = await axios.get('http://localhost:5000/api/rooms/all');
+        const response = await axios.get('http://localhost:5000/api/customization/customizable');
         setRooms(response.data);
         setLoading(false);
       } catch (error) {

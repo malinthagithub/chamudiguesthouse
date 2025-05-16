@@ -101,9 +101,12 @@ const RoomCustomization = () => {
         setIsProcessing(false);
         return;
       }
+     // Get user data from local storage
+  const user = JSON.parse(localStorage.getItem('userData'));
+  const userId = user ? user.userId : null;
 
       const response = await axios.post('http://localhost:5000/api/customization/customize', {
-        user_id,
+       user_id: userId,
         room_id: roomId,
         beds,
         hot_water,
@@ -241,12 +244,11 @@ const RoomCustomization = () => {
             <h3><FaBed /> Room Configuration</h3>
             <div className="input-group">
               <label style={{ color:"black" }}>Number of Beds</label>
-              <input 
-                type="number" 
-                value={beds} 
-                onChange={(e) => setBeds(Math.max(1, Number(e.target.value)))} 
-                min="1" 
-              />
+              <select value={beds} onChange={(e) => setBeds(Number(e.target.value))}>
+  <option value={1}>1</option>
+  <option value={2}>2</option>
+</select>
+
             </div>
             <div className="input-group">
               <label>View Type</label>

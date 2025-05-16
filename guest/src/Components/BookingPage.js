@@ -25,12 +25,14 @@ const BookingPage = () => {
   let totalAmount = 0;
 
   if (room && checkInDate && checkOutDate) {
-    const checkIn = new Date(checkInDate);
-    const checkOut = new Date(checkOutDate);
-    const timeDifference = checkOut - checkIn;
-    numberOfNights = timeDifference > 0 ? timeDifference / (1000 * 3600 * 24) : 0;
-    totalAmount = numberOfNights * room.rentperday;
-  }
+  const checkIn = new Date(checkInDate);
+  const checkOut = new Date(checkOutDate);
+  const timeDifference = checkOut - checkIn;
+  numberOfNights = timeDifference > 0 ? Math.ceil(timeDifference / (1000 * 3600 * 24)) : 0;
+  const rentPerDay = Number(room.rentperday);
+  totalAmount = numberOfNights * rentPerDay;
+}
+
 
   // Handle Stripe Checkout token
   const onToken = async (token) => {
@@ -47,7 +49,7 @@ const BookingPage = () => {
     }
 
     try {
-      const totalAmountInCents = totalAmount * 100;
+      const totalAmountInCents = totalAmount;
 
       const response = await fetch("http://localhost:5000/api/stripe/book-room", {
         method: "POST",
