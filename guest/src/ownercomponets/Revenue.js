@@ -3,7 +3,8 @@ import { Line, Bar, Pie } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ArcElement, PointElement, LineElement } from 'chart.js';
 import './Revenue.css';
 import { Link } from 'react-router-dom';
-
+import RevenueReportDownload from './RevenueReportDownload';
+import { color } from 'framer-motion';
 // Register required chart components
 ChartJS.register(
   CategoryScale,
@@ -28,6 +29,46 @@ const Revenue = () => {
   const [todayBookings, setTodayBookings] = useState([]);
   const [weekBookings, setWeekBookings] = useState([]);
   const [view, setView] = useState('monthly');
+  const [isModalOpen, setIsModalOpen] = useState(false);
+
+
+  const styles = {
+    overlay: {
+      position: 'fixed',
+      top: 0,
+      left: 0,
+      width: '100vw',
+      height: '100vh',
+      backgroundColor: 'rgba(0,0,0,0.5)',
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      zIndex: 1000,
+    },
+    modal: {
+      color: '#000',
+      backgroundColor: '#fff',
+      padding: '30px',
+      borderRadius: '10px',
+      width: '400px',
+      position: 'relative',
+      boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
+    },
+    closeButton: {
+  position: 'absolute',
+  top: '10px',
+  right: '-180px',
+  fontSize: '24px',
+  fontWeight: 'bold',
+  color: '#000',
+  background: 'none',
+  border: 'none',
+  cursor: 'pointer',
+  zIndex: 1001,
+}
+
+  };
+
 
   useEffect(() => {
     fetch('http://localhost:5000/api/revenue/analytics')
@@ -187,15 +228,21 @@ const Revenue = () => {
             </li>
             <li style={{ marginBottom: '10px' }}> <i className="fas fa-cog"></i>
             Settings</li>
-           <button onClick={handleDownloadOccupancyReport} style={{ marginBottom: '10px', position: 'relative', top: '300px' }}>
+           <button
+        onClick={() => setIsModalOpen(true)}
+        style={{ marginBottom: '10px', position: 'relative', top: '80px' }}
+      >
+        Revenue Report
+      </button>
+           <button onClick={handleDownloadOccupancyReport} style={{ marginBottom: '10px', position: 'relative', top: '80px' }}>
   Report
 </button>
 
             <div>
-          <button style={{ marginBottom: '10px',position:"relative", top:"300px" }} onClick={handleDownload}>Download Report</button>
+          <button style={{ marginBottom: '10px',position:"relative", top:"80px" }} onClick={handleDownload}>Online Booking Report</button>
         </div>
         <div>
-          <button style={{ marginBottom: '10px',position:"relative", top:"300px" }} onClick={handleDownloadwalk}>Download Report</button>
+          <button style={{ marginBottom: '10px',position:"relative", top:"80px" }} onClick={handleDownloadwalk}>walk Report</button>
         </div>
        
           </ul>
@@ -259,11 +306,23 @@ const Revenue = () => {
                 }}
               />
             </div>
-
+{isModalOpen && (
+        <div style={styles.overlay}>
+          <div style={styles.modal}>
+            <button
+              onClick={() => setIsModalOpen(false)}
+              style={styles.closeButton}
+            >
+              X
+            </button>
+            <RevenueReportDownload />
+          </div>
+        </div>
+      )}
         {/* Today's Bookings Section */}
-        <div>
-          <h3>Today's Bookings</h3>
-          <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
+        <div style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse',position: 'relative', top: '100px',left: '-280px' }}>
+          <h3 style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse',position: 'relative', top: '100px' }}> Today's Bookings</h3>
+          <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse',position: 'relative', top: '100px' }}>
             <thead>
               <tr>
                 <th style={{ padding: '10px', backgroundColor: '#f4f4f4' }}>Room Name</th>
@@ -294,7 +353,7 @@ const Revenue = () => {
         </div>
 
         {/* This Week's Bookings Section */}
-        <div>
+        <div style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse',position: 'relative', top: '200px',left: '-280px' }}>
           <h3>This Week's Bookings</h3>
           <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
             <thead>

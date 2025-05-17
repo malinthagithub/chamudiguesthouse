@@ -28,15 +28,29 @@ const OwnerRoomDashboard = () => {
         setIsModalOpen(false);
     };
 
+    
+
     const deleteRoom = (roomId) => {
-        if (window.confirm('Are you sure you want to delete this room?')) {
-            axios.delete(`http://localhost:5000/api/rooms/delete/${roomId}`)
-                .then(() => {
-                    setRooms(rooms.filter(room => room.room_id !== roomId));
-                })
-                .catch(error => console.error('Error deleting room:', error));
-        }
-    };
+    if (window.confirm('Are you sure you want to delete this room?')) {
+        axios.delete(`http://localhost:5000/api/rooms/delete/${roomId}`)
+            .then((response) => {
+                // Show success message
+                alert(response.data.message); // "Room deleted successfully"
+                // Remove the room from UI
+                setRooms(prevRooms => prevRooms.filter(room => room.room_id !== roomId));
+            })
+            .catch(error => {
+                if (error.response && error.response.status === 400) {
+                    // Room has future bookings
+                    alert(error.response.data.message); // "Room has future bookings and cannot be deleted"
+                } else {
+                    // Some other error
+                    alert('Error deleting room. Please try again later.');
+                    console.error('Error:', error);
+                }
+            });
+    }
+};
 
     const updateRoom = (roomId) => {
         navigate(`/update-room/${roomId}`);

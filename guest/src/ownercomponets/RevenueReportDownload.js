@@ -25,23 +25,22 @@ const RevenueReportDownload = () => {
     <div style={{ padding: '20px' }}>
       <h2>Download Revenue Report</h2>
 
-      <div>
-        <label>
-          Year:{' '}
-          <input
-            type="number"
-            value={year}
-            onChange={(e) => setYear(e.target.value)}
-            placeholder="e.g. 2025"
-            min="2000"
-            max="2100"
-          />
-        </label>
-      </div>
+     <div>
+  <span style={{ color: 'black', fontWeight: 'bold' }}>Year: </span>
+  <input
+    type="number"
+    value={year}
+    onChange={(e) => setYear(e.target.value)}
+    placeholder="e.g. 2025"
+    min="2000"
+    max="2100"
+  />
+</div>
+
 
       <div>
         <label>
-          Month:{' '}
+           <span style={{ color: 'black', fontWeight: 'bold' }}>Month: </span>
           <input
             type="number"
             value={month}
