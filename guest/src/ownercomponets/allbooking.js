@@ -182,6 +182,12 @@ const AllBookings = () => {
                                                 sortConfig.direction === 'asc' ? '↑' : '↓'
                                             )}
                                         </th>
+                                        <th onClick={() => handleSort('booking_source')}>
+  Booking Source {sortConfig.key === 'booking_source' && (
+    sortConfig.direction === 'asc' ? '↑' : '↓'
+  )}
+</th>
+
                                         <th onClick={() => handleSort('payment_amount')}>
                                             Amount {sortConfig.key === 'payment_amount' && (
                                                 sortConfig.direction === 'asc' ? '↑' : '↓'
@@ -192,18 +198,20 @@ const AllBookings = () => {
                                 <tbody>
                                     {currentBookings.map((booking) => (
                                         <tr key={booking.booking_id}>
-                                            <td>#{booking.booking_id}</td>
+                                            <td>{booking.booking_id}</td>
                                             <td>{booking.room_name}</td>
                                             <td>
                                                 <div className="guest-info">
-                                                    <strong>{booking.username}</strong>
-                                                    <small>{booking.email}</small>
+                                                    <strong>{booking.guest_name}</strong>
+<small>{booking.guest_email}</small>
+
                                                 </div>
                                             </td>
                                             <td>{formatDate(booking.checkin_date)}</td>
                                             <td>{formatDate(booking.checkout_date)}</td>
                                             <td>{getStatusBadge(booking.status)}</td>
                                             <td>{getStatusBadge(booking.payment_status)}</td>
+                                            <td>{getStatusBadge(booking.booking_source)}</td>
                                             <td>{formatCurrency(booking.payment_amount)}</td>
                                         </tr>
                                     ))}
@@ -255,7 +263,8 @@ const AllBookings = () => {
                         </div>
                         <div className="summary-card">
                             <h4>Revenue</h4>
-                            <p>{formatCurrency(bookings.reduce((sum, b) => sum + (b.payment_amount || 0), 0))}</p>
+                          <p>{formatCurrency(bookings.reduce((sum, b) => sum + parseFloat(b.payment_amount || 0), 0))}</p>
+
                         </div>
                     </div>
                 </>

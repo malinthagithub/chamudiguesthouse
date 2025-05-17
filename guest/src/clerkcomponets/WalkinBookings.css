@@ -1,0 +1,189 @@
+/* WalkinBookings.css */
+
+.walkin-container {
+    position: relative;
+    top: 50px;
+  max-width: 1200px;
+  margin: 2rem auto;
+  padding: 2rem;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+}
+
+.walkin-container h2 {
+  color: #2c3e50;
+  margin-bottom: 1.5rem;
+  font-size: 1.8rem;
+  text-align: center;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid #f1f1f1;
+}
+
+.booking-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+.filter-group {
+  flex: 1;
+  min-width: 200px;
+}
+.filter-group label {
+  color: #000 !important;
+}
+.filter-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  color: #555;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.filter-group input {
+  width: 100%;
+  padding: 0.8rem;
+  border: 1px solid #e0e0e0;
+  border-radius: 6px;
+  font-size: 1rem;
+  transition: all 0.2s;
+}
+
+.filter-group input:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+}
+
+.filter-actions {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+}
+
+.filter-btn {
+  padding: 0.8rem 1.5rem;
+  background-color: #3498db;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  background-color: #2980b9;
+  transform: translateY(-2px);
+}
+
+.reset-btn {
+  padding: 0.8rem 1.5rem;
+  background-color: #95a5a6;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.reset-btn:hover {
+  background-color: #7f8c8d;
+}
+
+.booking-table-container {
+  overflow-x: auto;
+  margin-top: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+}
+
+.walkin-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.95rem;
+}
+
+.walkin-table thead {
+  background-color: #3498db;
+  color: rgb(20, 19, 19);
+}
+
+.walkin-table th {
+  padding: 1rem;
+  text-align: left;
+  font-weight: 500;
+}
+
+.walkin-table tbody tr {
+  border-bottom: 1px solid #eee;
+  transition: all 0.2s;
+}
+
+.walkin-table tbody tr:hover {
+  background-color: #f8f9fa;
+}
+
+.walkin-table td {
+  padding: 1rem;
+  color: #555;
+}
+
+.status-pending {
+  color: #e67e22;
+  font-weight: 500;
+}
+
+.status-confirmed {
+  color: #2ecc71;
+  font-weight: 500;
+}
+
+.status-cancelled {
+  color: #e74c3c;
+  font-weight: 500;
+}
+
+.loading-message {
+  text-align: center;
+  padding: 2rem;
+  color: #7f8c8d;
+  font-style: italic;
+}
+
+.no-bookings {
+  text-align: center;
+  padding: 2rem;
+  color: #7f8c8d;
+  background: #f8f9fa;
+  border-radius: 8px;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .booking-filters {
+    flex-direction: column;
+  }
+  
+  .filter-actions {
+    justify-content: flex-end;
+  }
+  
+  .walkin-table {
+    font-size: 0.85rem;
+  }
+  
+  .walkin-table th,
+  .walkin-table td {
+    padding: 0.75rem 0.5rem;
+  }
+}

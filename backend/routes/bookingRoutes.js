@@ -3,34 +3,45 @@ const router = express.Router();
 const db = require("../db"); // Import your MySQL connection
 router.get('/all-bookings', async (req, res) => {
     try {
-        // Get query parameters
         const { filter, search } = req.query;
-        
+
         let baseQuery = `
             SELECT 
                 b.booking_id,
                 r.name AS room_name,
                 r.room_id,
-                u.username,
-                u.email,
+
+                -- Corrected CASE conditions
+                CASE 
+                    WHEN b.booking_source = 'online' THEN u.username
+                    WHEN b.booking_source = 'walk-in' THEN gw.name
+                    ELSE 'Unknown'
+                END AS guest_name,
+
+                CASE 
+                    WHEN b.booking_source = 'online' THEN u.email
+                    WHEN b.booking_source = 'walk-in' THEN gw.email
+                    ELSE 'Unknown'
+                END AS guest_email,
+
                 b.checkin_date,
                 b.checkout_date,
                 b.status,
                 b.created_at,
+                b.booking_source,
                 p.amount AS payment_amount,
                 p.payment_method,
                 p.payment_status
             FROM bookings b
             JOIN rooms r ON b.room_id = r.room_id
-            JOIN users u ON b.user_id = u.id
+            LEFT JOIN users u ON b.user_id = u.id
+            LEFT JOIN guest_walkin gw ON b.guest_walkin_id = gw.guest_walkin_id
             LEFT JOIN payments p ON b.booking_id = p.booking_id
         `;
 
-        // Add WHERE clauses based on filters
         const whereClauses = [];
         const params = [];
 
-        // Date filters
         if (filter === 'today') {
             whereClauses.push('DATE(b.checkin_date) = CURDATE()');
         } else if (filter === 'week') {
@@ -39,24 +50,23 @@ router.get('/all-bookings', async (req, res) => {
             whereClauses.push('YEAR(b.checkin_date) = YEAR(CURDATE()) AND MONTH(b.checkin_date) = MONTH(CURDATE())');
         }
 
-        // Search functionality
         if (search) {
             whereClauses.push(`
                 (r.name LIKE ? OR 
                 u.username LIKE ? OR 
-                u.email LIKE ? OR 
+                u.email LIKE ? OR
+                gw.name LIKE ? OR
+                gw.email LIKE ? OR
                 b.status LIKE ?)
             `);
             const searchTerm = `%${search}%`;
-            params.push(searchTerm, searchTerm, searchTerm, searchTerm);
+            params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
         }
 
-        // Combine WHERE clauses
         if (whereClauses.length > 0) {
             baseQuery += ' WHERE ' + whereClauses.join(' AND ');
         }
 
-        // Add sorting
         baseQuery += ' ORDER BY b.checkin_date DESC';
 
         db.query(baseQuery, params, (err, results) => {
@@ -64,14 +74,16 @@ router.get('/all-bookings', async (req, res) => {
                 console.error("Database error:", err);
                 return res.status(500).json({ message: "Database error", error: err });
             }
-
             res.json(results);
         });
+
     } catch (error) {
         console.error('Error fetching all bookings:', error);
         res.status(500).json({ message: 'Server error fetching all bookings', error });
     }
 });
+
+
 // Get bookings for a specific user
 router.get("/:user_id", async (req, res) => {
     const { user_id } = req.params;

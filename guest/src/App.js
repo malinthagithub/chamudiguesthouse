@@ -30,6 +30,11 @@ import TodayBookings from './clerkcomponets/TodayBookings';
 import RegisterClerk from './ownercomponets/RegisterClerk';
 import CancellationsPage from './clerkcomponets/CancellationsPage';
 import BookingCustomizations from './clerkcomponets/Bookingcustomization';
+import ClerkAvailable from './clerkcomponets/ClerkAvailable';
+import GuestWalkinForm from './clerkcomponets/GuestWalkinForm';
+import WalkinPayment from './clerkcomponets/WalkinPayment';
+import WalkinBookings from './clerkcomponets/WalkinBookings';
+import RevenueReportDownload from './ownercomponets/RevenueReportDownload';
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
@@ -127,6 +132,13 @@ const MainContent = ({ isAuthenticated, setIsAuthenticated, username, setUsernam
         <Route path="/register-clerk" element={<RegisterClerk />} />
         <Route path="/cancellations" element={<CancellationsPage />} />
         <Route path="/booking-customizations" element={<BookingCustomizations />} />
+        <Route path="/clerk-available" element={<ClerkAvailable />} />
+       
+        <Route path="//walkin-payment" element={<GuestWalkinForm />} />
+        <Route path='/payment' element={<WalkinPayment />} />
+        <Route path="/walk_view" element={<WalkinBookings />} />
+        <Route path="/walkin-payment" element={<WalkinPayment />} />
+        <Route path='/RevnueReportDownload' element={<RevenueReportDownload />} />
         {/* Clerk routes */}
       </Routes>
     </div>

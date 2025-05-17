@@ -22,7 +22,9 @@ const userProfileRoutes = require("./routes/userRoutes"); // Import user profile
 const faqRoutes = require("./routes/faqRoutes"); // Import FAQ route
 const cancellationsRouter = require('./routes/cancellations');
 const customizationbookingRoutes = require('./routes/customizationbooking');
-
+const availableWalkRoutes = require('./routes/available-walk'); // Import the new route
+const walkinRoutes = require('./routes/walkin');
+const guestWalkinRoutes = require('./routes/guestWalkinRoutes');
 // Create an Express app
 const app = express();
 
@@ -54,9 +56,11 @@ app.use("/api", cancelBookingRoute);
 app.use("/api/user", userProfileRoutes); // User profile route
 app.use("/api/faqs", faqRoutes); // FAQ route
 app.use('/api/customizationbooking', customizationbookingRoutes);
-
+app.use('/api/available-walk', availableWalkRoutes);
 // Routes
 app.use('/api/cancellations', cancellationsRouter); 
+app.use('/api/guest-walkin', guestWalkinRoutes); // Guest walk-in route
+app.use('/', walkinRoutes); // mount it directly
 // Connect to the database and start the server
 db.connect((err) => {
     if (err) {

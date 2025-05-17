@@ -86,14 +86,13 @@ const Revenue = () => {
   };
 
   const handleDownload = () => {
-    // Create a link element
-    const link = document.createElement("a");
-    link.href = "http://localhost:5000/api/reports/download"; // Adjust the backend URL if necessary
-    link.setAttribute("download", "revenue_report.csv"); // Set the default file name
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
-  };
+  const link = document.createElement("a");
+  link.href = "http://localhost:5000/api/reports/download/online";  // Use correct route here
+  link.setAttribute("download", "online_revenue_report.csv");
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+};
 
   return (
     <div className="revenue-analytics">
@@ -138,7 +137,16 @@ const Revenue = () => {
               Customizations Booking
               </Link>
             </li>
-            <li style={{ marginBottom: '10px' }}>Settings</li>
+            <li style={{ marginBottom: '10px' }}>
+              <Link to="/clerk-available" style={{ textDecoration: 'none', color: 'white' }}>
+              On-site Booking Guest
+              </Link>
+            </li>
+            <li style={{ marginBottom: '10px' }}>
+              <Link to="/walk_view" style={{ textDecoration: 'none', color: 'white' }}>
+              walk_view
+              </Link>
+            </li>
             <div>
           <button style={{ marginBottom: '10px',position:"relative", top:"300px" }} onClick={handleDownload}>Download Report</button>
         </div>

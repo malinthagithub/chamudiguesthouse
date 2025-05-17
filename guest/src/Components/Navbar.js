@@ -51,8 +51,15 @@ const Navbar = ({ isAuthenticated, username, setIsAuthenticated }) => {
         height: '70px',
       }} className="navbar">
         <div className="navbar-container">
+          {/* Chamudi logo with role-based route */}
           <Link 
-            to={userRole === 'owner' ? '/revenue' : '/'} 
+            to={
+              userRole === 'owner'
+                ? '/revenue'
+                : userRole === 'clerk'
+                ? '/revenueclerk'
+                : '/'
+            }
             className="navbar-logo" 
             onClick={() => setMenuOpen(false)}
           >
@@ -70,7 +77,6 @@ const Navbar = ({ isAuthenticated, username, setIsAuthenticated }) => {
                   <FaBook /> Room Customization
                 </Link>
                 
-                {/* FAQ link that opens modal */}
                 <FaqLink>
                   <FaBook /> FAQ
                 </FaqLink>
@@ -129,7 +135,7 @@ const Navbar = ({ isAuthenticated, username, setIsAuthenticated }) => {
         </div>
       </nav>
 
-      {/* FAQ Modal - will appear above everything when showFaqModal is true */}
+      {/* FAQ Modal */}
       <FaqModal 
         isOpen={showFaqModal}
         onClose={() => setShowFaqModal(false)}

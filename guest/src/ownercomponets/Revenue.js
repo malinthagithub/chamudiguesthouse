@@ -84,16 +84,68 @@ const Revenue = () => {
   const formatCurrency = (amount) => {
     return `$${parseFloat(amount).toFixed(2)}`;
   };
+  const handleDownloadOccupancyReport = async () => {
+  try {
+    const response = await fetch('http://localhost:5000/api/reports/download/occupancy');
+
+    if (!response.ok) {
+      throw new Error('Network response was not ok');
+    }
+
+    // Check if the response is a PDF
+    const contentType = response.headers.get('content-type');
+    if (!contentType || !contentType.includes('application/pdf')) {
+      throw new Error('Response is not a PDF');
+    }
+
+    // Convert response to blob
+    const blob = await response.blob();
+
+    // Create a URL for the blob
+    const url = window.URL.createObjectURL(blob);
+
+    // Create a temporary link element
+    const link = document.createElement('a');
+    link.href = url;
+
+    // Set the suggested file name
+    link.download = 'occupancy_report_may_2025.pdf';
+
+    // Append to DOM and trigger click
+    document.body.appendChild(link);
+    link.click();
+
+    // Cleanup: remove the link and revoke the object URL
+    link.remove();
+    window.URL.revokeObjectURL(url);
+
+  } catch (error) {
+    console.error('Error downloading the PDF:', error);
+  }
+};
+
 
   const handleDownload = () => {
     // Create a link element
     const link = document.createElement("a");
-    link.href = "http://localhost:5000/api/reports/download"; // Adjust the backend URL if necessary
+    link.href = "http://localhost:5000/api/reports/download/online"; // Adjust the backend URL if necessary
     link.setAttribute("download", "revenue_report.csv"); // Set the default file name
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
   };
+  const handleDownloadwalk = () => {
+    // Create a link element
+    const link = document.createElement("a");
+    link.href = "http://localhost:5000/api/reports/download/walkin"; // Adjust the backend URL if necessary
+    link.setAttribute("download", "revenue_report.csv"); // Set the default file name
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+
+
 
   return (
     <div className="revenue-analytics">
@@ -135,9 +187,17 @@ const Revenue = () => {
             </li>
             <li style={{ marginBottom: '10px' }}> <i className="fas fa-cog"></i>
             Settings</li>
+           <button onClick={handleDownloadOccupancyReport} style={{ marginBottom: '10px', position: 'relative', top: '300px' }}>
+  Report
+</button>
+
             <div>
           <button style={{ marginBottom: '10px',position:"relative", top:"300px" }} onClick={handleDownload}>Download Report</button>
         </div>
+        <div>
+          <button style={{ marginBottom: '10px',position:"relative", top:"300px" }} onClick={handleDownloadwalk}>Download Report</button>
+        </div>
+       
           </ul>
         </div>
 
