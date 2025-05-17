@@ -133,6 +133,11 @@ const Revenue = () => {
                Atendence
               </Link>
             </li>
+            <li style={{ marginBottom: '10px' }}>
+              <Link to="/booking-customizations" style={{ textDecoration: 'none', color: 'white' }}>
+              Customizations Booking
+              </Link>
+            </li>
             <li style={{ marginBottom: '10px' }}>Settings</li>
             <div>
           <button style={{ marginBottom: '10px',position:"relative", top:"300px" }} onClick={handleDownload}>Download Report</button>

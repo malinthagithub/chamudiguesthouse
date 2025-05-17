@@ -5,14 +5,17 @@ import './AddRoom.css';
 const AddRoom = () => {
   const [activeStep, setActiveStep] = useState(1);
   const [roomData, setRoomData] = useState({
-    name: '',
-    maxcount: '',
-    phonenumber: '',
-    rentperday: '',
-    room_type: '',
-    room_size: '',
-    discount_percentage: '',
-  });
+  name: '',
+  maxcount: '',
+  phonenumber: '',
+  rentperday: '',
+  room_type: '',
+  room_size: '',
+  discount_percentage: '',
+  customizable: false,     // ✅ Add this
+  description: '',         // ✅ Add this
+});
+
 
   const [files, setFiles] = useState({
     image1: null,
@@ -34,9 +37,14 @@ const AddRoom = () => {
     };
   }, []);
 
-  const handleChange = (e) => {
-    setRoomData({ ...roomData, [e.target.name]: e.target.value });
-  };
+ const handleChange = (e) => {
+  const { name, value, type, checked } = e.target;
+  setRoomData({
+    ...roomData,
+    [name]: type === 'checkbox' ? checked : value,
+  });
+};
+
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
@@ -132,6 +140,29 @@ const AddRoom = () => {
                 required
               />
             </div>
+            <div className="input-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
+  <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
+    <input
+      type="checkbox"
+      name="customizable"
+      checked={roomData.customizable}
+      onChange={handleChange}
+      style={{ marginRight: '6px', cursor: 'pointer' }}
+    />
+    Customizable
+  </label>
+</div>
+
+
+            <div className="input-group">
+  <textarea
+    name="description"
+    value={roomData.description}
+    onChange={handleChange}
+    placeholder="Room Description"
+    required
+  ></textarea>
+</div>
             <button className="next-btn" onClick={nextStep}>
               Continue
             </button>

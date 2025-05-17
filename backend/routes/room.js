@@ -26,69 +26,67 @@ const upload = multer({ storage: storage });
 
 // API to add a new room
 router.post('/add', upload.fields([
-    { name: 'image1', maxCount: 1 },
-    { name: 'image2', maxCount: 1 },
-    { name: 'image3', maxCount: 1 },
-    { name: 'video', maxCount: 1 }
+  { name: 'image1', maxCount: 1 },
+  { name: 'image2', maxCount: 1 },
+  { name: 'image3', maxCount: 1 },
+  { name: 'video', maxCount: 1 }
 ]), (req, res) => {
-    // Ensure files are uploaded and available
-    if (!req.files || !req.files.image1 || !req.files.image2 || !req.files.image3) {
-        return res.status(400).json({ message: 'Please upload all required images.' });
+  // Ensure files are uploaded and available
+  if (!req.files || !req.files.image1 || !req.files.image2 || !req.files.image3) {
+    return res.status(400).json({ message: 'Please upload all required images.' });
+  }
+
+  const {
+    name,
+    maxcount,
+    phonenumber,
+    rentperday,
+    room_type,
+    room_size,
+    discount_percentage,
+    description,
+    customizable
+  } = req.body;
+
+  const { image1, image2, image3, video } = req.files;
+
+  console.log('Uploaded Files:', req.files);
+  console.log('Request Body:', req.body);
+
+  // Assign image URLs
+  const imageurl1 = `/uploads/${image1[0].filename}`;
+  const imageurl2 = `/uploads/${image2[0].filename}`;
+  const imageurl3 = `/uploads/${image3[0].filename}`;
+  const videoUrl = video && video[0] ? `/uploads/${video[0].filename}` : null;
+
+  // Create a new room object
+  const newRoom = {
+    name,
+    maxcount,
+    phonenumber,
+    rentperday,
+    room_type,
+    room_size,
+    discount_percentage,
+    imageurl1,
+    imageurl2,
+    imageurl3,
+    video_url: videoUrl,
+    description,
+    customizable: customizable === 'true' || customizable === 'on',  // checkbox logic
+    payment_status: 'pending'
+  };
+
+  // Insert new room into database
+  db.query('INSERT INTO rooms SET ?', newRoom, (err, result) => {
+    if (err) {
+      console.error('Error inserting room:', err);
+      return res.status(500).json({ message: 'Error inserting room into database' });
     }
-
-    const { name, maxcount, phonenumber, rentperday, room_type, room_size, discount_percentage } = req.body;
-    const { image1, image2, image3, video } = req.files;
-
-    // Debug log to verify the files and body data
-    console.log('Uploaded Files:', req.files);
-    console.log('Request Body:', req.body);
-
-    // Assign URLs for images
-    let imageurl1 = null, imageurl2 = null, imageurl3 = null;
-    if (image1 && image1[0]) {
-        imageurl1 = `/uploads/${image1[0].filename}`;
-    }
-    if (image2 && image2[0]) {
-        imageurl2 = `/uploads/${image2[0].filename}`;
-    }
-    if (image3 && image3[0]) {
-        imageurl3 = `/uploads/${image3[0].filename}`;
-    }
-
-    // If there's a video, assign its URL
-    let videoUrl = null;
-    if (video && video[0]) {
-        videoUrl = `/uploads/${video[0].filename}`;
-    }
-
-    // Log URLs to verify the assignments
-    console.log('Generated URLs:', { imageurl1, imageurl2, imageurl3, videoUrl });
-
-    // Create a new room object
-    const newRoom = {
-        name,
-        maxcount,
-        phonenumber,
-        rentperday,
-        room_type,
-        room_size,
-        discount_percentage,
-        imageurl1,
-        imageurl2,
-        imageurl3,
-        video_url: videoUrl,
-        payment_status: 'pending'  // Default payment status
-    };
-
-    // Insert new room into database
-    db.query('INSERT INTO rooms SET ?', newRoom, (err, result) => {
-        if (err) {
-            console.error('Error inserting room:', err);
-            return res.status(500).json({ message: 'Error inserting room into database' });
-        }
-        res.status(200).json({ message: 'Room added successfully', roomId: result.insertId });
-    });
+    res.status(200).json({ message: 'Room added successfully', roomId: result.insertId });
+  });
 });
+
 
 
 // Update room details with booking_id instead of bookin_id
