@@ -113,31 +113,46 @@ console.log('Total Revenue:', totalRevenue.toFixed(2));
   });
 });
 router.get('/download/occupancy', (req, res) => {
+  const { year, month } = req.query;
+
+  // Validate inputs
+  if (!year || !month) {
+    return res.status(400).json({ error: 'Year and month are required as query parameters' });
+  }
+
+  const paddedMonth = String(month).padStart(2, '0');
+  const startDate = `${year}-${paddedMonth}-01`;
+  const endDate = `${year}-${paddedMonth}-31`;
+
   const query = `
     SELECT 
       r.room_id,
       r.name AS room_name,
       COUNT(DISTINCT DATE(b.checkin_date)) AS booked_days,
-      DAY(LAST_DAY('2025-05-01')) AS total_days_in_month,
-      ROUND((COUNT(DISTINCT DATE(b.checkin_date)) / DAY(LAST_DAY('2025-05-01'))) * 100, 2) AS occupancy_percentage
+      DAY(LAST_DAY(?)) AS total_days_in_month,
+      ROUND((COUNT(DISTINCT DATE(b.checkin_date)) / DAY(LAST_DAY(?))) * 100, 2) AS occupancy_percentage
     FROM rooms r
     LEFT JOIN bookings b ON r.room_id = b.room_id
       AND (b.status = 'Arrived' OR b.status = 'Completed')
-      AND b.checkin_date >= '2025-05-01'
-      AND b.checkin_date <= '2025-05-31'
+      AND b.checkin_date >= ?
+      AND b.checkin_date <= ?
     GROUP BY r.room_id, r.name
     ORDER BY occupancy_percentage DESC
     LIMIT 25;
   `;
 
-  db.query(query, async (err, rows) => {
+  db.query(query, [startDate, startDate, startDate, endDate], async (err, rows) => {
     if (err) {
       console.error('Query error:', err);
       return res.status(500).json({ error: 'Failed to generate occupancy report' });
     }
 
     try {
-      // Prepare chart config for QuickChart
+      const chartTitle = `Occupancy Percentage for ${new Date(startDate).toLocaleString('default', {
+        month: 'long',
+        year: 'numeric'
+      })}`;
+
       const qc = new QuickChart();
       qc.setConfig({
         type: 'bar',
@@ -153,7 +168,7 @@ router.get('/download/occupancy', (req, res) => {
           plugins: {
             title: {
               display: true,
-              text: 'Occupancy Percentage for May 2025',
+              text: chartTitle,
               font: { size: 18 },
             },
             legend: {
@@ -181,14 +196,12 @@ router.get('/download/occupancy', (req, res) => {
       });
 
       const chartUrl = qc.getUrl();
-
-      // Fetch the chart image buffer
       const response = await axios.get(chartUrl, { responseType: 'arraybuffer' });
       const chartImageBuffer = response.data;
 
-      // Create PDF document
       const doc = new PDFDocument({ size: 'A4', margin: 50 });
-      res.setHeader('Content-Disposition', 'attachment; filename=occupancy_report_may_2025.pdf');
+      const filename = `occupancy_report_${year}_${paddedMonth}.pdf`;
+      res.setHeader('Content-Disposition', `attachment; filename=${filename}`);
       res.setHeader('Content-Type', 'application/pdf');
 
       doc.pipe(res);
@@ -196,10 +209,10 @@ router.get('/download/occupancy', (req, res) => {
       // Add header
       doc.fontSize(20).text('Chmaudi Guest House', { align: 'center' });
       doc.moveDown(0.5);
-      doc.fontSize(16).text('Occupancy Report for May 2025', { align: 'center' });
+      doc.fontSize(16).text(chartTitle, { align: 'center' });
       doc.moveDown(1);
 
-      // Add the chart image
+      // Add chart
       doc.image(chartImageBuffer, {
         fit: [500, 300],
         align: 'center',
@@ -208,18 +221,17 @@ router.get('/download/occupancy', (req, res) => {
 
       doc.moveDown(1);
 
-      // Add table headers
+      // Add table header
       doc.fontSize(12).text(
         'Room ID'.padEnd(10) +
-        'Room Name'.padEnd(30) +
-        'Booked Days'.padEnd(15) +
+        'Room Name'.padEnd(20) +
+        'Booked Days'.padEnd(20) +
         'Total Days'.padEnd(15) +
         'Occupancy %'
       );
 
       doc.moveDown(0.5);
 
-      // Add table rows
       rows.forEach(row => {
         const occupancy = Number(row.occupancy_percentage);
         const occupancyText = isNaN(occupancy) ? '0.00' : occupancy.toFixed(2);
@@ -227,14 +239,13 @@ router.get('/download/occupancy', (req, res) => {
         doc.text(
           String(row.room_id).padEnd(10) +
           String(row.room_name).padEnd(30) +
-          String(row.booked_days).padEnd(15) +
-          String(row.total_days_in_month).padEnd(15) +
+          String(row.booked_days).padEnd(40) +
+          String(row.total_days_in_month).padEnd(20) +
           occupancyText
         );
       });
 
       doc.end();
-
     } catch (error) {
       console.error('Error generating PDF:', error);
       if (!res.headersSent) {
@@ -243,6 +254,7 @@ router.get('/download/occupancy', (req, res) => {
     }
   });
 });
+
 router.get('/download/revenue', async (req, res) => {
   const year = parseInt(req.query.year);
   const month = parseInt(req.query.month);
@@ -358,7 +370,7 @@ router.get('/download/revenue', async (req, res) => {
       // Table header
       doc.fontSize(12).text(
         'Room ID'.padEnd(10) +
-        'Room Name'.padEnd(30) +
+        'Room Name'.padEnd(20) +
         'Walk-in Revenue'.padEnd(20) +
         'Online Revenue'.padEnd(20) +
         'Total Revenue'
@@ -370,7 +382,7 @@ router.get('/download/revenue', async (req, res) => {
       rows.forEach(row => {
         doc.text(
           String(row.room_id).padEnd(10) +
-          String(row.room_name).padEnd(30) +
+          String(row.room_name).padEnd(40) +
           (Number(row.walkin_revenue) || 0).toFixed(2).padEnd(20) +
           (Number(row.online_revenue) || 0).toFixed(2).padEnd(20) +
           (Number(row.total_revenue) || 0).toFixed(2)

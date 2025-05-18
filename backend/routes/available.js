@@ -1,22 +1,18 @@
 const express = require('express');
 const router = express.Router();
-const db = require('../db'); // Make sure this points to your MySQL connection file
+const db = require('../db');
 
-// Function to fix date formatting
 const formatDate = (date) => {
-    return new Date(date).toISOString().split('T')[0]; // Converts to 'YYYY-MM-DD'
+    return new Date(date).toISOString().split('T')[0];
 };
 
-// Route to check room availability
 router.get('/isAvailable', async (req, res) => {
     let { room_id, checkInDate, checkOutDate } = req.query;
 
-    // Validate required parameters
     if (!room_id || !checkInDate || !checkOutDate) {
         return res.status(400).json({ error: 'Missing required parameters' });
     }
 
-    // Fix date format
     checkInDate = formatDate(checkInDate);
     checkOutDate = formatDate(checkOutDate);
 
@@ -24,6 +20,7 @@ router.get('/isAvailable', async (req, res) => {
         const query = `
             SELECT * FROM bookings 
             WHERE room_id = ? 
+            AND status != 'cancelled'
             AND (
                 (checkin_date <= ? AND checkout_date > ?) OR
                 (checkin_date < ? AND checkout_date >= ?) OR

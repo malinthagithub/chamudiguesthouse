@@ -55,7 +55,7 @@ async function isRoomAvailable(roomId, checkin, checkout) {
 // Walk-in payment and booking confirmation
 router.post('/api/walkin-payment', async (req, res) => {
   try {
-    const { roomId, checkin, checkout, user_id, guest_walkin_id, payment_method } = req.body;
+    const { roomId, checkin, checkout, user_id, guest_walkin_id, payment_method, payment_intent_id } = req.body;
 
     if (!roomId || !checkin || !checkout || !payment_method || (!user_id && !guest_walkin_id)) {
       return res.status(400).json({ success: false, message: 'Missing required fields' });
@@ -97,14 +97,14 @@ router.post('/api/walkin-payment', async (req, res) => {
     const bookingResult = await query(insertBookingQuery, bookingValues);
     const booking_id = bookingResult.insertId;
 
-    // Insert payment
+    // ✅ Insert payment with transaction_id
     await query(
-      `INSERT INTO payments (booking_id, amount, payment_status, payment_method, payment_date)
-       VALUES (?, ?, 'completed', ?, NOW())`,
-      [booking_id, totalAmount, payment_method]
+      `INSERT INTO payments (booking_id, amount, payment_status, payment_method, transaction_id, payment_date)
+       VALUES (?, ?, 'completed', ?, ?, NOW())`,
+      [booking_id, totalAmount, payment_method, payment_intent_id || null]
     );
 
-    // Send email to guest_walkin
+    // Optional email
     if (guest_walkin_id) {
       const guestResult = await query('SELECT email, name FROM guest_walkin WHERE guest_walkin_id = ?', [guest_walkin_id]);
 
@@ -133,6 +133,7 @@ router.post('/api/walkin-payment', async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error during payment processing' });
   }
 });
+
 // Get all walk-in bookings with guest_walkin data
 router.get('/walkin-bookings', (req, res) => {
   const { date, booking_id } = req.query;
@@ -215,4 +216,25 @@ router.get('/walkin-bookings', (req, res) => {
     res.json(formattedResults);
   });
 });
+router.post('/api/walkin-create-payment-intent', async (req, res) => {
+  const { roomId, checkin, checkout } = req.body;
+
+  const roomRows = await query('SELECT rentperday FROM rooms WHERE room_id = ?', [roomId]);
+  if (roomRows.length === 0) {
+    return res.status(404).json({ error: 'Room not found' });
+  }
+
+  const rentPerDay = parseFloat(roomRows[0].rentperday);
+  const days = calculateDays(checkin, checkout);
+  const amount = rentPerDay * days * 100; // convert to cents
+
+  const paymentIntent = await stripe.paymentIntents.create({
+    amount: amount,
+    currency: 'usd',
+    payment_method_types: ['card'],
+  });
+
+  res.send({ clientSecret: paymentIntent.client_secret });
+});
+
 module.exports = router;

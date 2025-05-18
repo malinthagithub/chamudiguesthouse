@@ -19,6 +19,9 @@ const CheckoutForm = ({ roomId, checkin, checkout, guest_walkin_id }) => {
     if (!stripe || !elements) return;
 
     setLoading(true);
+
+    console.log("Submitting payment with:", { roomId, checkin, checkout, guest_walkin_id });
+
     try {
       const { data } = await axios.post('http://localhost:5000/api/walkin-create-payment-intent', {
         roomId,
@@ -27,6 +30,8 @@ const CheckoutForm = ({ roomId, checkin, checkout, guest_walkin_id }) => {
         guest_walkin_id,
       });
 
+      console.log("Received clientSecret from backend:", data.clientSecret);
+
       const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
@@ -34,16 +39,23 @@ const CheckoutForm = ({ roomId, checkin, checkout, guest_walkin_id }) => {
       });
 
       if (error) {
+        console.error("Stripe payment error:", error);
         Swal.fire("Payment Failed", error.message, "error");
       } else if (paymentIntent.status === 'succeeded') {
-        await axios.post('http://localhost:5000/api/walkin-payment', {
+        console.log("Payment succeeded, paymentIntent:", paymentIntent);
+
+        // Debug: Show what is being sent in payment confirmation
+        const paymentConfirmData = {
           roomId,
           checkin,
           checkout,
-          guest_walkin_id,
-          payment_method: 'card',
-          payment_intent_id: paymentIntent.id
-        });
+          user_id: guest_walkin_id,
+          payment_method: 'stripe',
+          payment_intent_id: paymentIntent.id,
+        };
+        console.log("Sending payment confirmation to backend:", paymentConfirmData);
+
+        await axios.post('http://localhost:5000/api/walkin-payment', paymentConfirmData);
 
         Swal.fire({
           title: "Success!",
@@ -53,6 +65,7 @@ const CheckoutForm = ({ roomId, checkin, checkout, guest_walkin_id }) => {
         }).then(() => navigate("/walk_view"));
       }
     } catch (error) {
+      console.error("Error during payment process:", error);
       Swal.fire("Payment Failed", "An error occurred during payment.", "error");
     } finally {
       setLoading(false);
@@ -93,7 +106,9 @@ const WalkinPayment = () => {
   useEffect(() => {
     const fetchRoomDetails = async () => {
       try {
+        console.log("Fetching room details for roomId:", roomId);
         const { data } = await axios.get(`http://localhost:5000/api/rooms/${roomId}`);
+        console.log("Room details fetched:", data);
         setRoomDetails(data);
       } catch (error) {
         console.error('Error fetching room details:', error);
@@ -111,6 +126,7 @@ const WalkinPayment = () => {
 
   const handleCashPayment = async () => {
     try {
+      console.log("Processing cash payment with:", { roomId, checkin, checkout, guest_walkin_id });
       const { data } = await axios.post('http://localhost:5000/api/walkin-payment', {
         roomId,
         checkin,
@@ -118,6 +134,7 @@ const WalkinPayment = () => {
         guest_walkin_id,
         payment_method: 'cash',
       });
+      console.log("Cash payment response:", data);
 
       if (data.success) {
         Swal.fire({
@@ -130,6 +147,7 @@ const WalkinPayment = () => {
         Swal.fire("Payment Failed", data.message || "Please try again.", "error");
       }
     } catch (err) {
+      console.error("Error during cash payment:", err);
       Swal.fire("Booking Error", "An error occurred. Please try again.", "error");
     }
   };

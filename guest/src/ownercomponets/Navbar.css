@@ -24,7 +24,9 @@
   text-decoration: none;
 }
 
-.navbar-links {
+.navbar-link {
+  position: relative;
+  left: 800px;
   display: flex;
   align-items: center;
 }

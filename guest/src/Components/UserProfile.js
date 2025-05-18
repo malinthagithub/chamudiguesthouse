@@ -5,7 +5,7 @@ import 'react-circular-progressbar/dist/styles.css';
 import { useNavigate } from 'react-router-dom'; // ✅ Import navigate
 
 const UserProfile = () => {
-  const user = JSON.parse(localStorage.getItem("userData"));
+ const user = JSON.parse(sessionStorage.getItem('userData'));
   const userId = user ? user.userId : null;
   const navigate = useNavigate(); // ✅ Initialize navigate
 

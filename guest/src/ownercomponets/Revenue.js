@@ -55,17 +55,17 @@ const Revenue = () => {
       boxShadow: '0 5px 15px rgba(0,0,0,0.3)',
     },
     closeButton: {
-  position: 'absolute',
-  top: '10px',
-  right: '-180px',
-  fontSize: '24px',
-  fontWeight: 'bold',
-  color: '#000',
-  background: 'none',
-  border: 'none',
-  cursor: 'pointer',
-  zIndex: 1001,
-}
+      position: 'absolute',
+      top: '10px',
+      right: '-180px',
+      fontSize: '24px',
+      fontWeight: 'bold',
+      color: '#000',
+      background: 'none',
+      border: 'none',
+      cursor: 'pointer',
+      zIndex: 1001,
+    }
 
   };
 
@@ -79,13 +79,13 @@ const Revenue = () => {
         const monthlyGuestCount = data.filter(item => item.type === 'monthly_guest_count') || [];
         const dailyRevenue = data.filter(item => item.type === 'daily') || [];
         const currentGuestCount = data.find(item => item.type === 'current_guest_count')?.guest_count || 0;
-  
+
         const aggregatedRoomWiseRevenue = {};
         roomWiseRevenue.forEach((item) => {
           aggregatedRoomWiseRevenue[item.room_id] = aggregatedRoomWiseRevenue[item.room_id] || { room_name: item.room_name, revenue: 0 };
           aggregatedRoomWiseRevenue[item.room_id].revenue += parseFloat(item.revenue);
         });
-  
+
         setAnalyticsData({
           monthlyRevenue,
           roomWiseRevenue: Object.values(aggregatedRoomWiseRevenue),
@@ -95,7 +95,7 @@ const Revenue = () => {
         });
       })
       .catch((error) => console.error('Error fetching analytics data:', error));
-  
+
     fetch('http://localhost:5000/api/booktody/today-and-week-bookings')
       .then((response) => response.json())
       .then((data) => {
@@ -104,7 +104,7 @@ const Revenue = () => {
       })
       .catch((error) => console.error('Error fetching today and week bookings:', error));
   }, []);
-  
+
 
   const generateChartData = (labels, data, color) => ({
     labels,
@@ -126,44 +126,44 @@ const Revenue = () => {
     return `$${parseFloat(amount).toFixed(2)}`;
   };
   const handleDownloadOccupancyReport = async () => {
-  try {
-    const response = await fetch('http://localhost:5000/api/reports/download/occupancy');
+    try {
+      const response = await fetch('http://localhost:5000/api/reports/download/occupancy');
 
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+
+      // Check if the response is a PDF
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/pdf')) {
+        throw new Error('Response is not a PDF');
+      }
+
+      // Convert response to blob
+      const blob = await response.blob();
+
+      // Create a URL for the blob
+      const url = window.URL.createObjectURL(blob);
+
+      // Create a temporary link element
+      const link = document.createElement('a');
+      link.href = url;
+
+      // Set the suggested file name
+      link.download = 'occupancy_report_may_2025.pdf';
+
+      // Append to DOM and trigger click
+      document.body.appendChild(link);
+      link.click();
+
+      // Cleanup: remove the link and revoke the object URL
+      link.remove();
+      window.URL.revokeObjectURL(url);
+
+    } catch (error) {
+      console.error('Error downloading the PDF:', error);
     }
-
-    // Check if the response is a PDF
-    const contentType = response.headers.get('content-type');
-    if (!contentType || !contentType.includes('application/pdf')) {
-      throw new Error('Response is not a PDF');
-    }
-
-    // Convert response to blob
-    const blob = await response.blob();
-
-    // Create a URL for the blob
-    const url = window.URL.createObjectURL(blob);
-
-    // Create a temporary link element
-    const link = document.createElement('a');
-    link.href = url;
-
-    // Set the suggested file name
-    link.download = 'occupancy_report_may_2025.pdf';
-
-    // Append to DOM and trigger click
-    document.body.appendChild(link);
-    link.click();
-
-    // Cleanup: remove the link and revoke the object URL
-    link.remove();
-    window.URL.revokeObjectURL(url);
-
-  } catch (error) {
-    console.error('Error downloading the PDF:', error);
-  }
-};
+  };
 
 
   const handleDownload = () => {
@@ -184,7 +184,7 @@ const Revenue = () => {
     link.click();
     document.body.removeChild(link);
   };
-  
+
 
 
 
@@ -202,49 +202,47 @@ const Revenue = () => {
           <h3>Dashboard</h3>
           <ul style={{ listStyle: 'none', padding: 0 }}>
             <li style={{ marginBottom: '10px' }}>
-            <Link to="/revenue" style={{ textDecoration: 'none', color: 'white' }}>
-  <i className="fas fa-sign-out-alt"></i> Home
-</Link>
+              <Link to="/revenue" style={{ textDecoration: 'none', color: 'white' }}>
+                <i className="fas fa-sign-out-alt"></i> Home
+              </Link>
             </li>
             <li style={{ marginBottom: '10px' }}>
               <Link to="/dashboard" style={{ textDecoration: 'none', color: 'white' }}>
-              <i className="fas fa-hotel"></i>  Manage Rooms
+                <i className="fas fa-hotel"></i>  Manage Rooms
               </Link>
             </li>
             <li style={{ marginBottom: '10px' }}>
               <Link to="/add-room" style={{ textDecoration: 'none', color: 'white' }}>
-              <i className="fas fa-calendar-check"></i>    New-Room
+                <i className="fas fa-calendar-check"></i>    New-Room
               </Link>
             </li>
             <li style={{ marginBottom: '10px' }}>
               <Link to="/register-clerk" style={{ textDecoration: 'none', color: 'white' }}>
-              <i className="fas fa-calendar-check"></i>    Add-Clerk
+                <i className="fas fa-calendar-check"></i>    Add-Clerk
               </Link>
             </li>
             <li style={{ marginBottom: '10px' }}>
               <Link to="/comment" style={{ textDecoration: 'none', color: 'white' }}>
-              <i className="fas fa-users"> </i>  Coment
+                <i className="fas fa-users"> </i>  Coment
               </Link>
             </li>
             <li style={{ marginBottom: '10px' }}> <i className="fas fa-cog"></i>
-            Settings</li>
-           <button
-        onClick={() => setIsModalOpen(true)}
-        style={{ marginBottom: '10px', position: 'relative', top: '80px' }}
-      >
-        Revenue Report
-      </button>
-           <button onClick={handleDownloadOccupancyReport} style={{ marginBottom: '10px', position: 'relative', top: '80px' }}>
-  Report
-</button>
+              Settings</li>
+            <button
+              onClick={() => setIsModalOpen(true)}
+              style={{ marginBottom: '10px', position: 'relative', top: '80px' }}
+            >
+              Revenue Report
+            </button>
+
 
             <div>
-          <button style={{ marginBottom: '10px',position:"relative", top:"80px" }} onClick={handleDownload}>Online Booking Report</button>
-        </div>
-        <div>
-          <button style={{ marginBottom: '10px',position:"relative", top:"80px" }} onClick={handleDownloadwalk}>walk Report</button>
-        </div>
-       
+              <button style={{ marginBottom: '10px', position: "relative", top: "80px" }} onClick={handleDownload}>Online Booking Report</button>
+            </div>
+            <div>
+              <button style={{ marginBottom: '10px', position: "relative", top: "80px" }} onClick={handleDownloadwalk}>walk Report</button>
+            </div>
+
           </ul>
         </div>
 
@@ -264,65 +262,65 @@ const Revenue = () => {
         </div>
 
         <div>
-              <h3>Active Guest Count</h3>
-              <Bar
-                data={{
-                  labels: ['Active Guests'], // x-axis label
-                  datasets: [
-                    {
-                      label: 'Current Guest Count',
-                      data: [analyticsData.currentGuestCount], // y-axis data
-                      backgroundColor: ['rgba(54, 162, 235, 0.6)'], // Bar color
-                      borderColor: ['rgba(54, 162, 235, 1)'], // Border color
-                      borderWidth: 1, // Border width
-                    },
-                  ],
-                }}
-                options={{
-                  responsive: true,
-                  scales: {
-                    x: {
-                      title: {
-                        display: true,
-                        text: 'Guest Status', // x-axis title
-                      },
-                    },
-                    y: {
-                      title: {
-                        display: true,
-                        text: 'Count', // y-axis title
-                      },
-                      beginAtZero: true, // Start y-axis from 0
-                    },
+          <h3>Active Guest Count</h3>
+          <Bar
+            data={{
+              labels: ['Active Guests'], // x-axis label
+              datasets: [
+                {
+                  label: 'Current Guest Count',
+                  data: [analyticsData.currentGuestCount], // y-axis data
+                  backgroundColor: ['rgba(54, 162, 235, 0.6)'], // Bar color
+                  borderColor: ['rgba(54, 162, 235, 1)'], // Border color
+                  borderWidth: 1, // Border width
+                },
+              ],
+            }}
+            options={{
+              responsive: true,
+              scales: {
+                x: {
+                  title: {
+                    display: true,
+                    text: 'Guest Status', // x-axis title
                   },
-                  plugins: {
-                    tooltip: {
-                      enabled: true,
-                    },
-                    legend: {
-                      position: 'top',
-                    },
+                },
+                y: {
+                  title: {
+                    display: true,
+                    text: 'Count', // y-axis title
                   },
-                }}
-              />
-            </div>
-{isModalOpen && (
-        <div style={styles.overlay}>
-          <div style={styles.modal}>
-            <button
-              onClick={() => setIsModalOpen(false)}
-              style={styles.closeButton}
-            >
-              X
-            </button>
-            <RevenueReportDownload />
-          </div>
+                  beginAtZero: true, // Start y-axis from 0
+                },
+              },
+              plugins: {
+                tooltip: {
+                  enabled: true,
+                },
+                legend: {
+                  position: 'top',
+                },
+              },
+            }}
+          />
         </div>
-      )}
+        {isModalOpen && (
+          <div style={styles.overlay}>
+            <div style={styles.modal}>
+              <button
+                onClick={() => setIsModalOpen(false)}
+                style={styles.closeButton}
+              >
+                X
+              </button>
+              <RevenueReportDownload />
+            </div>
+          </div>
+        )}
         {/* Today's Bookings Section */}
-        <div style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse',position: 'relative', top: '100px',left: '-280px' }}>
-          <h3 style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse',position: 'relative', top: '100px' }}> Today's Bookings</h3>
-          <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse',position: 'relative', top: '100px' }}>
+        <div style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse', position: 'relative', top: '100px', left: '-280px' }}>
+          <h3 style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse', position: 'relative', top: '100px' }}> Today's Bookings</h3>
+          <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse', position: 'relative', top: '100px' }}>
             <thead>
               <tr>
                 <th style={{ padding: '10px', backgroundColor: '#f4f4f4' }}>Room Name</th>
@@ -353,7 +351,7 @@ const Revenue = () => {
         </div>
 
         {/* This Week's Bookings Section */}
-        <div style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse',position: 'relative', top: '200px',left: '-280px' }}>
+        <div style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse', position: 'relative', top: '200px', left: '-280px' }}>
           <h3>This Week's Bookings</h3>
           <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
             <thead>

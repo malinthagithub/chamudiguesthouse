@@ -5,8 +5,11 @@ import { FaHotel, FaRegSadTear } from "react-icons/fa";
 import "./ConfirmBooking.css";
 
 function ConfirmBooking() {
-    const user = JSON.parse(localStorage.getItem("userData"));
-    const userId = user ? user.userId : null;
+   // Changed from localStorage to sessionStorage
+  const userData = JSON.parse(sessionStorage.getItem('userData'));
+  const userRole = userData?.role;
+  const userId = userData?.userId;
+    const user = userData?.username;
 
     const [bookings, setBookings] = useState([]);
     const [loading, setLoading] = useState(true);

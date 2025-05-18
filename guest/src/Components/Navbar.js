@@ -9,16 +9,17 @@ const Navbar = ({ isAuthenticated, username, setIsAuthenticated }) => {
   const [menuOpen, setMenuOpen] = useState(false);
   const [showFaqModal, setShowFaqModal] = useState(false);
 
-  const userData = JSON.parse(localStorage.getItem('userData'));
-  const userRole = userData?.role;
+ const userData = JSON.parse(sessionStorage.getItem('userData'));
+const userRole = userData?.role;
 
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userData');
-    setIsAuthenticated(false);
-    setMenuOpen(false);
-    navigate('/login');
-  };
+const handleLogout = () => {
+  sessionStorage.removeItem('token');
+  sessionStorage.removeItem('userData');
+  setIsAuthenticated(false);
+  setMenuOpen(false);
+  navigate('/login');
+};
+
 
   // Custom component that looks like Link but opens modal
   const FaqLink = ({ children }) => (

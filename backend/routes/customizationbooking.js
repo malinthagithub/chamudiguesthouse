@@ -52,5 +52,37 @@ router.get('/room-customizations', async (req, res) => {
     res.status(500).json({ error: 'Failed to fetch data' });
   }
 });
+router.get('/available-customizable-rooms', async (req, res) => {
+  try {
+    const { checkin_date, checkout_date } = req.query;
+
+    if (!checkin_date || !checkout_date) {
+      return res.status(400).json({ error: "Please provide checkin_date and checkout_date" });
+    }
+
+    const query = `
+      SELECT r.*
+      FROM rooms r
+      WHERE r.customizable = 1
+        AND r.room_id NOT IN (
+          SELECT b.room_id
+          FROM bookings b
+          WHERE b.status IN ('confirmed', 'arrived')
+            AND NOT (
+              b.checkout_date <= ? OR b.checkin_date >= ?
+            )
+        )
+      ORDER BY r.name
+    `;
+
+    const [results] = await db.promise().query(query, [checkin_date, checkout_date]);
+
+    res.json(results);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Failed to fetch available customizable rooms' });
+  }
+});
+
 
 module.exports = router;

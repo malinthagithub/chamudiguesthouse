@@ -16,8 +16,8 @@ const BookingPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   
-  // Get user data from local storage
-  const user = JSON.parse(localStorage.getItem('userData'));
+  // Changed from localStorage to sessionStorage
+  const user = JSON.parse(sessionStorage.getItem('userData'));
   const userId = user ? user.userId : null;
   
   // Calculate the number of nights and total amount

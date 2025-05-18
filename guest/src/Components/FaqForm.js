@@ -12,7 +12,7 @@ function FaqForm({ isOpen, onClose }) {
   const [viewingAnswers, setViewingAnswers] = useState(false);
 
   // Get userId from localStorage
-  const user = JSON.parse(localStorage.getItem("userData"));
+ const user = JSON.parse(sessionStorage.getItem('userData'));
   const userId = user ? user.userId : null;
 
   useEffect(() => {

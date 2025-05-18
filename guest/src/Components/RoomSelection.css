@@ -188,3 +188,191 @@
       padding: 1rem;
     }
   }
+  /* RoomSelection.css - Minimal Date Picker & Buttons Only */
+.date-picker-form {
+  display: flex;
+  gap: 1rem;
+  align-items: flex-end;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: #f8f9fa;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.date-picker-form label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  font-weight: 500;
+  color: #2c3e50;
+}
+
+.date-picker-form input[type="date"] {
+  padding: 0.75rem 1rem;
+  border: 1px solid #dfe6e9;
+  border-radius: 8px;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  min-width: 180px;
+}
+
+.date-picker-form input[type="date"]:focus {
+  outline: none;
+  border-color: #3498db;
+  box-shadow: 0 0 0 2px rgba(52, 152, 219, 0.2);
+}
+
+.date-picker-form button {
+  position: relative;
+  top: -15px;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.date-picker-form button[type="submit"] {
+  background-color: #3498db;
+  color: white;
+}
+
+.date-picker-form button[type="submit"]:hover {
+  background-color: #2980b9;
+}
+
+.date-picker-form button[type="submit"]:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.reset-buttont {
+  height: 40px;
+  width: 40px;
+  position: relative;
+  top: -10px;
+  left: 20px;
+  background-color: #e74c3c;
+  color: white;
+}
+
+.reset-buttont:hover {
+  background-color: #c0392b;
+}
+
+.reset-buttont:disabled {
+  background-color: #bdc3c7;
+  cursor: not-allowed;
+}
+
+.validation-error {
+  color: #e74c3c;
+  margin-top: -1rem;
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .date-picker-form {
+    flex-direction: column;
+    align-items: stretch;
+  }
+  
+  .date-picker-form input[type="date"] {
+    width: 100%;
+  }
+}
+
+.modal-overlayl {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.modal-contentl {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  max-width: 600px;
+  width: 90%;
+  position: relative;
+}
+.modal-contentl h2 {
+  position: relative;
+  left: 250px;
+  margin: 0;
+  font-size: 1.5rem;
+  color: #333;
+}
+
+.modal-close-btnl {
+  color: #000;
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+}
+
+.slider-containerl {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px 0;
+}
+
+.slider-imagel {
+  max-width: 500px;
+  max-height: 250px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin: 0 10px;
+}
+
+.slider-arrowl {
+
+  background-color: rgb(255, 255, 255);
+  border: none;
+  font-size: 30px;
+  color: rgb(21, 17, 17);
+  padding: 5px,1px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+
+.slider-btnl:hover {
+  background: #0056b3;
+}
+
+.room-badge-widel {
+  width: 40px;
+  background-color: #ff5722;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 10;
+  user-select: none;
+}
+
+.room-image-container-widel {
+  position: relative;
+}

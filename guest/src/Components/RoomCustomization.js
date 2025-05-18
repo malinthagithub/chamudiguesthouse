@@ -5,9 +5,10 @@ import { Elements, CardElement, useStripe, useElements } from '@stripe/react-str
 import { FiWifi, FiDroplet, FiWind, FiCoffee, FiSun, FiWatch, FiHome, FiCalendar } from 'react-icons/fi';
 import { FaSwimmingPool, FaBed, FaMoneyBillWave } from 'react-icons/fa';
 import { IoWaterOutline } from 'react-icons/io5';
-import { useParams } from 'react-router-dom';
-import './RoomCustomization.css';
+import { useParams,useNavigate } from 'react-router-dom';
 
+import './RoomCustomization.css';
+import Swal from 'sweetalert2';
 const stripePromise = loadStripe('pk_test_51QwQDmEE05ueOOCKzSNPSRQgBaePuf5CZOibhqOKrcxgw8JGtv5JW7iJWYmzWiRSZ4UvjX3FgNZ8omZS1tDduvFG00P1Xd2j5Y');
 
 const RoomCustomization = () => {
@@ -31,7 +32,7 @@ const RoomCustomization = () => {
 
   const stripe = useStripe();
   const elements = useElements();
-
+ const navigate = useNavigate();
   useEffect(() => {
     const fetchRoomDetails = async () => {
       try {
@@ -102,9 +103,11 @@ const RoomCustomization = () => {
         return;
       }
      // Get user data from local storage
-  const user = JSON.parse(localStorage.getItem('userData'));
+  // Changed from localStorage to sessionStorage
+  const user = JSON.parse(sessionStorage.getItem('userData'));
   const userId = user ? user.userId : null;
 
+  
       const response = await axios.post('http://localhost:5000/api/customization/customize', {
        user_id: userId,
         room_id: roomId,
@@ -123,12 +126,24 @@ const RoomCustomization = () => {
         payment_method_id: paymentMethod.id,
       });
 
-      if (response.status === 200) {
-        alert('Booking successful! Thank you for your reservation.');
-        // Reset form or redirect here
-      } else {
-        alert('Booking failed. Please try again.');
-      }
+     if (response.status === 200) {
+  Swal.fire({
+    title: 'Success!',
+    text: 'Booking successful! Thank you for your reservation.',
+    icon: 'success',
+    confirmButtonText: 'View Bookings',
+  }).then(() => {
+    // Redirect after user clicks the button
+    navigate('/confirm');
+  });
+} else {
+  Swal.fire({
+    title: 'Error!',
+    text: 'Booking failed. Please try again.',
+    icon: 'error',
+    confirmButtonText: 'Retry',
+  });
+}
     } catch (error) {
       console.error('Error processing booking:', error);
       alert(error.response?.data?.message || 'An error occurred during booking.');

@@ -1,21 +1,22 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+
 import Login from './Components/Login';
 import Register from './Components/Register';
 import HomePage from './Components/HomePage';
 import RoomDetails from './Components/RoomDetails';
-import Navbar from './Components/Navbar'; // Regular Navbar
+import Navbar from './Components/Navbar';
 import BookingPage from './Components/BookingPage';
 import About from './Components/About';
 import ConfirmBooking from './Components/ConfirmBooking';
 import HotelBookingPage from './Components/HotelBookingPage';
-import OwnerRoomDashboard from './ownercomponets/OwnerRoomDashboard'; // Owner Dashboard
-import AddRoom from './ownercomponets/AddRoom'; // Owner Add Room
-import Revenue from './ownercomponets/Revenue'; // Owner Revenue
-import RoomReview from './ownercomponets/RoomReview'; // Owner Review
-import RoomBookings from './ownercomponets/RoomBookings'; // Owner Room Bookings
-import UpdateRoom from './ownercomponets/UpdateRoom'; // Owner Update Room
-import NavbarOwner from './ownercomponets/Navbar'; // Owner Navbar
+import OwnerRoomDashboard from './ownercomponets/OwnerRoomDashboard';
+import AddRoom from './ownercomponets/AddRoom';
+import Revenue from './ownercomponets/Revenue';
+import RoomReview from './ownercomponets/RoomReview';
+import RoomBookings from './ownercomponets/RoomBookings';
+import UpdateRoom from './ownercomponets/UpdateRoom';
+import NavbarOwner from './ownercomponets/Navbar';
 import RoomCustomization from './Components/RoomCustomization';
 import ResetPassword from './Components/ResetPassword';
 import Revenueclerk from './clerkcomponets/Revenueclerk';
@@ -33,35 +34,85 @@ import GuestWalkinForm from './clerkcomponets/GuestWalkinForm';
 import WalkinPayment from './clerkcomponets/WalkinPayment';
 import WalkinBookings from './clerkcomponets/WalkinBookings';
 
-// PrivateRoute wrapper component
-const PrivateRoute = ({ isAuthenticated, children }) => {
-  if (!isAuthenticated) {
-    // If user is not authenticated, redirect to login page
-    return <Navigate to="/login" replace />;
+// PrivateRoute wrapper
+const PrivateRoute = ({ isAuthenticated, children ,loading,}) => {
+   if (loading) {
+    return <div>Loading...</div>;
   }
-  // If authenticated, render the children component(s)
+  if (!isAuthenticated) {
+    console.log("PrivateRoute: User not authenticated, redirecting to /login");
+     return <Navigate to="/login" replace />;
+  }
+  return children;
+};
+
+// Role-based protected route
+const RoleProtectedRoute = ({ isAuthenticated, userRole, allowedRoles, children,loading, }) => {
+   if (loading) {
+    return <div>Loading...</div>;
+  }
+  if (!isAuthenticated) {
+    console.log("RoleProtectedRoute: User not authenticated, redirecting to /login.");
+   return <Navigate to="/login" replace />;
+  }
+  if (!allowedRoles.includes(userRole)) {
+    console.log(`RoleProtectedRoute: User role '${userRole}' not allowed, redirecting to home.`);
+    let redirectPath = "/"; // default redirect for guest
+
+    if (userRole === "owner") {
+      redirectPath = "/revenue";
+    } else if (userRole === "clerk") {
+      redirectPath = "/revenueclerk";
+    } else if (userRole === "guest") {
+      redirectPath = "/";
+    }
+
+    return <Navigate to={redirectPath} replace />;
+  }
   return children;
 };
 
 const App = () => {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [username, setUsername] = useState('');
+  const [userRole, setUserRole] = useState('guest'); // default role
+  const [loading, setLoading] = useState(true);  // new loading state
 
   useEffect(() => {
-    const userToken = localStorage.getItem('token');
-    const userData = localStorage.getItem('userData');
+    console.log("App useEffect: Checking sessionStorage for token and userData...");
+
+    const userToken = sessionStorage.getItem('token');
+    const userData = sessionStorage.getItem('userData');
+
+    console.log("Raw userData from sessionStorage:", userData);
 
     if (userToken && userData) {
       try {
         const parsedUserData = JSON.parse(userData);
         setIsAuthenticated(true);
-        setUsername(parsedUserData.username || 'Guest');
+        setUserRole(parsedUserData.role || 'guest');
+        setUsername(parsedUserData.username || '');
+        console.log("App useEffect: Authenticated as:", parsedUserData.role);
       } catch (error) {
         console.error("Error parsing userData:", error);
-        localStorage.removeItem('userData');
+        sessionStorage.removeItem('userData');
+        sessionStorage.removeItem('token');
+        setIsAuthenticated(false);
+        setUserRole('guest');
+        setUsername('');
       }
+    } else {
+      console.log("App useEffect: No token or userData found in sessionStorage.");
+      setIsAuthenticated(false);
+      setUserRole('guest');
+      setUsername('');
     }
+     setLoading(false); // done loading session check
   }, []);
+  if (loading) {
+    // Render a loading spinner or empty div while checking session
+    return <div>Loading...</div>;
+  }
 
   return (
     <Router>
@@ -70,21 +121,28 @@ const App = () => {
         setIsAuthenticated={setIsAuthenticated}
         username={username}
         setUsername={setUsername}
+        userRole={userRole}
+        setUserRole={setUserRole}
       />
     </Router>
   );
 };
 
-// MainContent with routing and navbar logic
-const MainContent = ({ isAuthenticated, setIsAuthenticated, username, setUsername }) => {
+const MainContent = ({ isAuthenticated, setIsAuthenticated, username, setUsername, userRole, setUserRole }) => {
   const location = useLocation();
-  const isOwnerRoute = location.pathname.startsWith('/owner');
+
+  if (!userRole) {
+    console.log("MainContent: Waiting for userRole to load...");
+    return <div>Loading...</div>;
+  }
+
+  console.log("MainContent: Rendering routes for userRole:", userRole);
 
   return (
     <div className="App">
-      {/* Navbar */}
+      {/* Navbar rendering based on user role */}
       {location.pathname !== '/user-profile' && location.pathname !== '/hotel' && (
-        isOwnerRoute ? (
+        userRole === 'gg' ? (
           <NavbarOwner
             isAuthenticated={isAuthenticated}
             username={username}
@@ -101,15 +159,33 @@ const MainContent = ({ isAuthenticated, setIsAuthenticated, username, setUsernam
 
       <Routes>
         <Route path="/hotel" element={<HotelBookingPage />} />
+      <Route
+  path="/"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['guest']}
+    >
+      <HomePage />
+    </RoleProtectedRoute>
+  }
+/>
 
-        {/* Redirect '/' to home page if authenticated or to /hotel */}
-        <Route path="/" element={isAuthenticated ? <HomePage /> : <Navigate to="/hotel" />} />
-
-        <Route path="/login" element={<Login setIsAuthenticated={setIsAuthenticated} setUsername={setUsername} />} />
+        <Route
+          path="/login"
+          element={
+            <Login
+              setIsAuthenticated={setIsAuthenticated}
+              setUsername={setUsername}
+              setUserRole={setUserRole} // Important: pass setUserRole here
+            />
+          }
+        />
         <Route path="/register" element={<Register />} />
         <Route path="/room/:room_id" element={<RoomDetails />} />
 
-        {/* Protected routes for guest users */}
+        {/* Protected guest routes */}
         <Route
           path="/booking"
           element={
@@ -118,50 +194,317 @@ const MainContent = ({ isAuthenticated, setIsAuthenticated, username, setUsernam
             </PrivateRoute>
           }
         />
+
+        {/* About page for guests only */}
         <Route
           path="/about"
           element={
-            <PrivateRoute isAuthenticated={isAuthenticated}>
+            <RoleProtectedRoute
+              isAuthenticated={isAuthenticated}
+              userRole={userRole}
+              allowedRoles={['guest']}
+            >
               <About />
-            </PrivateRoute>
-          }
-        />
-        <Route
-          path="/confirm"
-          element={
-            <PrivateRoute isAuthenticated={isAuthenticated}>
-              <ConfirmBooking />
-            </PrivateRoute>
+            </RoleProtectedRoute>
           }
         />
 
-        {/* Owner Dashboard routes */}
-        <Route path="/dashboard" element={<OwnerRoomDashboard />} />
-        <Route path="/add-room" element={<AddRoom />} />
+        {/* Owner & Clerk routes */}
         <Route
-          path="/update-room/:roomId"
-          element={isAuthenticated ? <UpdateRoom /> : <Navigate to="/login" />}
-        />
+  path="/confirm"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['guest']}   // ✅ guests only
+    >
+      <ConfirmBooking />
+    </RoleProtectedRoute>
+  }
+/>
+
+        <Route
+  path="/dashboard"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['owner']}
+    >
+      <OwnerRoomDashboard />
+    </RoleProtectedRoute>
+  }
+/>
+
+       <Route
+  path="/add-room"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['owner']}
+    >
+      <AddRoom />
+    </RoleProtectedRoute>
+  }
+/>
+
+<Route
+  path="/update-room/:roomId"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['owner']}
+    >
+      <UpdateRoom />
+    </RoleProtectedRoute>
+  }
+/>
+
         <Route path="/room-bookings/:roomId" element={<RoomBookings />} />
-        <Route path="/revenue" element={<Revenue />} />
-        <Route path="/comment" element={<RoomReview />} />
-        <Route path="/room-customization/:roomId" element={<RoomCustomization />} />
+        <Route
+  path="/revenue"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['owner']}
+    >
+      <Revenue />
+    </RoleProtectedRoute>
+  }
+/>
+
+       <Route
+  path="/comment"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['owner']}
+    >
+      <RoomReview />
+    </RoleProtectedRoute>
+  }
+/>
+
+       <Route
+  path="/room-customization/:roomId"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['guest']}
+    >
+      <RoomCustomization />
+    </RoleProtectedRoute>
+  }
+/>
+
         <Route path="/reset-password/:token" element={<ResetPassword />} />
-        <Route path="/revenueclerk" element={<Revenueclerk />} />
-        <Route path="/user-profile" element={<UserProfile />} />
-        <Route path="/room-selection" element={<RoomSelection />} />
-        <Route path="/all-bookings" element={<AllBookings />} />
-        <Route path="/faq" element={<FaqForm />} />
-        <Route path="/clerk-faq-dashboard" element={<ClerkFAQDashboard />} />
-        <Route path="/today-bookings" element={<TodayBookings />} />
-        <Route path="/register-clerk" element={<RegisterClerk />} />
-        <Route path="/cancellations" element={<CancellationsPage />} />
-        <Route path="/booking-customizations" element={<BookingCustomizations />} />
-        <Route path="/clerk-available" element={<ClerkAvailable />} />
-        <Route path="//walkin-payment" element={<GuestWalkinForm />} />
-        <Route path="/payment" element={<WalkinPayment />} />
-        <Route path="/walk_view" element={<WalkinBookings />} />
-        <Route path="/walkin-payment" element={<WalkinPayment />} />
+       <Route
+  path="/revenueclerk"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <Revenueclerk />
+    </RoleProtectedRoute>
+  }
+/>
+
+       <Route
+  path="/user-profile"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['guest']}
+    >
+      <UserProfile />
+    </RoleProtectedRoute>
+  }
+/>
+
+<Route
+  path="/room-selection"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['guest']}
+    >
+      <RoomSelection />
+    </RoleProtectedRoute>
+  }
+/>
+
+      <Route
+  path="/all-bookings"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <AllBookings />
+    </RoleProtectedRoute>
+  }
+/>
+
+<Route
+  path="/faq"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <FaqForm />
+    </RoleProtectedRoute>
+  }
+/>
+
+<Route
+  path="/clerk-faq-dashboard"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <ClerkFAQDashboard />
+    </RoleProtectedRoute>
+  }
+/>
+
+       <Route
+  path="/today-bookings"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <TodayBookings />
+    </RoleProtectedRoute>
+  }
+/>
+
+        <Route
+  path="/register-clerk"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['owner']}
+    >
+      <RegisterClerk />
+    </RoleProtectedRoute>
+  }
+/>
+
+        <Route
+  path="/cancellations"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <CancellationsPage />
+    </RoleProtectedRoute>
+  }
+/>
+<Route
+  path="/booking-customizations"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <BookingCustomizations />
+    </RoleProtectedRoute>
+  }
+/>
+<Route
+  path="/clerk-available"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <ClerkAvailable />
+    </RoleProtectedRoute>
+  }
+/>
+<Route
+  path="/walkin-payment"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <GuestWalkinForm />
+    </RoleProtectedRoute>
+  }
+/>
+
+      <Route
+  path="/walkin-payment"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <WalkinPayment />
+    </RoleProtectedRoute>
+  }
+/>
+<Route
+  path="/payment"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <WalkinPayment />
+    </RoleProtectedRoute>
+  }
+/>
+<Route
+  path="/walk_view"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <WalkinBookings />
+    </RoleProtectedRoute>
+  }
+/>
+<Route
+  path="/walkin-bookings"
+  element={
+    <RoleProtectedRoute
+      isAuthenticated={isAuthenticated}
+      userRole={userRole}
+      allowedRoles={['clerk']}
+    >
+      <WalkinBookings />
+    </RoleProtectedRoute>
+  }
+/>
+
       </Routes>
     </div>
   );

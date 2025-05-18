@@ -5,10 +5,16 @@ import './Navbar.css';
 const Navbar = ({ isAuthenticated, username, setIsAuthenticated }) => {
   const navigate = useNavigate();
 
+ // Changed from localStorage to sessionStorage
+  const userData = JSON.parse(sessionStorage.getItem('userData'));
+  const userRole = userData?.role;
+
   const handleLogout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('userData');
+    // Changed from localStorage to sessionStorage
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('userData');
     setIsAuthenticated(false);
+    setMenuOpen(false);
     navigate('/login');
   };
 
@@ -17,7 +23,7 @@ const Navbar = ({ isAuthenticated, username, setIsAuthenticated }) => {
       <div className="navbar-container">
        
 
-        <div className="navbar-links">
+        <div className="navbar-link">
         {isAuthenticated && (
             <>
              

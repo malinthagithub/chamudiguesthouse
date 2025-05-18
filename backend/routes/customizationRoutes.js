@@ -9,14 +9,30 @@ router.post('/customize', async (req, res) => {
         breakfast, pool_access, view, payment_method_id, checkin_date, checkout_date, total_price 
     } = req.body;
 
-    // Step 1: Check if the room is already booked for the selected dates
+    // Validate input dates
+    if (!checkin_date || !checkout_date) {
+        return res.status(400).json({ message: 'Check-in and check-out dates are required' });
+    }
+
+    // Step 1: Check if the room is already booked for the selected dates and status is NOT 'cancelled'
     const checkAvailabilityQuery = `
         SELECT * FROM bookings 
-        WHERE room_id = ? 
-        AND ((checkin_date <= ? AND checkout_date >= ?) OR (checkin_date <= ? AND checkout_date >= ?))
+WHERE room_id = ? 
+AND status NOT IN ('cancelled', 'pending')
+AND (
+    (checkin_date <= ? AND checkout_date > ?) OR
+    (checkin_date < ? AND checkout_date >= ?) OR
+    (checkin_date >= ? AND checkout_date <= ?)
+)
+
     `;
 
-    db.query(checkAvailabilityQuery, [room_id, checkout_date, checkin_date, checkin_date, checkout_date], (err, results) => {
+    db.query(checkAvailabilityQuery, [
+        room_id,
+        checkout_date, checkin_date,  // For condition 1
+        checkin_date, checkout_date,  // For condition 2
+        checkin_date, checkout_date   // For condition 3
+    ], (err, results) => {
         if (err) {
             console.error('Error checking room availability:', err);
             return res.status(500).json({ message: 'Database error while checking availability' });
@@ -126,6 +142,7 @@ router.post('/customize', async (req, res) => {
         });
     });
 });
+
 // GET /api/rooms/customizable - get only customizable rooms
 router.get('/customizable', async (req, res) => {
   try {

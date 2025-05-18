@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';  // Import Framer Motion for 3D effects
-import './Login.css'; // Ensure this file has proper styles
+import { motion } from 'framer-motion';
+import './Login.css';
 
-const Login = ({ setIsAuthenticated, setUsername }) => {
+const Login = ({ setIsAuthenticated, setUsername, setUserRole }) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -12,7 +12,6 @@ const Login = ({ setIsAuthenticated, setUsername }) => {
   const [isForgotPassword, setIsForgotPassword] = useState(false);
   const navigate = useNavigate();
 
-  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -39,16 +38,28 @@ const Login = ({ setIsAuthenticated, setUsername }) => {
           username: response.data.username,
           email,
           userId: response.data.id,
-          role: response.data.role
+          role: response.data.role,
         };
-        localStorage.setItem('token', response.data.token);
-        localStorage.setItem('userData', JSON.stringify(userData));
 
+        // Store token and userData in sessionStorage
+        sessionStorage.setItem('token', response.data.token);
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+
+        // Update states
         setIsAuthenticated(true);
         setUsername(response.data.username);
+        setUserRole(response.data.role);
 
-        // Navigate based on user role
-        navigate(response.data.role === 'owner' ? '/revenue' : response.data.role === 'clerk' ? '/revenueclerk' : '/');
+        console.log("User logged in with role:", response.data.role);
+
+        // Redirect based on role
+        if (response.data.role === 'owner') {
+          navigate('/revenue');
+        } else if (response.data.role === 'clerk') {
+          navigate('/revenueclerk');
+        } else {
+          navigate('/');
+        }
 
       } catch (err) {
         setError(err.response?.data?.message || 'Invalid email or password');
@@ -60,19 +71,18 @@ const Login = ({ setIsAuthenticated, setUsername }) => {
 
   return (
     <div className="login-container">
-      {/* 3D Rotation Effect (Rotates Once) */}
-      <div
-       
-        transition={{ duration: 2, ease: "easeInOut" }} // Smooth transition in 2 seconds
+      <motion.div
+        initial={{ rotateY: 0 }}
+        animate={{ rotateY: 360 }}
+        transition={{ duration: 2, ease: "easeInOut" }}
         className="login-box"
       >
-        <h2 className="white-text"><strong>{isForgotPassword ? 'Reset Password' : 'Sing in'}</strong></h2>
+        <h2 className="white-text"><strong>{isForgotPassword ? 'Reset Password' : 'Sign in'}</strong></h2>
 
-        {/* Display Error Message */}
         {error && <p className="error">{error}</p>}
 
         <form onSubmit={handleSubmit}>
-          <div className="input-grou">
+          <div className="input-group">
             <label>Email</label>
             <input
               type="email"
@@ -82,9 +92,8 @@ const Login = ({ setIsAuthenticated, setUsername }) => {
             />
           </div>
 
-          {/* Password input field will only be displayed when not in "Forgot Password" mode */}
           {!isForgotPassword && (
-            <div className="input-grou">
+            <div className="input-group">
               <label>Password</label>
               <input
                 type="password"
@@ -95,19 +104,17 @@ const Login = ({ setIsAuthenticated, setUsername }) => {
             </div>
           )}
 
-          {/* Login button with loading state */}
           <button className='login' type="submit" disabled={loading}>
             {loading ? (isForgotPassword ? 'Sending email...' : 'Logging in...') : (isForgotPassword ? 'Send Reset Email' : 'Login')}
           </button>
         </form>
 
-        {/* Forgot Password link toggles between login and reset password */}
         {!isForgotPassword ? (
           <p onClick={() => setIsForgotPassword(true)} className="forgot-password-link">Forgot Password?</p>
         ) : (
-          <p onClick={() => setIsForgotPassword(false)} className="forgot-password-link">Back to Sing in</p>
+          <p onClick={() => setIsForgotPassword(false)} className="forgot-password-link">Back to Sign in</p>
         )}
-      </div>
+      </motion.div>
     </div>
   );
 };
