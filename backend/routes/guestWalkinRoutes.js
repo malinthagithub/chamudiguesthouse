@@ -1,11 +1,26 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const authenticateToken = require('../middleware/auth'); // import the middleware
 
-router.post('/', (req, res) => {
-  const { name, phone, email, id_proof, country, created_at } = req.body;
+// ADD the middleware here ⬇️
+router.post('/', authenticateToken, (req, res) => {
+  console.log('Received guestWalkin payload:', req.body);
 
-  // First, check if email already exists
+  const guestData = req.body.guest_walkin_data || {};
+  const { name, phone, email, id_proof, country, created_at } = guestData;
+
+  // 🔐 Get clerk ID from token
+  const ownerclerk_id = req.user?.id;
+
+  if (!ownerclerk_id) {
+    return res.status(401).json({ error: 'Unauthorized: Clerk not logged in' });
+  }
+
+  if (!name || !phone || !email) {
+    return res.status(400).json({ error: 'Missing required guest data' });
+  }
+
   const checkEmailQuery = `SELECT * FROM guest_walkin WHERE email = ?`;
 
   db.query(checkEmailQuery, [email], (err, results) => {
@@ -15,17 +30,15 @@ router.post('/', (req, res) => {
     }
 
     if (results.length > 0) {
-      // Email already exists
       return res.status(400).json({ error: 'Email already registered' });
     }
 
-    // Email not found, proceed to insert
     const insertQuery = `
-      INSERT INTO guest_walkin (name, phone, email, id_proof, country, created_at)
-      VALUES (?, ?, ?, ?, ?, ?)
+      INSERT INTO guest_walkin (name, phone, email, id_proof, country, created_at, ownerclerk_id)
+      VALUES (?, ?, ?, ?, ?, ?, ?)
     `;
 
-    db.query(insertQuery, [name, phone, email, id_proof, country, created_at], (err, result) => {
+    db.query(insertQuery, [name, phone, email, id_proof, country, created_at, ownerclerk_id], (err, result) => {
       if (err) {
         console.error('Error inserting guest walkin:', err);
         return res.status(500).json({ error: 'Internal Server Error' });

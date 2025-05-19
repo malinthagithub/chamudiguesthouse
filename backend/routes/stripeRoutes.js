@@ -55,7 +55,7 @@ router.post("/book-room", async (req, res) => {
 
     // Stripe payment
     const paymentIntent = await stripe.paymentIntents.create({
-      amount: total_amount,
+      amount: total_amount*100,
       currency: "usd",
       payment_method_data: {
         type: "card",

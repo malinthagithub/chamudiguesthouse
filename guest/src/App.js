@@ -41,7 +41,7 @@ const PrivateRoute = ({ isAuthenticated, children ,loading,}) => {
   }
   if (!isAuthenticated) {
     console.log("PrivateRoute: User not authenticated, redirecting to /login");
-     return <Navigate to="/login" replace />;
+     return <Navigate to="/hotel" replace />;
   }
   return children;
 };
@@ -53,7 +53,7 @@ const RoleProtectedRoute = ({ isAuthenticated, userRole, allowedRoles, children,
   }
   if (!isAuthenticated) {
     console.log("RoleProtectedRoute: User not authenticated, redirecting to /login.");
-   return <Navigate to="/login" replace />;
+   return <Navigate to="/hotel" replace />;
   }
   if (!allowedRoles.includes(userRole)) {
     console.log(`RoleProtectedRoute: User role '${userRole}' not allowed, redirecting to home.`);

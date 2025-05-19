@@ -1,13 +1,16 @@
 import React, { useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import axios from 'axios';
 import './GuestWalkinForm.css';
 
 const GuestWalkinForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  // Extract from location.state, fallback to empty
   const { roomId, checkin, checkout } = location.state || {};
+  
+  // User session info
+  const ownerclerk_id = JSON.parse(sessionStorage.getItem('userData'))?.userId;
 
   const [formData, setFormData] = useState({
     name: '',
@@ -21,33 +24,46 @@ const GuestWalkinForm = () => {
     setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
   };
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
 
+    // Validate all required fields
     if (!formData.name || !formData.phone || !formData.email || !formData.id_proof || !formData.country) {
       alert('Please fill all fields.');
       return;
     }
 
-    try {
-      const response = await axios.post('http://localhost:5000/api/guest-walkin', {
-        ...formData,
-        created_at: new Date(),
-      });
-
-      navigate('/payment', { 
-        state: { 
-          roomId, 
-          checkin, 
-          checkout, 
-          guest_walkin_id: response.data.guest_walkin_id 
-        } 
-      });
-
-    } catch (error) {
-      console.error('Error saving guest data:', error);
-      alert('Failed to save guest details. Please try again.');
+    if (!ownerclerk_id) {
+      alert('User session expired. Please login again.');
+      return;
     }
+
+    if (!roomId || !checkin || !checkout) {
+      alert('Missing booking dates or room info. Please start booking again.');
+      return;
+    }
+
+    const guestWalkinData = {
+      ...formData,
+      created_at: new Date(),
+      ownerclerk_id,
+    };
+
+    // Save full booking data to sessionStorage as fallback
+    const bookingData = {
+      roomId,
+      checkin,
+      checkout,
+      guest_walkin_data: guestWalkinData,
+    
+      
+    };
+    sessionStorage.setItem('walkinBookingData', JSON.stringify(bookingData));
+
+    console.log('Passing guest walkin data to /payment:', bookingData);
+
+    // Navigate to payment passing data via state
+    navigate('/payment', { state: bookingData });
   };
 
   return (
@@ -57,7 +73,7 @@ const GuestWalkinForm = () => {
           <h2>Guest Registration</h2>
           <p>Please enter your details to complete booking</p>
         </div>
-        
+
         <form onSubmit={handleSubmit} className="elegant-form">
           <div className="form-group">
             <input
@@ -70,7 +86,7 @@ const GuestWalkinForm = () => {
             <label>Full Name</label>
             <span className="input-border"></span>
           </div>
-          
+
           <div className="form-group">
             <input
               type="tel"
@@ -82,7 +98,7 @@ const GuestWalkinForm = () => {
             <label>Phone Number</label>
             <span className="input-border"></span>
           </div>
-          
+
           <div className="form-group">
             <input
               type="email"
@@ -94,7 +110,7 @@ const GuestWalkinForm = () => {
             <label>Email Address</label>
             <span className="input-border"></span>
           </div>
-          
+
           <div className="form-group">
             <input
               type="text"
@@ -106,7 +122,7 @@ const GuestWalkinForm = () => {
             <label>ID Proof Number</label>
             <span className="input-border"></span>
           </div>
-          
+
           <div className="form-group">
             <input
               type="text"
@@ -118,7 +134,7 @@ const GuestWalkinForm = () => {
             <label>Country</label>
             <span className="input-border"></span>
           </div>
-          
+
           <button type="submit" className="submit-btn">
             <span>Proceed to Payment</span>
             <svg width="13px" height="10px" viewBox="0 0 13 10">

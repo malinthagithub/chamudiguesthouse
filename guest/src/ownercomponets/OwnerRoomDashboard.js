@@ -78,7 +78,7 @@ const OwnerRoomDashboard = () => {
             <button className="add-room-btn" onClick={() => navigate('/add-room')} 
         aria-label="Add new room" title="Add new room">
 </button>
-            <div className="room-container">
+            <div className="room-containerl">
                 {rooms.map((room) => (
                     <div className="room-card" key={room.room_id}>
                         <img src={`http://localhost:5000${room.imageurl1}`} alt={room.name} />

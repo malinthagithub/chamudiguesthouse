@@ -3,7 +3,7 @@ const router = express.Router();
 const db = require("../db"); // Import your MySQL connection
 router.get('/all-bookings', async (req, res) => {
     try {
-        const { filter, search } = req.query;
+        const { filter, search, startDate } = req.query;
 
         let baseQuery = `
             SELECT 
@@ -11,7 +11,6 @@ router.get('/all-bookings', async (req, res) => {
                 r.name AS room_name,
                 r.room_id,
 
-                -- Corrected CASE conditions
                 CASE 
                     WHEN b.booking_source = 'online' THEN u.username
                     WHEN b.booking_source = 'walk-in' THEN gw.name
@@ -42,6 +41,7 @@ router.get('/all-bookings', async (req, res) => {
         const whereClauses = [];
         const params = [];
 
+        // Optional: built-in filter (today/week/month)
         if (filter === 'today') {
             whereClauses.push('DATE(b.checkin_date) = CURDATE()');
         } else if (filter === 'week') {
@@ -50,6 +50,7 @@ router.get('/all-bookings', async (req, res) => {
             whereClauses.push('YEAR(b.checkin_date) = YEAR(CURDATE()) AND MONTH(b.checkin_date) = MONTH(CURDATE())');
         }
 
+        // Search filter
         if (search) {
             whereClauses.push(`
                 (r.name LIKE ? OR 
@@ -62,6 +63,12 @@ router.get('/all-bookings', async (req, res) => {
             const searchTerm = `%${search}%`;
             params.push(searchTerm, searchTerm, searchTerm, searchTerm, searchTerm, searchTerm);
         }
+
+        // Start date filter (optional)
+        if (startDate) {
+    whereClauses.push('DATE(b.checkin_date) = ?');
+    params.push(startDate);
+}
 
         if (whereClauses.length > 0) {
             baseQuery += ' WHERE ' + whereClauses.join(' AND ');
@@ -82,6 +89,7 @@ router.get('/all-bookings', async (req, res) => {
         res.status(500).json({ message: 'Server error fetching all bookings', error });
     }
 });
+
 
 
 // Get bookings for a specific user
@@ -130,7 +138,7 @@ router.get('/room/:roomId', async (req, res) => {
         const query = `
             SELECT 
                 bookings.booking_id, bookings.checkin_date, bookings.checkout_date, bookings.status, bookings.created_at,
-                users.username, users.email, 
+                users.username, users.email,users.phone_number, users.country, 
                 payments.amount, payments.payment_method, payments.payment_status
             FROM bookings
             JOIN users ON bookings.user_id = users.id

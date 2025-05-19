@@ -99,9 +99,9 @@ const CancellationsPage = () => {
           <table className="cancellations-table">
             <thead>
               <tr>
-                <th>ID</th>
-                <th>Booking</th>
-                <th>User</th>
+                <th>Room</th>
+                <th>Email</th>
+                <th>Username</th>
                 <th>Amount</th>
                 <th>Cancelled On</th>
                 <th>Status</th>
@@ -111,9 +111,9 @@ const CancellationsPage = () => {
               {filteredCancellations.length > 0 ? (
                 filteredCancellations.map(item => (
                   <tr key={item.cancellation_id}>
-                    <td className="id-cell">{item.cancellation_id}</td>
-                    <td>{item.booking_id}</td>
-                    <td>User {item.user_id}</td>
+                    <td className="id-cell">{item.room_name}</td>
+                    <td>{item.email}</td>
+                    <td>{item.username}</td>
                     <td className="amount-cell">{formatCurrency(item.refund_amount)}</td>
                     <td>{formatDate(item.cancelled_at)}</td>
                     <td>

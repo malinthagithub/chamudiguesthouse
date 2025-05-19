@@ -18,6 +18,7 @@ const Login = ({ setIsAuthenticated, setUsername, setUserRole }) => {
     setError('');
 
     if (isForgotPassword) {
+      // Forgot password flow
       try {
         const response = await axios.post('http://localhost:5000/api/users/forgot-password', { email });
         setError(response.data.message || 'Failed to send reset email.');
@@ -25,6 +26,7 @@ const Login = ({ setIsAuthenticated, setUsername, setUserRole }) => {
         setError(err.response?.data?.message || 'An error occurred');
       }
     } else {
+      // Normal login flow
       try {
         const response = await axios.post('http://localhost:5000/api/users/login', { email, password });
 
@@ -34,10 +36,11 @@ const Login = ({ setIsAuthenticated, setUsername, setUserRole }) => {
           return;
         }
 
+        // Prepare user data object to save in sessionStorage
         const userData = {
           username: response.data.username,
           email,
-          userId: response.data.id,
+          userId: response.data.id,   // This is the user id you want to store
           role: response.data.role,
         };
 
@@ -45,14 +48,14 @@ const Login = ({ setIsAuthenticated, setUsername, setUserRole }) => {
         sessionStorage.setItem('token', response.data.token);
         sessionStorage.setItem('userData', JSON.stringify(userData));
 
-        // Update states
+        // Update app state for logged in user
         setIsAuthenticated(true);
         setUsername(response.data.username);
         setUserRole(response.data.role);
 
         console.log("User logged in with role:", response.data.role);
 
-        // Redirect based on role
+        // Redirect based on user role
         if (response.data.role === 'owner') {
           navigate('/revenue');
         } else if (response.data.role === 'clerk') {

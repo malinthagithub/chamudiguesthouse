@@ -25,13 +25,14 @@ AND (
     (checkin_date >= ? AND checkout_date <= ?)
 )
 
+
     `;
 
     db.query(checkAvailabilityQuery, [
-        room_id,
-        checkout_date, checkin_date,  // For condition 1
-        checkin_date, checkout_date,  // For condition 2
-        checkin_date, checkout_date   // For condition 3
+    room_id,
+    checkin_date, checkout_date,  // for condition 1
+    checkin_date, checkout_date,  // for condition 2
+    checkin_date, checkout_date   // for condition 3
     ], (err, results) => {
         if (err) {
             console.error('Error checking room availability:', err);

@@ -255,22 +255,44 @@ const Revenue = () => {
           </ul>
         </div>
 
-        <div>
+        <div className='monthly'>
           {view === 'monthly' && <><h3>Monthly Revenue</h3><Bar data={generateChartData(analyticsData.monthlyRevenue.map(item => `${item.month}-${item.year}`), analyticsData.monthlyRevenue.map(item => item.revenue), 'rgba(75, 192, 192, 1)')} options={{ responsive: true }} /></>}
           {view === 'daily' && <><h3>Daily Revenue</h3><Bar data={generateChartData(analyticsData.dailyRevenue.map(item => `${item.day}-${item.month}-${item.year}`), analyticsData.dailyRevenue.map(item => item.revenue), 'rgba(255, 99, 132, 1)')} options={{ responsive: true }} /></>}
         </div>
 
-        <div>
-          <h3>Room-wise Revenue</h3>
-          <Pie data={{ labels: analyticsData.roomWiseRevenue.map(item => `${item.room_name}: ${item.revenue.toFixed(2)}`), datasets: [{ label: 'Room-wise Revenue', data: analyticsData.roomWiseRevenue.map(item => item.revenue), backgroundColor: analyticsData.roomWiseRevenue.map(() => `rgba(${Math.random() * 256}, ${Math.random() * 256}, ${Math.random() * 256}, 0.6)`) }] }} options={{ responsive: true }} />
-        </div>
+       <div>
+  <h3>Room-wise Revenue</h3>
+  <Pie
+    className="pie-chart"
+    data={{
+      labels: analyticsData.roomWiseRevenue.map(item => item.room_name),
+      datasets: [{
+        label: 'Room-wise Revenue',
+        data: analyticsData.roomWiseRevenue.map(item => item.revenue),
+        backgroundColor: analyticsData.roomWiseRevenue.map(() => `rgba(${Math.random() * 256}, ${Math.random() * 256}, ${Math.random() * 256}, 0.6)`)
+      }]
+    }}
+    options={{
+      responsive: true,
+      plugins: { legend: { display: false } }  // disable default legend
+    }}
+  />
+  <ul className="custom-legend">
+    {analyticsData.roomWiseRevenue.map((item, index) => (
+      <li key={index} style={{ color: `rgba(${Math.random() * 256}, ${Math.random() * 256}, ${Math.random() * 256}, 0.6)` }}>
+        {item.room_name}: <strong>{item.revenue.toFixed(2)}</strong>
+      </li>
+    ))}
+  </ul>
+</div>
 
-        <div>
+
+        <div className='Monthly-Guest'>
           <h3>Monthly Guest Count</h3>
           <Bar data={generateChartData(analyticsData.monthlyGuestCount.map(item => `${item.month}-${item.year}`), analyticsData.monthlyGuestCount.map(item => item.guest_count), 'rgba(255, 159, 64, 1)')} options={{ responsive: true }} />
         </div>
 
-        <div>
+        <div className='current-guest'>
           <h3>Active Guest Count</h3>
           <Bar
             data={{
@@ -328,8 +350,9 @@ const Revenue = () => {
         )}
         {/* Today's Bookings Section */}
         <div>
-          <h3>Today's Bookings</h3>
-          <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
+          <div style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse', position: 'relative', top: '-100px', left: '-300px' }}></div>
+          <h3 style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse', position: 'relative', top: '-10px',left: '120px' }}> Today's Bookings</h3>
+          <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse',position: 'relative', top: '-10px', left: '-100px' }}>
             <thead>
               <tr>
                 <th style={{ padding: '10px', backgroundColor: '#f4f4f4' }}>Room Name</th>
@@ -361,8 +384,9 @@ const Revenue = () => {
 
         {/* This Week's Bookings Section */}
         <div>
-          <h3>This Week's Bookings</h3>
-          <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse' }}>
+          
+          <h3 style={{position:'relative',top:'20px',left:'120px'}}>This Week's Bookings</h3>
+          <table style={{ width: '100%', marginTop: '20px', borderCollapse: 'collapse',position: 'relative', top: '20px', left: '-100px' }}>
             <thead>
               <tr>
                 <th style={{ padding: '10px', backgroundColor: '#f4f4f4' }}>Room Name</th>

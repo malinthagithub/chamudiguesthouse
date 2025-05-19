@@ -8,7 +8,7 @@ import './WalkinPayment.css';
 
 const stripePromise = loadStripe('pk_test_51QwQDmEE05ueOOCKzSNPSRQgBaePuf5CZOibhqOKrcxgw8JGtv5JW7iJWYmzWiRSZ4UvjX3FgNZ8omZS1tDduvFG00P1Xd2j5Y');
 
-const CheckoutForm = ({ roomId, checkin, checkout, guest_walkin_id }) => {
+const CheckoutForm = ({ roomId, checkin, checkout, guest_walkin_data }) => {
   const stripe = useStripe();
   const elements = useElements();
   const navigate = useNavigate();
@@ -17,55 +17,78 @@ const CheckoutForm = ({ roomId, checkin, checkout, guest_walkin_id }) => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!stripe || !elements) return;
-
     setLoading(true);
 
-    console.log("Submitting payment with:", { roomId, checkin, checkout, guest_walkin_id });
-
     try {
+      const token = sessionStorage.getItem('token');
+      const ownerclerk_id = guest_walkin_data?.ownerclerk_id;
+
+      if (!token || !ownerclerk_id || !guest_walkin_data) {
+        Swal.fire("Unauthorized", "Please log in to continue.", "warning");
+        setLoading(false);
+        return;
+      }
+
+      // 1. Create Payment Intent
       const { data } = await axios.post('http://localhost:5000/api/walkin-create-payment-intent', {
         roomId,
         checkin,
         checkout,
-        guest_walkin_id,
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
       });
 
-      console.log("Received clientSecret from backend:", data.clientSecret);
+      const clientSecret = data.clientSecret;
 
-      const { error, paymentIntent } = await stripe.confirmCardPayment(data.clientSecret, {
+      // 2. Confirm Card Payment
+      const { error, paymentIntent } = await stripe.confirmCardPayment(clientSecret, {
         payment_method: {
           card: elements.getElement(CardElement),
         },
       });
 
       if (error) {
-        console.error("Stripe payment error:", error);
         Swal.fire("Payment Failed", error.message, "error");
-      } else if (paymentIntent.status === 'succeeded') {
-        console.log("Payment succeeded, paymentIntent:", paymentIntent);
+        setLoading(false);
+        return;
+      }
 
-        // Debug: Show what is being sent in payment confirmation
-        const paymentConfirmData = {
+      if (paymentIntent.status === 'succeeded') {
+        // 3. Insert/update guest walkin data
+        const guestResp = await axios.post('http://localhost:5000/api/guest-walkin', {
+          guest_walkin_id: guest_walkin_data?.guest_walkin_id,
+          guest_walkin_data: { ...guest_walkin_data, ownerclerk_id },
+        }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        const guest_walkin_id = guestResp.data.guest_walkin_id;
+
+        // 4. Insert booking + payment
+        const walkinRes = await axios.post('http://localhost:5000/api/walkin-payment', {
+          guest_walkin_id,
           roomId,
           checkin,
           checkout,
-          user_id: guest_walkin_id,
           payment_method: 'stripe',
           payment_intent_id: paymentIntent.id,
-        };
-        console.log("Sending payment confirmation to backend:", paymentConfirmData);
+        }, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
 
-        await axios.post('http://localhost:5000/api/walkin-payment', paymentConfirmData);
-
-        Swal.fire({
-          title: "Success!",
-          text: "Your booking has been confirmed.",
-          icon: "success",
-          confirmButtonText: "View Bookings",
-        }).then(() => navigate("/walk_view"));
+        if (walkinRes.data.success) {
+          Swal.fire({
+            title: "Success!",
+            text: "Your booking has been confirmed.",
+            icon: "success",
+            confirmButtonText: "View Bookings",
+          }).then(() => navigate("/walk_view"));
+        } else {
+          Swal.fire("Booking Failed", walkinRes.data.message || "Please try again.", "error");
+        }
       }
     } catch (error) {
-      console.error("Error during payment process:", error);
+      console.error('[CheckoutForm] Error:', error);
       Swal.fire("Payment Failed", "An error occurred during payment.", "error");
     } finally {
       setLoading(false);
@@ -74,23 +97,21 @@ const CheckoutForm = ({ roomId, checkin, checkout, guest_walkin_id }) => {
 
   return (
     <form onSubmit={handleSubmit} className="payment-form">
-      <CardElement options={{
-        style: {
-          base: {
-            fontSize: '16px',
-            color: '#424770',
-            '::placeholder': {
-              color: '#aab7c4',
+      <CardElement
+        options={{
+          style: {
+            base: {
+              fontSize: '16px',
+              color: '#424770',
+              '::placeholder': { color: '#aab7c4' },
             },
+            invalid: { color: '#9e2146' },
           },
-          invalid: {
-            color: '#9e2146',
-          },
-        },
-        hidePostalCode: true
-      }} />
+          hidePostalCode: true,
+        }}
+      />
       <button type="submit" disabled={!stripe || loading}>
-        {loading ? 'Processing...' : `Pay Now`}
+        {loading ? 'Processing...' : 'Pay Now'}
       </button>
     </form>
   );
@@ -99,44 +120,58 @@ const CheckoutForm = ({ roomId, checkin, checkout, guest_walkin_id }) => {
 const WalkinPayment = () => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { roomId, checkin, checkout, guest_walkin_id } = location.state || {};
+
+  const { roomId, checkin, checkout, guest_walkin_data } = location.state || {};
   const [showCardForm, setShowCardForm] = useState(false);
   const [roomDetails, setRoomDetails] = useState(null);
+  const token = sessionStorage.getItem('token');
 
   useEffect(() => {
     const fetchRoomDetails = async () => {
       try {
-        console.log("Fetching room details for roomId:", roomId);
-        const { data } = await axios.get(`http://localhost:5000/api/rooms/${roomId}`);
-        console.log("Room details fetched:", data);
+        const { data } = await axios.get(`http://localhost:5000/api/rooms/${roomId}`, {
+          headers: token ? { Authorization: `Bearer ${token}` } : undefined,
+        });
         setRoomDetails(data);
       } catch (error) {
-        console.error('Error fetching room details:', error);
+        console.error('[WalkinPayment] Error fetching room details:', error);
       }
     };
 
     if (roomId) fetchRoomDetails();
-  }, [roomId]);
-
-  if (!roomId || !checkin || !checkout || !guest_walkin_id) {
-    return <div className="walkin-payment">
-      <p>Missing booking information. Please start the booking process again.</p>
-    </div>;
-  }
+  }, [roomId, token]);
 
   const handleCashPayment = async () => {
     try {
-      console.log("Processing cash payment with:", { roomId, checkin, checkout, guest_walkin_id });
-      const { data } = await axios.post('http://localhost:5000/api/walkin-payment', {
+    const token = sessionStorage.getItem('token');
+      const ownerclerk_id = guest_walkin_data?.ownerclerk_id;
+      if (!token || !ownerclerk_id || !guest_walkin_data) {
+        Swal.fire("Unauthorized", "Please log in to continue.", "warning");
+        return;
+      }
+
+      // 1. Insert/update guest walkin data
+      const guestResp = await axios.post('http://localhost:5000/api/guest-walkin', {
+        guest_walkin_id: guest_walkin_data?.guest_walkin_id,
+        guest_walkin_data: { ...guest_walkin_data, ownerclerk_id },
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+
+      const guest_walkin_id = guestResp.data.guest_walkin_id;
+
+      // 2. Insert booking + payment with payment_method cash
+      const walkinRes = await axios.post('http://localhost:5000/api/walkin-payment', {
+        guest_walkin_id,
         roomId,
         checkin,
         checkout,
-        guest_walkin_id,
         payment_method: 'cash',
+      }, {
+        headers: { Authorization: `Bearer ${token}` },
       });
-      console.log("Cash payment response:", data);
 
-      if (data.success) {
+      if (walkinRes.data.success) {
         Swal.fire({
           title: "Success!",
           text: "Your booking has been confirmed.",
@@ -144,24 +179,32 @@ const WalkinPayment = () => {
           confirmButtonText: "View Bookings",
         }).then(() => navigate("/walk_view"));
       } else {
-        Swal.fire("Payment Failed", data.message || "Please try again.", "error");
+        Swal.fire("Booking Failed", walkinRes.data.message || "Please try again.", "error");
       }
     } catch (err) {
-      console.error("Error during cash payment:", err);
+      console.error('[WalkinPayment] Error:', err);
       Swal.fire("Booking Error", "An error occurred. Please try again.", "error");
     }
   };
 
+  if (!roomId || !checkin || !checkout || !guest_walkin_data) {
+    return (
+      <div className="walkin-payment">
+        <p>Missing booking information. Please start the booking process again.</p>
+      </div>
+    );
+  }
+
   return (
     <div className="walkin-payment">
       <h2>Complete Your Booking</h2>
-      
+
       {roomDetails && (
         <div className="room-display">
-          <img 
-            src={`http://localhost:5000${roomDetails.imageurl1}`} 
-            alt={`Room ${roomId}`} 
-            className="room-image" 
+          <img
+            src={`http://localhost:5000${roomDetails.imageurl1}`}
+            alt={`Room ${roomId}`}
+            className="room-image"
           />
           <div className="room-details">
             <h3>{roomDetails.name}</h3>
@@ -174,12 +217,11 @@ const WalkinPayment = () => {
       <div className="booking-info">
         <p><strong>Check-in:</strong> {new Date(checkin).toLocaleDateString()}</p>
         <p><strong>Check-out:</strong> {new Date(checkout).toLocaleDateString()}</p>
-        <p><strong>Guest ID:</strong> {guest_walkin_id}</p>
       </div>
 
       <div className="payment-methods">
         <h3>Select Payment Method</h3>
-        
+
         {!showCardForm ? (
           <div className="payment-options">
             <button onClick={() => setShowCardForm(true)}>Pay Online</button>
@@ -192,7 +234,7 @@ const WalkinPayment = () => {
                 roomId={roomId}
                 checkin={checkin}
                 checkout={checkout}
-                guest_walkin_id={guest_walkin_id}
+                guest_walkin_data={guest_walkin_data}
               />
             </Elements>
             <span className="back-button" onClick={() => setShowCardForm(false)}>

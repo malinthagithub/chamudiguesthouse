@@ -71,8 +71,12 @@ const RoomBookings = () => {
                                     </span>
                                 </div>
                                 <div className="info-row">
-                                    <span className="info-label">Address</span>
-                                    <span className="info-value">{booking.address}</span>
+                                    <span className="info-label">phoneNumber</span>
+                                    <span className="info-value">{booking.phone_number}</span>
+                                </div>
+                                <div className="info-row">
+                                    <span className="info-label">Country</span>
+                                    <span className="info-value">{booking.country}</span>
                                 </div>
                                 <div className="info-row">
                                     <span className="info-label">Booked On</span>
@@ -87,9 +91,7 @@ const RoomBookings = () => {
                                     ${booking.amount}
                                     <span className="payment-label">Total Paid</span>
                                 </div>
-                                <button className="action-button">
-                                    View Details
-                                </button>
+                                
                             </div>
                         </div>
                     ))}

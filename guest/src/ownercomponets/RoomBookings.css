@@ -1,4 +1,6 @@
 .room-bookings-container {
+    position: relative;
+    top:40px;
     max-width: 1200px;
     margin: 0 auto;
     padding: 2rem;
@@ -104,6 +106,7 @@
 
 .booking-status {
     margin-left: auto;
+    color: #0c0c0c;
 }
 
 .card-body {

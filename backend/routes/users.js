@@ -184,47 +184,100 @@ router.post('/register-ownerclerk', async (req, res) => {
         email, 
         password, 
         phoneNumber,
-        last_name, // Changed from lastname to match your frontend
+        last_name,
         address1, 
         address2,
-        role = 'clerk' // Default to clerk if not provided
+        role = 'clerk'
     } = req.body;
 
-    // Validation for required fields
+    // 1. VALIDATION 
     if (!username || !email || !password || !phoneNumber || !last_name || !address1) {
-        return res.status(400).json({ message: 'Please provide all required fields' });
+        return res.status(400).json({ 
+            success: false,
+            message: 'All fields are required' 
+        });
+    }
+
+    // Email format validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+        return res.status(400).json({ 
+            success: false,
+            message: 'Invalid email format' 
+        });
+    }
+
+    // Password strength check
+    if (password.length < 8) {
+        return res.status(400).json({ 
+            success: false,
+            message: 'Password must be at least 8 characters' 
+        });
     }
 
     try {
-        // Hash password before saving
-        const hashedPassword = await bcrypt.hash(password, 10);
-
-        // Insert clerk into the owner_clerk table
-        db.query(
-            'INSERT INTO owner_clerk (username, email, password, phone_number, last_name, address1, address2, role) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
-            [username, email, hashedPassword, phoneNumber, last_name, address1, address2, role],
-            (err, result) => {
-                if (err) {
-                    console.error('Database error:', err);
-                    if (err.code === 'ER_DUP_ENTRY') {
-                        return res.status(400).json({ message: 'Username or email already exists' });
-                    }
-                    return res.status(500).json({ message: 'Database error occurred' });
-                }
-
-                return res.status(201).json({ 
-                    success: true,
-                    message: 'Clerk registered successfully!',
-                    clerkId: result.insertId 
+        // 2. CHECK FOR EXISTING USER
+        const checkUserQuery = 'SELECT * FROM owner_clerk WHERE email = ? OR username = ?';
+        db.query(checkUserQuery, [email, username], async (checkErr, checkResult) => {
+            if (checkErr) {
+                console.error('Database check error:', checkErr);
+                return res.status(500).json({ 
+                    success: false,
+                    message: 'Database error during validation' 
                 });
             }
-        );
+
+            if (checkResult.length > 0) {
+                const existingField = checkResult[0].email === email ? 'email' : 'username';
+                return res.status(409).json({ 
+                    success: false,
+                    message: `${existingField} already exists` 
+                });
+            }
+
+       
+            const hashedPassword = await bcrypt.hash(password, 10);
+
+           
+            const insertQuery = `
+                INSERT INTO owner_clerk 
+                (username, email, password, phone_number, last_name, address1, address2, role) 
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+            `;
+            
+            db.query(
+                insertQuery,
+                [username, email, hashedPassword, phoneNumber, last_name, address1, address2, role],
+                (insertErr, result) => {
+                    if (insertErr) {
+                        console.error('Database insert error:', insertErr);
+                        return res.status(500).json({ 
+                            success: false,
+                            message: 'Failed to register clerk' 
+                        });
+                    }
+
+                
+                    res.status(201).json({ 
+                        success: true,
+                        message: 'Clerk registered successfully',
+                        data: {
+                            clerkId: result.insertId,
+                            email: email,
+                            role: role
+                        }
+                    });
+                }
+            );
+        });
     } catch (err) {
         console.error('Server error:', err);
-        res.status(500).json({ message: 'Internal server error' });
+        res.status(500).json({ 
+            success: false,
+            message: 'Internal server error' 
+        });
     }
 });
-
 
 // 🔹 Login Route (No security key required for login regardless of role)
 router.post('/login', (req, res) => {
@@ -253,15 +306,20 @@ router.post('/login', (req, res) => {
 
                 const user = result[0];
 
-                // 🔹 Check password for owner/clerk
+                // Check password for owner/clerk
                 const isMatch = await bcrypt.compare(password, user.password);
                 if (!isMatch) {
                     return res.status(400).json({ message: 'Invalid email or password' });
                 }
 
-                // 🔹 Generate JWT token (for owner/clerk)
+                // Generate JWT token (for owner/clerk) with correct id key
                 const token = jwt.sign(
-                    { id: user.id, username: user.username, email: user.email, role: user.role },
+                    {
+                        id: user.ownerclerk_id,  // use ownerclerk_id here
+                        username: user.username,
+                        email: user.email,
+                        role: user.role
+                    },
                     process.env.JWT_SECRET,
                     { expiresIn: '1h' }
                 );
@@ -272,22 +330,27 @@ router.post('/login', (req, res) => {
                     username: user.username,
                     email: user.email,
                     role: user.role,
-                    id: user.id
+                    id: user.ownerclerk_id  // return ownerclerk_id
                 });
             });
         } else {
             // If found in 'users' table (guest)
             const user = result[0];
 
-            // 🔹 Check password for guest
+            // Check password for guest
             const isMatch = await bcrypt.compare(password, user.password);
             if (!isMatch) {
                 return res.status(400).json({ message: 'Invalid email or password' });
             }
 
-            // 🔹 Generate JWT token (for guest)
+            // Generate JWT token (for guest)
             const token = jwt.sign(
-                { id: user.id, username: user.username, email: user.email, role: user.role },
+                {
+                    id: user.id,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role
+                },
                 process.env.JWT_SECRET,
                 { expiresIn: '1h' }
             );
@@ -298,7 +361,7 @@ router.post('/login', (req, res) => {
                 username: user.username,
                 email: user.email,
                 role: user.role,
-                id: user.id
+                id: user.id  // return user id
             });
         }
     });

@@ -1,0 +1,96 @@
+.booking-customizations-container {
+    position: relative;
+    top: 30px;
+  padding: 2rem;
+  font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.booking-customizations-header {
+position: relative;
+left: 300px;
+  font-size: 2rem;
+  font-weight: 600;
+  color: #2d3748;
+  margin-bottom: 1.5rem;
+}
+
+.booking-filters-container {
+  display: flex;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.booking-filter-button {
+  padding: 0.5rem 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #edf2f7;
+  color: #4a5568;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.booking-filter-button:hover {
+  background-color: #e2e8f0;
+}
+
+.booking-filter-button:disabled {
+  background-color: #4299e1;
+  color: white;
+  cursor: default;
+}
+
+.booking-table {
+  width: 100%;
+  border-collapse: collapse;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.booking-table-header {
+  background-color: #4299e1;
+  color: white;
+  text-align: left;
+}
+
+.booking-table-header th {
+  padding: 1rem;
+  font-weight: 500;
+}
+
+.booking-table-row {
+  border-bottom: 1px solid #e2e8f0;
+  transition: background-color 0.2s ease;
+}
+
+.booking-table-row:hover {
+  background-color: #f8fafc;
+}
+
+.booking-table-cell {
+  padding: 1rem;
+  color: #4a5568;
+}
+
+.booking-table-cell-empty {
+  text-align: center;
+  padding: 2rem;
+  color: #718096;
+}
+
+.booking-customization-details {
+  font-size: 0.875rem;
+  color: #4a5568;
+  line-height: 1.5;
+}
+
+.booking-loading-indicator {
+  display: flex;
+  justify-content: center;
+  padding: 2rem;
+  color: #718096;
+}

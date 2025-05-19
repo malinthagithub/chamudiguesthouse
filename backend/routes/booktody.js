@@ -9,36 +9,41 @@ router.get('/today-and-week-bookings', async (req, res) => {
 
     // Query to get today's bookings (now comparing only the date part)
     const todayQuery = `
-        SELECT
-            b.booking_id,  -- ✅ Include booking_id
-            r.name AS room_name,
-            u.username,
-            b.checkin_date,
-            b.checkout_date,
-            b.total_amount AS payment_amount,
-            b.status  -- Optional: include status if needed
-        FROM bookings b
-        JOIN rooms r ON b.room_id = r.room_id
-        JOIN users u ON b.user_id = u.id
-        WHERE b.status IN ('confirmed', 'arrived')
-        AND DATE(b.checkin_date) = ?  -- Ensure checkin_date is compared in 'YYYY-MM-DD' format
+       SELECT
+    b.booking_id,
+    r.name AS room_name,
+    COALESCE(u.username, gw.name) AS username,  -- Keep key as 'username' for frontend compatibility
+    b.checkin_date,
+    b.checkout_date,
+    b.total_amount AS payment_amount,
+    b.status
+FROM bookings b
+JOIN rooms r ON b.room_id = r.room_id
+LEFT JOIN users u ON b.user_id = u.id
+LEFT JOIN guest_walkin gw ON b.guest_walkin_id = gw.guest_walkin_id
+WHERE b.status IN ('confirmed', 'arrived')
+  AND DATE(b.checkin_date) = ?;
+
+
     `;
 
     // Query to get this week's bookings
     const weekQuery = `
         SELECT
-            b.booking_id,  -- ✅ Include booking_id
-            r.name AS room_name,
-            u.username,
-            b.checkin_date,
-            b.checkout_date,
-            b.total_amount AS payment_amount,
-            b.status  -- Optional: include status if needed
-        FROM bookings b
-        JOIN rooms r ON b.room_id = r.room_id
-        JOIN users u ON b.user_id = u.id
-        WHERE b.status IN ('confirmed', 'arrived')
-        AND YEARWEEK(b.checkin_date, 1) = YEARWEEK(CURDATE(), 1) -- Filter for this week
+    b.booking_id,
+    r.name AS room_name,
+    COALESCE(u.username, gw.name) AS username,
+    b.checkin_date,
+    b.checkout_date,
+    b.total_amount AS payment_amount,
+    b.status
+FROM bookings b
+JOIN rooms r ON b.room_id = r.room_id
+LEFT JOIN users u ON b.user_id = u.id
+LEFT JOIN guest_walkin gw ON b.guest_walkin_id = gw.guest_walkin_id
+WHERE b.status IN ('confirmed', 'arrived')
+  AND YEARWEEK(b.checkin_date, 1) = YEARWEEK(CURDATE(), 1);
+
     `;
 
     try {

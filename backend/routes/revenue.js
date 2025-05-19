@@ -109,7 +109,7 @@ router.get('/analytics', async (req, res) => {
         UNION ALL
 
         -- Current Guest Count (Active Guests) - Count by user_id
-        SELECT
+       SELECT
             'current_guest_count' AS type,
             NULL AS year,
             NULL AS month,
@@ -118,9 +118,22 @@ router.get('/analytics', async (req, res) => {
             NULL AS room_id,
             NULL AS room_name,
             NULL AS revenue,
-            COUNT(DISTINCT b.user_id) AS guest_count
-        FROM bookings b
-        WHERE b.status = 'confirmed' AND CURDATE() BETWEEN b.checkin_date AND b.checkout_date
+            COUNT(DISTINCT guest_identifier) AS guest_count
+        FROM (
+            SELECT DISTINCT CONCAT('user_', user_id) AS guest_identifier
+            FROM bookings
+            WHERE status = 'Arrived'
+              AND user_id IS NOT NULL
+              AND CURDATE() BETWEEN checkin_date AND checkout_date
+
+            UNION
+
+            SELECT DISTINCT CONCAT('walkin_', guest_walkin_id) AS guest_identifier
+            FROM bookings
+            WHERE status = 'Arrived'
+              AND guest_walkin_id IS NOT NULL
+              AND CURDATE() BETWEEN checkin_date AND checkout_date
+        ) AS combined_guests
 
         UNION ALL
 

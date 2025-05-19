@@ -80,9 +80,13 @@ router.post('/api/walkin-payment', async (req, res) => {
 
     const totalAmount = rentPerDay * days;
 
-    // Insert booking
+    // ✅ Determine booking status based on checkin date
+    const today = new Date().toISOString().split('T')[0]; // Format: 'YYYY-MM-DD'
+    const bookingStatus = checkin === today ? 'Arrived' : 'Confirmed';
+
+    // ✅ Insert booking
     const bookingFields = ['room_id', 'checkin_date', 'checkout_date', 'total_amount', 'status', 'booking_source'];
-    const bookingValues = [roomId, checkin, checkout, totalAmount, 'Arrived', user_id ? 'online' : 'walk-in'];
+    const bookingValues = [roomId, checkin, checkout, totalAmount, bookingStatus, user_id ? 'online' : 'walk-in'];
 
     if (user_id) {
       bookingFields.push('user_id');
@@ -97,14 +101,14 @@ router.post('/api/walkin-payment', async (req, res) => {
     const bookingResult = await query(insertBookingQuery, bookingValues);
     const booking_id = bookingResult.insertId;
 
-    // ✅ Insert payment with transaction_id
+    // ✅ Insert payment
     await query(
       `INSERT INTO payments (booking_id, amount, payment_status, payment_method, transaction_id, payment_date)
        VALUES (?, ?, 'completed', ?, ?, NOW())`,
       [booking_id, totalAmount, payment_method, payment_intent_id || null]
     );
 
-    // Optional email
+    // ✅ Optional email if walk-in guest
     if (guest_walkin_id) {
       const guestResult = await query('SELECT email, name FROM guest_walkin WHERE guest_walkin_id = ?', [guest_walkin_id]);
 
@@ -133,6 +137,7 @@ router.post('/api/walkin-payment', async (req, res) => {
     res.status(500).json({ success: false, message: 'Server error during payment processing' });
   }
 });
+
 
 // Get all walk-in bookings with guest_walkin data
 router.get('/walkin-bookings', (req, res) => {

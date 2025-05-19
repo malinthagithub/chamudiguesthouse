@@ -1,6 +1,8 @@
 /* ClerkAvailable.module.css */
 
 .clerkContainer {
+  position: relative;
+  top: 40px;
   max-width: 1200px;
   margin: 0 auto;
   padding: 2rem 1rem;
@@ -16,6 +18,8 @@
 }
 
 .datePickerContainer {
+  position: relative;
+  top:-20px;
   display: flex;
   gap: 1.5rem;
   align-items: flex-end;
@@ -30,6 +34,8 @@
 
 .datePickerGroup label {
   display: block;
+  position: relative;
+  top: -10px;
   margin-bottom: 0.5rem;
   font-size: 0.9rem;
   color: #555;
@@ -72,6 +78,8 @@
 }
 
 .roomsGrid {
+  position: relative;
+  top:-50px;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 2rem;
@@ -79,6 +87,8 @@
 }
 
 .roomCard {
+  position: relative;
+  top: 10px;
   background: white;
   border-radius: 12px;
   overflow: hidden;
