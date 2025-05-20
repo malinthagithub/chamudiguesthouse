@@ -276,7 +276,7 @@ function HotelBookingPage() {
         }}
       >
         <img
-          src="https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/667e45c5cc530.jpg/1440x800/fit;c:0,1056,2551,2578;fp:59,53/80/8b9df4935145afd703da89205ddcb9ac.jpg" // Replace with actual image URL
+          src="https://images.pexels.com/photos/2598638/pexels-photo-2598638.jpeg?auto=compress&cs=tinysrgb&w=600" // Replace with actual image URL
           alt="Cinnamon Nature Trails"
           style={{
             width: "100%",

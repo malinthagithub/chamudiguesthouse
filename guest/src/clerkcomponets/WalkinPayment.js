@@ -208,7 +208,7 @@ const WalkinPayment = () => {
           />
           <div className="room-details">
             <h3>{roomDetails.name}</h3>
-            <p>Room #{roomId}</p>
+            <p>Room {roomId}</p>
             <p>${roomDetails.rentperday} per night</p>
           </div>
         </div>

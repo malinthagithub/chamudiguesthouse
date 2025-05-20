@@ -28,7 +28,11 @@ const Register = () => {
     const newErrors = {};
 
     if (!formData.username.trim()) newErrors.username = "First name is required";
+    else if (!/^[A-Za-z\s]+$/.test(formData.username)) newErrors.username = "First name should only contain letters";
     if (!formData.lastname.trim()) newErrors.lastname = "Last name is required";
+    else if (!/^[A-Za-z\s]+$/.test(formData.lastname)) newErrors.lastname = "Last name should only contain letters";
+
+
     if (!formData.email) newErrors.email = "Email is required";
     else if (!/\S+@\S+\.\S+/.test(formData.email)) newErrors.email = "Email is invalid";
 
@@ -41,6 +45,7 @@ const Register = () => {
     if (!formData.address1.trim()) newErrors.address1 = "Address line 1 is required";
     if (!formData.city.trim()) newErrors.city = "City is required";
     if (!formData.zipCode.trim()) newErrors.zipCode = "Zip code is required";
+    else if (!/^\d+$/.test(formData.zipCode)) newErrors.zipCode = "Zip code must contain only numbers";
     if (!formData.country.trim()) newErrors.country = "Country is required";
 
     setErrors(newErrors);

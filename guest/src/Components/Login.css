@@ -6,7 +6,7 @@
     justify-content: center;
     z-index: 1 !important;
     align-items: center;
-    background-image: url('../images/login.jpg'); /* Adjust the path if needed */
+    background-image: url('../images/login1.jpg'); /* Adjust the path if needed */
     background-size: cover; /* Ensures the image covers the full container */
     background-position: center; /* Centers the image */
     background-repeat: no-repeat; /* Prevents repetition */
@@ -56,7 +56,7 @@
 
 label {
     font-size: 16px;
-    color: #f6ebeb !important;
+    color: #f6ebeb;
     display: block;
     margin-bottom: 8px;
     text-align: left; /* Align labels to the left */

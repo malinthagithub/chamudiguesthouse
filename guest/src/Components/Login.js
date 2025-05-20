@@ -85,8 +85,9 @@ const Login = ({ setIsAuthenticated, setUsername, setUserRole }) => {
         {error && <p className="error">{error}</p>}
 
         <form onSubmit={handleSubmit}>
-          <div className="input-group">
-            <label>Email</label>
+          <div className="input-groupl">
+            <label style={{ color: 'white !important' }}>Email</label>
+
             <input
               type="email"
               value={email}
@@ -96,8 +97,9 @@ const Login = ({ setIsAuthenticated, setUsername, setUserRole }) => {
           </div>
 
           {!isForgotPassword && (
-            <div className="input-group">
-              <label>Password</label>
+            <div className="input-groupl">
+             <label style={{ color: 'white !important' }}>Password</label>
+
               <input
                 type="password"
                 value={password}

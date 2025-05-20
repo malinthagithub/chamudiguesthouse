@@ -6,10 +6,8 @@ const GuestWalkinForm = () => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Extract from location.state, fallback to empty
   const { roomId, checkin, checkout } = location.state || {};
-  
-  // User session info
+
   const ownerclerk_id = JSON.parse(sessionStorage.getItem('userData'))?.userId;
 
   const [formData, setFormData] = useState({
@@ -30,9 +28,48 @@ const GuestWalkinForm = () => {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Validate all required fields
-    if (!formData.name || !formData.phone || !formData.email || !formData.id_proof || !formData.country) {
+    const { name, phone, email, id_proof, country } = formData;
+
+    // Regex patterns
+    const nameRegex = /^[A-Za-z\s]+$/;
+    const phoneRegex = /^[0-9]{7,15}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const idProofRegex = /^[0-9]{5,20}$/;
+    const countryRegex = /^[A-Za-z\s]+$/;
+
+    // Validation checks
+    if (!name || !phone || !email || !id_proof || !country) {
       alert('Please fill all fields.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!nameRegex.test(name)) {
+      alert('Name can contain only letters and spaces.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!phoneRegex.test(phone)) {
+      alert('Phone number must be between 7 and 15 digits.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!emailRegex.test(email)) {
+      alert('Invalid email format.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!idProofRegex.test(id_proof)) {
+      alert('ID Proof must be alphanumeric with no spaces.');
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!countryRegex.test(country)) {
+      alert('Country name must contain only letters and spaces.');
       setIsSubmitting(false);
       return;
     }
@@ -55,16 +92,14 @@ const GuestWalkinForm = () => {
       ownerclerk_id,
     };
 
-    // Save full booking data to sessionStorage as fallback
     const bookingData = {
       roomId,
       checkin,
       checkout,
       guest_walkin_data: guestWalkinData,
     };
-    sessionStorage.setItem('walkinBookingData', JSON.stringify(bookingData));
 
-    // Navigate to payment passing data via state
+    sessionStorage.setItem('walkinBookingData', JSON.stringify(bookingData));
     navigate('/payment', { state: bookingData });
   };
 
