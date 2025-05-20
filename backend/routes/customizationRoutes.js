@@ -9,137 +9,103 @@ router.post('/customize', async (req, res) => {
         breakfast, pool_access, view, payment_method_id, checkin_date, checkout_date, total_price 
     } = req.body;
 
-    // Validate input dates
+    // Validate input dates and price
     if (!checkin_date || !checkout_date) {
         return res.status(400).json({ message: 'Check-in and check-out dates are required' });
     }
 
-    // Step 1: Check if the room is already booked for the selected dates and status is NOT 'cancelled'
+    if (isNaN(total_price) || total_price <= 0) {
+        return res.status(400).json({ message: 'Invalid total price' });
+    }
+
+    // Step 1: Check room availability first
     const checkAvailabilityQuery = `
         SELECT * FROM bookings 
-WHERE room_id = ? 
-AND status NOT IN ('cancelled', 'pending')
-AND (
-    (checkin_date <= ? AND checkout_date > ?) OR
-    (checkin_date < ? AND checkout_date >= ?) OR
-    (checkin_date >= ? AND checkout_date <= ?)
-)
-
-
+        WHERE room_id = ? 
+        AND status NOT IN ('cancelled', 'pending')
+        AND (
+            (checkin_date <= ? AND checkout_date > ?) OR
+            (checkin_date < ? AND checkout_date >= ?) OR
+            (checkin_date >= ? AND checkout_date <= ?)
+        )
     `;
 
     db.query(checkAvailabilityQuery, [
-    room_id,
-    checkin_date, checkout_date,  // for condition 1
-    checkin_date, checkout_date,  // for condition 2
-    checkin_date, checkout_date   // for condition 3
+        room_id, checkin_date, checkout_date,
+        checkin_date, checkout_date,
+        checkin_date, checkout_date
     ], (err, results) => {
-        if (err) {
-            console.error('Error checking room availability:', err);
-            return res.status(500).json({ message: 'Database error while checking availability' });
-        }
+        if (err) return res.status(500).json({ message: 'Error checking availability' });
+        if (results.length > 0) return res.status(400).json({ message: 'Room is already booked' });
 
-        if (results.length > 0) {
-            return res.status(400).json({ message: 'Room is already booked for the selected dates' });
-        }
+        // Step 2: Process Stripe payment first
+        stripe.paymentIntents.create({
+            amount: Math.round(total_price * 100),
+            currency: 'usd',
+            payment_method: payment_method_id,
+            confirm: true,
+            automatic_payment_methods: {
+                enabled: true,
+                allow_redirects: 'never',
+            },
+        }).then(paymentIntent => {
+            // Payment succeeded, now insert booking and customization
 
-        if (isNaN(total_price) || total_price <= 0) {
-            return res.status(400).json({ message: 'Invalid total price' });
-        }
-
-        // Step 2: Insert customization
-        const insertCustomizationQuery = `
-            INSERT INTO customizations (user_id, room_id, beds, hot_water, wifi, ac, minibar, 
-            room_service, breakfast, pool_access, view, total_price)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-        `;
-
-        db.query(insertCustomizationQuery, [
-            user_id, room_id, beds, hot_water, wifi, ac, minibar, 
-            room_service, breakfast, pool_access, view, total_price
-        ], (err, result) => {
-            if (err) {
-                console.error(err);
-                return res.status(500).json({ message: 'Error saving customization' });
-            }
-
-            const customizationId = result.insertId;
-
-            // Step 3: Insert booking
+            // Insert booking first
             const insertBookingQuery = `
                 INSERT INTO bookings (user_id, room_id, checkin_date, checkout_date, status, total_amount)
                 VALUES (?, ?, ?, ?, ?, ?)
             `;
-
-            db.query(insertBookingQuery, [user_id, room_id, checkin_date, checkout_date, 'pending', total_price], (bookingErr, bookingResult) => {
+            db.query(insertBookingQuery, [user_id, room_id, checkin_date, checkout_date, 'confirmed', total_price], (bookingErr, bookingResult) => {
                 if (bookingErr) {
                     console.error(bookingErr);
-                    return res.status(500).json({ message: 'Error saving booking' });
+                    return res.status(500).json({ message: 'Error saving booking after payment' });
                 }
 
                 const bookingId = bookingResult.insertId;
 
-                // Step 4: Process payment with Stripe
-                stripe.paymentIntents.create({
-                    amount: Math.round(total_price * 100),
-                    currency: 'usd',
-                    payment_method: payment_method_id,
-                    confirm: true,
-                    automatic_payment_methods: {
-                        enabled: true,
-                        allow_redirects: 'never',
-                    },
-                })
-                .then(paymentIntent => {
-                    // Step 5: Insert payment
+                // Insert customization linked to bookingId
+                const insertCustomizationQuery = `
+                    INSERT INTO customizations (user_id, room_id, beds, hot_water, wifi, ac, minibar, 
+                        room_service, breakfast, pool_access, view, total_price, booking_id, booking_status)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                `;
+
+                db.query(insertCustomizationQuery, [
+                    user_id, room_id, beds, hot_water, wifi, ac, minibar,
+                    room_service, breakfast, pool_access, view, total_price, bookingId, 'confirmed'
+                ], (custErr, customizationResult) => {
+                    if (custErr) {
+                        console.error(custErr);
+                        return res.status(500).json({ message: 'Error saving customization after payment' });
+                    }
+
+                    const customizationId = customizationResult.insertId;
+
+                    // Insert payment record
                     const insertPaymentQuery = `
                         INSERT INTO payments (booking_id, amount, payment_status, payment_method, transaction_id)
                         VALUES (?, ?, ?, ?, ?)
                     `;
-
-                    db.query(insertPaymentQuery, [
-                        bookingId, total_price, 'completed', 'stripe', paymentIntent.id
-                    ], (paymentErr) => {
+                    db.query(insertPaymentQuery, [bookingId, total_price, 'completed', 'stripe', paymentIntent.id], (paymentErr) => {
                         if (paymentErr) {
                             console.error(paymentErr);
-                            return res.status(500).json({ message: 'Error saving payment' });
+                            return res.status(500).json({ message: 'Error saving payment record' });
                         }
 
-                        // Step 6: Update customization and booking statuses
-                        const updateCustomizationQuery = `
-                            UPDATE customizations SET booking_status = ? WHERE customization_id = ?
-                        `;
-
-                        db.query(updateCustomizationQuery, ['confirmed', customizationId], (updateErr) => {
-                            if (updateErr) {
-                                console.error(updateErr);
-                                return res.status(500).json({ message: 'Error updating customization status' });
-                            }
-
-                            const updateBookingQuery = `
-                                UPDATE bookings SET status = 'confirmed' WHERE booking_id = ?
-                            `;
-
-                            db.query(updateBookingQuery, [bookingId], (updateBookingErr) => {
-                                if (updateBookingErr) {
-                                    console.error(updateBookingErr);
-                                    return res.status(500).json({ message: 'Error updating booking status' });
-                                }
-
-                                return res.status(200).json({
-                                    message: 'Customization, booking, and payment processed successfully',
-                                    customizationId: customizationId,
-                                    final_price: total_price
-                                });
-                            });
+                        // All done
+                        return res.status(200).json({
+                            message: 'Payment, booking and customization successful',
+                            bookingId,
+                            customizationId,
+                            final_price: total_price
                         });
                     });
-                })
-                .catch(err => {
-                    console.error(err);
-                    return res.status(400).json({ message: 'Payment failed', error: err });
                 });
             });
+        }).catch(err => {
+            console.error('Payment failed:', err);
+            return res.status(400).json({ message: 'Payment failed', error: err });
         });
     });
 });

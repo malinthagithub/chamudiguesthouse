@@ -209,9 +209,21 @@ body {
 
 /* Media Upload Section */
 .media-upload-section {
+    position: relative;
+    top:-120px;
     margin: 2rem 0;
 }
-
+.checkbox-label{
+    color: #000 !important;
+}
+.form-groupl {
+    position: relative;
+    top: -120px;
+}
+.amenities-checkboxes input[type="checkbox"] {
+    position: relative;
+    top: 30px;
+}
 .media-upload-section h3 {
     font-size: 1.1rem;
     color: var(--dark);

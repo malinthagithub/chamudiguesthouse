@@ -269,12 +269,20 @@ const Revenue = () => {
             }}
           />
           <ul className="custom-legend">
-            {analyticsData.roomWiseRevenue.map((item, index) => (
-              <li key={index} style={{ color: `rgba(${Math.random() * 256}, ${Math.random() * 256}, ${Math.random() * 256}, 0.6)` }}>
-                {item.room_name}: <strong>{item.revenue.toFixed(2)}</strong>
-              </li>
-            ))}
-          </ul>
+  {analyticsData.roomWiseRevenue.map((item, index) => (
+    <li
+      key={index}
+      style={{
+        color: `rgba(${Math.floor(Math.random() * 256)}, ${Math.floor(
+          Math.random() * 256
+        )}, ${Math.floor(Math.random() * 256)}, 0.6)`
+      }}
+    >
+      {item.room_name}: <strong>${item.revenue.toFixed(2)}</strong>
+    </li>
+  ))}
+</ul>
+
         </div>
 
         <div className='Monthly-Guest'>

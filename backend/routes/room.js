@@ -26,66 +26,72 @@ const upload = multer({ storage: storage });
 
 // API to add a new room
 router.post('/add', upload.fields([
-  { name: 'image1', maxCount: 1 },
-  { name: 'image2', maxCount: 1 },
-  { name: 'image3', maxCount: 1 },
-  { name: 'video', maxCount: 1 }
+    { name: 'image1', maxCount: 1 },
+    { name: 'image2', maxCount: 1 },
+    { name: 'image3', maxCount: 1 },
+    { name: 'video', maxCount: 1 }
 ]), (req, res) => {
-  // Ensure files are uploaded and available
-  if (!req.files || !req.files.image1 || !req.files.image2 || !req.files.image3) {
-    return res.status(400).json({ message: 'Please upload all required images.' });
-  }
-
-  const {
-    name,
-    maxcount,
-    phonenumber,
-    rentperday,
-    room_type,
-    room_size,
-    discount_percentage,
-    description,
-    customizable
-  } = req.body;
-
-  const { image1, image2, image3, video } = req.files;
-
-  console.log('Uploaded Files:', req.files);
-  console.log('Request Body:', req.body);
-
-  // Assign image URLs
-  const imageurl1 = `/uploads/${image1[0].filename}`;
-  const imageurl2 = `/uploads/${image2[0].filename}`;
-  const imageurl3 = `/uploads/${image3[0].filename}`;
-  const videoUrl = video && video[0] ? `/uploads/${video[0].filename}` : null;
-
-  // Create a new room object
-  const newRoom = {
-    name,
-    maxcount,
-    phonenumber,
-    rentperday,
-    room_type,
-    room_size,
-    discount_percentage,
-    imageurl1,
-    imageurl2,
-    imageurl3,
-    video_url: videoUrl,
-    description,
-    customizable: customizable === 'true' || customizable === 'on',  // checkbox logic
-    payment_status: 'pending'
-  };
-
-  // Insert new room into database
-  db.query('INSERT INTO rooms SET ?', newRoom, (err, result) => {
-    if (err) {
-      console.error('Error inserting room:', err);
-      return res.status(500).json({ message: 'Error inserting room into database' });
+    // Ensure all required images are uploaded
+    if (!req.files || !req.files.image1 || !req.files.image2 || !req.files.image3) {
+        return res.status(400).json({ message: 'Please upload all required images.' });
     }
-    res.status(200).json({ message: 'Room added successfully', roomId: result.insertId });
-  });
+
+    // Destructure request body
+    const {
+        name,
+        maxcount,
+        phonenumber,
+        rentperday,
+        room_type,
+        room_size,
+        description,
+        customizable,
+        wifi,
+        ac,
+        tv
+    } = req.body;
+
+    const { image1, image2, image3, video } = req.files;
+
+    console.log('Uploaded Files:', req.files);
+    console.log('Request Body:', req.body);
+
+    // Assign image and video URLs
+    const imageurl1 = `/uploads/${image1[0].filename}`;
+    const imageurl2 = `/uploads/${image2[0].filename}`;
+    const imageurl3 = `/uploads/${image3[0].filename}`;
+    const videoUrl = video && video[0] ? `/uploads/${video[0].filename}` : null;
+
+    // Construct room object
+    const newRoom = {
+        name,
+        maxcount,
+        phonenumber,
+        rentperday,
+        room_type,
+        room_size,
+        imageurl1,
+        imageurl2,
+        imageurl3,
+        video_url: videoUrl,
+        description,
+        customizable: customizable === 'true' || customizable === 'on',
+        wifi: wifi === 'true' || wifi === 'on',
+        ac: ac === 'true' || ac === 'on',
+        tv: tv === 'true' || tv === 'on',
+
+    };
+
+    // Insert into database
+    db.query('INSERT INTO rooms SET ?', newRoom, (err, result) => {
+        if (err) {
+            console.error('Error inserting room:', err);
+            return res.status(500).json({ message: 'Error inserting room into database' });
+        }
+        res.status(200).json({ message: 'Room added successfully', roomId: result.insertId });
+    });
 });
+
 
 
 
@@ -96,38 +102,65 @@ router.put('/update/:roomId', upload.fields([
     { name: 'image3', maxCount: 1 },
     { name: 'video', maxCount: 1 }
 ]), (req, res) => {
+   
     const roomId = req.params.roomId;
-    const { name, maxcount, phonenumber, rentperday } = req.body;
+    const {
+        name,
+        maxcount,
+        phonenumber,
+        rentperday,
+        room_type,
+        description,
+        tv,
+        ac,
+        wifi
+    } = req.body;
 
-    // Prepare values for updating
-    let imageUrl1 = null;
-    let imageUrl2 = null;
-    let imageUrl3 = null;
-    let videoUrl = null;
-
-    // Log files and body for debugging
-    console.log('Uploaded Files:', req.files);
-    console.log('Request Body:', req.body);
-
-    // Only add image and video URLs if files are provided
-    if (req.files?.image1) imageUrl1 = `/uploads/${req.files.image1[0].filename}`;
-    if (req.files?.image2) imageUrl2 = `/uploads/${req.files.image2[0].filename}`;
-    if (req.files?.image3) imageUrl3 = `/uploads/${req.files.image3[0].filename}`;
-    if (req.files?.video) videoUrl = `/uploads/${req.files.video[0].filename}`;
-
-    // Update room details in the database
     db.query(
-        'UPDATE rooms SET name = ?, maxcount = ?, phonenumber = ?, rentperday = ?, imageurl1 = ?, imageurl2 = ?, imageurl3 = ?, video_url = ? WHERE room_id = ?',
-        [name, maxcount, phonenumber, rentperday, imageUrl1, imageUrl2, imageUrl3, videoUrl, roomId],
-        (err, result) => {
-            if (err) {
-                console.error('Error updating room:', err);
-                return res.status(500).json({ message: 'Error updating room' });
+        'SELECT * FROM rooms WHERE room_id = ?',
+        [roomId],
+        (err, results) => {
+            if (err || results.length === 0) {
+                console.error('Error fetching current room details:', err);
+                return res.status(500).json({ message: 'Error fetching current room details' });
             }
-            res.status(200).json({ message: 'Room updated successfully' });
+
+            const current = results[0];
+
+            const updatedName = name || current.name;
+            const updatedMaxcount = maxcount || current.maxcount;
+            const updatedPhonenumber = phonenumber || current.phonenumber;
+            const updatedRentPerDay = rentperday || current.rentperday;
+            const updatedRoomType = room_type || current.room_type;
+            const updatedDescription = description || current.description;
+
+            const imageUrl1 = req.files?.image1 ? `/uploads/${req.files.image1[0].filename}` : current.imageurl1;
+            const imageUrl2 = req.files?.image2 ? `/uploads/${req.files.image2[0].filename}` : current.imageurl2;
+            const imageUrl3 = req.files?.image3 ? `/uploads/${req.files.image3[0].filename}` : current.imageurl3;
+            const videoUrl = req.files?.video ? `/uploads/${req.files.video[0].filename}` : current.video_url;
+
+            const updatedTv = typeof tv !== 'undefined' ? (tv === '1' || tv === 1 || tv === true) : current.tv;
+            const updatedAc = typeof ac !== 'undefined' ? (ac === '1' || ac === 1 || ac === true) : current.ac;
+            const updatedWifi = typeof wifi !== 'undefined' ? (wifi === '1' || wifi === 1 || wifi === true) : current.wifi;
+
+
+            db.query(
+                'UPDATE rooms SET name = ?, maxcount = ?, phonenumber = ?, rentperday = ?, imageurl1 = ?, imageurl2 = ?, imageurl3 = ?, video_url = ?, room_type = ?, description = ?, tv = ?, ac = ?, wifi = ? WHERE room_id = ?',
+                [updatedName, updatedMaxcount, updatedPhonenumber, updatedRentPerDay, imageUrl1, imageUrl2, imageUrl3, videoUrl, updatedRoomType, updatedDescription, updatedTv, updatedAc, updatedWifi, roomId],
+                (updateErr, result) => {
+                    if (updateErr) {
+                        console.error('Error updating room:', updateErr);
+                        return res.status(500).json({ message: 'Error updating room' });
+                    }
+                    res.status(200).json({ message: 'Room updated successfully' });
+                }
+            );
         }
     );
 });
+
+
+
 
 
 // API to delete a room

@@ -64,7 +64,7 @@ const handleLogout = () => {
             className="navbar-logo" 
             onClick={() => setMenuOpen(false)}
           >
-            Chamudi
+            Chamudi Guest House
           </Link>
 
           <div className="menu-icon" onClick={() => setMenuOpen(!menuOpen)}>

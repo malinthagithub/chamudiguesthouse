@@ -5,7 +5,7 @@ import "./BookingPage.css";
 import Swal from "sweetalert2";
 import { motion } from "framer-motion";
 import { FiArrowLeft, FiDollarSign, FiCalendar, FiUser, FiPhone, FiVideo } from "react-icons/fi";
-
+import { FaBed } from "react-icons/fa";
 const BookingPage = () => {
   const location = useLocation();
   const navigate = useNavigate();
@@ -165,6 +165,10 @@ const BookingPage = () => {
                 <FiPhone className="feature-icon" />
                 <span>Contact: {room.phonenumber}</span>
               </div>
+              <div className="feature-item">
+               <FaBed className="feature-icon" />
+                <span>Contact: {room.room_type}</span>
+              </div>
             </div>
           </div>
         </div>
@@ -208,7 +212,7 @@ const BookingPage = () => {
             </div>
             <div className="price-item">
               <span>Service fee</span>
-              <span>$0.00</span>
+              <span>Free</span>
             </div>
           </div>
 

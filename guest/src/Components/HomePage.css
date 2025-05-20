@@ -74,7 +74,8 @@
 .room-card {
     position: relative;
     top: -190px !important;
-    width: 250px;
+    width: 300px;
+    height: 550px;
     background: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -753,4 +754,9 @@ input-with-icon {
     .conflict-icon {
         align-self: center;
     }
+}
+.room-rating{
+    position: relative;
+    top: -50px !important;
+    
 }

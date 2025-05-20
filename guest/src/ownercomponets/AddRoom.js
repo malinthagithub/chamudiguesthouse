@@ -5,17 +5,18 @@ import './AddRoom.css';
 const AddRoom = () => {
   const [activeStep, setActiveStep] = useState(1);
   const [roomData, setRoomData] = useState({
-  name: '',
-  maxcount: '',
-  phonenumber: '',
-  rentperday: '',
-  room_type: '',
-  room_size: '',
-  discount_percentage: '',
-  customizable: false,     // ✅ Add this
-  description: '',         // ✅ Add this
-});
-
+    name: '',
+    maxcount: '',
+    phonenumber: '',
+    rentperday: '',
+    room_type: '',
+    room_size: '',
+    customizable: false,
+    description: '',
+    wifi: false,         
+    ac: false,        
+    tv: false,        
+  });
 
   const [files, setFiles] = useState({
     image1: null,
@@ -30,6 +31,7 @@ const AddRoom = () => {
     image3: null,
     video: null,
   });
+
   useEffect(() => {
     document.body.classList.add('addroom-background');
     return () => {
@@ -37,20 +39,18 @@ const AddRoom = () => {
     };
   }, []);
 
- const handleChange = (e) => {
-  const { name, value, type, checked } = e.target;
-  setRoomData({
-    ...roomData,
-    [name]: type === 'checkbox' ? checked : value,
-  });
-};
-
+  const handleChange = (e) => {
+    const { name, value, type, checked } = e.target;
+    setRoomData({
+      ...roomData,
+      [name]: type === 'checkbox' ? checked : value,
+    });
+  };
 
   const handleFileChange = (e) => {
     const file = e.target.files[0];
     setFiles({ ...files, [e.target.name]: file });
 
-    // Create preview
     if (file) {
       const reader = new FileReader();
       reader.onload = (event) => {
@@ -68,13 +68,10 @@ const AddRoom = () => {
 
   const handleSubmit = async () => {
     const formData = new FormData();
-
-    // Append room data
     Object.keys(roomData).forEach((key) => {
       formData.append(key, roomData[key]);
     });
 
-    // Append files
     Object.keys(files).forEach((key) => {
       if (files[key]) formData.append(key, files[key]);
     });
@@ -84,7 +81,6 @@ const AddRoom = () => {
         headers: { 'Content-Type': 'multipart/form-data' },
       });
       alert('Room added successfully!');
-      // Reset form
       setRoomData({
         name: '',
         maxcount: '',
@@ -92,7 +88,11 @@ const AddRoom = () => {
         rentperday: '',
         room_type: '',
         room_size: '',
-        discount_percentage: '',
+        customizable: false,
+        description: '',
+        wifi: false,
+        ac: false,
+        tv: false,
       });
       setFiles({ image1: null, image2: null, image3: null, video: null });
       setPreviews({ image1: null, image2: null, image3: null, video: null });
@@ -104,7 +104,6 @@ const AddRoom = () => {
   };
 
   const renderStep = () => {
-  
     switch (activeStep) {
       case 1:
         return (
@@ -140,29 +139,55 @@ const AddRoom = () => {
                 required
               />
             </div>
-            <div className="input-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '10px' }}>
-  <label style={{ display: 'flex', alignItems: 'center', cursor: 'pointer' }}>
-    <input
-      type="checkbox"
-      name="customizable"
-      checked={roomData.customizable}
-      onChange={handleChange}
-      style={{ marginRight: '6px', cursor: 'pointer' }}
-    />
-    Customizable
-  </label>
-</div>
 
+            <div className="input-group checkboxes">
+              <label>
+                <input
+                  type="checkbox"
+                  name="customizable"
+                  checked={roomData.customizable}
+                  onChange={handleChange}
+                />
+                Customizable
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="wifi"
+                  checked={roomData.wifi}
+                  onChange={handleChange}
+                />
+                WiFi
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="ac"
+                  checked={roomData.ac}
+                  onChange={handleChange}
+                />
+                AC
+              </label>
+              <label>
+                <input
+                  type="checkbox"
+                  name="tv"
+                  checked={roomData.tv}
+                  onChange={handleChange}
+                />
+                TV
+              </label>
+            </div>
 
             <div className="input-group">
-  <textarea
-    name="description"
-    value={roomData.description}
-    onChange={handleChange}
-    placeholder="Room Description"
-    required
-  ></textarea>
-</div>
+              <textarea
+                name="description"
+                value={roomData.description}
+                onChange={handleChange}
+                placeholder="Room Description"
+                required
+              ></textarea>
+            </div>
             <button className="next-btn" onClick={nextStep}>
               Continue
             </button>
@@ -182,16 +207,7 @@ const AddRoom = () => {
                 required
               />
             </div>
-            <div className="input-group">
-              <input
-                type="number"
-                name="discount_percentage"
-                value={roomData.discount_percentage}
-                onChange={handleChange}
-                placeholder="Discount Percentage"
-                required
-              />
-            </div>
+            
             <div className="input-group">
               <input
                 type="text"
@@ -287,22 +303,13 @@ const AddRoom = () => {
             <div className="review-section">
               <h3>Review Details</h3>
               <div className="review-grid">
-                <div>
-                  <p>Room Name</p>
-                  <span>{roomData.name}</span>
-                </div>
-                <div>
-                  <p>Max Guests</p>
-                  <span>{roomData.maxcount}</span>
-                </div>
-                <div>
-                  <p>Daily Rate</p>
-                  <span>${roomData.rentperday}</span>
-                </div>
-                <div>
-                  <p>Room Type</p>
-                  <span>{roomData.room_type}</span>
-                </div>
+                <div><p>Room Name</p><span>{roomData.name}</span></div>
+                <div><p>Max Guests</p><span>{roomData.maxcount}</span></div>
+                <div><p>Daily Rate</p><span>${roomData.rentperday}</span></div>
+                <div><p>Room Type</p><span>{roomData.room_type}</span></div>
+                <div><p>WiFi</p><span>{roomData.wifi ? 'Yes' : 'No'}</span></div>
+                <div><p>AC</p><span>{roomData.ac ? 'Yes' : 'No'}</span></div>
+                <div><p>TV</p><span>{roomData.tv ? 'Yes' : 'No'}</span></div>
               </div>
             </div>
             <div className="button-group">
@@ -321,7 +328,7 @@ const AddRoom = () => {
   };
 
   return (
-    <div className=" add-room-page add-room-container">
+    <div className="add-room-page add-room-container">
       <div className="progress-bar">
         {[1, 2, 3, 4].map((step) => (
           <div
@@ -332,13 +339,9 @@ const AddRoom = () => {
           </div>
         ))}
       </div>
-     
       {renderStep()}
     </div>
-   
   );
-  
 };
-
 
 export default AddRoom;

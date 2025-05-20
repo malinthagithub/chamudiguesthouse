@@ -108,8 +108,8 @@ router.get('/analytics', async (req, res) => {
 
         UNION ALL
 
-        -- Current Guest Count (Active Guests) - Count by user_id
-       SELECT
+        -- Current Guest Count (Active Guests) - Count by user_id and guest_walkin_id
+        SELECT
             'current_guest_count' AS type,
             NULL AS year,
             NULL AS month,
@@ -137,7 +137,7 @@ router.get('/analytics', async (req, res) => {
 
         UNION ALL
 
-        -- Monthly Guest Count (Bookings by each user per month)
+        -- Monthly Guest Count (user_id + guest_walkin_id)
         SELECT
             'monthly_guest_count' AS type,
             YEAR(created_at) AS year,
@@ -147,14 +147,25 @@ router.get('/analytics', async (req, res) => {
             NULL AS room_id,
             NULL AS room_name,
             NULL AS revenue,
-            COUNT(DISTINCT user_id) AS guest_count
-        FROM bookings
-        WHERE status = 'confirmed'
+            COUNT(DISTINCT guest_identifier) AS guest_count
+        FROM (
+            SELECT user_id AS guest_identifier, created_at
+            FROM bookings
+            WHERE status = 'confirmed'
+              AND user_id IS NOT NULL
+
+            UNION
+
+            SELECT guest_walkin_id AS guest_identifier, created_at
+            FROM bookings
+            WHERE status = 'confirmed'
+              AND guest_walkin_id IS NOT NULL
+        ) AS guests
         GROUP BY YEAR(created_at), MONTH(created_at)
 
         UNION ALL
 
-        -- Weekly Guest Count (Bookings by each user per week)
+        -- Weekly Guest Count (Bookings by user_id only, active week)
         SELECT
             'weekly_guest_count' AS type,
             YEAR(CURDATE()) AS year,
@@ -217,11 +228,9 @@ router.get('/analytics/download', async (req, res) => {
                 return res.status(500).json({ error: 'Failed to generate report' });
             }
 
-            // Convert JSON to CSV
             const json2csvParser = new Parser();
             const csv = json2csvParser.parse(rows);
 
-            // Set headers for CSV download
             res.header('Content-Type', 'text/csv');
             res.attachment('revenue_report.csv');
             res.send(csv);

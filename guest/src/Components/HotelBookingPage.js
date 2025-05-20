@@ -99,7 +99,7 @@ function HotelBookingPage() {
           }}
         >
           <h1 style={{ fontSize: "48px", fontWeight: "bold", color: "#fff" }}>Chamudi Guest House</h1>
-          <p style={{ fontSize: "22px" }}>CITY OF DREAMS | SRI LANKA</p>
+          <p style={{ fontSize: "22px" }}>CITY OF HIKKADUWA | SRI LANKA</p>
         </div>
       </section>
 
@@ -109,7 +109,7 @@ function HotelBookingPage() {
           <span style={{ fontFamily: "'Georgia', serif", fontWeight: "bold" }}>Chamudi</span> | DISCOVERY
         </h2>
         <p style={{ fontSize: "18px", color: "#555", marginBottom: "30px" }}>
-          Chamudi Hotels & Resorts is the first Sri Lankan brand to be part of the GHA DISCOVERY loyalty programme, rewarding guests in over 850 hotels, resorts, and palaces in 100 countries.
+         Experience more with our member-only benefits — from special rewards to upgraded stays and flexible check-in times.
         </p>
         <h3 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "30px", color: "#6a0dad" }}>EXCLUSIVE MEMBER BENEFITS</h3>
         <div style={{ display: "flex", justifyContent: "center", gap: "40px", flexWrap: "wrap" }}>
@@ -148,15 +148,15 @@ function HotelBookingPage() {
         >
           {[
             {
-              image: "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/66bde166ebbc1.jpg/600x800/fit/80/770e0ab29a5a6f31470a67645847306f.jpg",
+              image: "https://cdn.pixabay.com/photo/2016/04/15/11/43/hotel-1330834_1280.jpg",
               alt: "Poolside Relaxation",
             },
             {
-              image: "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/66bde0ac2a3e7.jpg/600x800/fit;c:0,401,3271,4905;fp:52,56/80/2af68f4285a8bfaf379feeb96aa695ff.jpg",
+              image: "https://cdn.pixabay.com/photo/2018/06/14/21/15/bedroom-3475656_1280.jpg",
               alt: "Scenic View",
             },
             {
-              image: "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/66bde0b9db05f.jpg/600x800/fit;c:2270,0,4918,3647;fp:50,50/80/1ed53531ae1f9454f02924d1c225dcc8.jpg",
+              image: "https://cdn.pixabay.com/photo/2016/03/28/09/34/bedroom-1285156_1280.jpg",
               alt: "Sunset by the Water",
             },
           ].map((item, index) => (
@@ -240,12 +240,15 @@ function HotelBookingPage() {
             marginBottom: "20px",
           }}
         >
-          CHAMUDI NATURE TRAILS
+          CHAMUDI Guest House
         </h2>
         <p style={{ fontSize: "16px", color: "#555", marginBottom: "30px" }}>
-          Our team of curious naturalists are experts at curating, guiding, and
-          advocating when it comes to 40+ wildlife and nature-based experiences
-          across Sri Lanka.
+          <h3 style={{ fontSize: "20px", fontWeight: "bold", marginBottom: "10px" }}>
+           Contact Information
+          </h3>
+         📍 657, Narigama, Hikkaduwa, Sri Lanka  
+          📞 091-2275937
+
         </p>
         <button
           style={{
@@ -311,17 +314,17 @@ function HotelBookingPage() {
           {[
             {
               image:
-                "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/667e45c5cc530.jpg/1440x800/fit;c:0,1056,2551,2578;fp:59,53/80/8b9df4935145afd703da89205ddcb9ac.jpg",
+                "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/66bde166ebbc1.jpg/600x800/fit/80/770e0ab29a5a6f31470a67645847306f.jpg",
               title: "Top Travel Destinations",
             },
             {
               image:
-                "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/667e45c5cc530.jpg/1440x800/fit;c:0,1056,2551,2578;fp:59,53/80/8b9df4935145afd703da89205ddcb9ac.jpg",
+                "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/66bde0ac2a3e7.jpg/600x800/fit;c:0,401,3271,4905;fp:52,56/80/2af68f4285a8bfaf379feeb96aa695ff.jpg",
               title: "Guest Experience: Feedback & Reviews",
             },
             {
               image:
-                "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/667e45c5cc530.jpg/1440x800/fit;c:0,1056,2551,2578;fp:59,53/80/8b9df4935145afd703da89205ddcb9ac.jpg",
+                "https://d18slle4wlf9ku.cloudfront.net/www.cinnamonhotels.com-1302818674/cms/cache/v2/66bde0b9db05f.jpg/600x800/fit;c:2270,0,4918,3647;fp:50,50/80/1ed53531ae1f9454f02924d1c225dcc8.jpg",
               title: "Exploring Sri Lanka's Rich Culture",
             },
           ].map((blog, index) => (
