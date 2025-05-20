@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
-
+import 'react-toastify/dist/ReactToastify.css';
+import { ToastContainer } from 'react-toastify';
 import Login from './Components/Login';
 import Register from './Components/Register';
 import HomePage from './Components/HomePage';
@@ -139,6 +140,7 @@ const MainContent = ({ isAuthenticated, setIsAuthenticated, username, setUsernam
   console.log("MainContent: Rendering routes for userRole:", userRole);
 
   return (
+    
     <div className="App">
       {/* Navbar rendering based on user role */}
       {location.pathname !== '/user-profile' && location.pathname !== '/hotel' && (
@@ -156,7 +158,7 @@ const MainContent = ({ isAuthenticated, setIsAuthenticated, username, setUsernam
           />
         )
       )}
-
+ <ToastContainer />
       <Routes>
         <Route path="/hotel" element={<HotelBookingPage />} />
       <Route

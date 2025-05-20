@@ -77,9 +77,14 @@ const Register = () => {
         navigate('/login');
       }, 2000);
     } catch (error) {
-      console.error('Registration error:', error.response?.data || error);
-      setErrorMessage("Registration failed. Please try again.");
-    }
+  const errMsg = error.response?.data?.message || "Registration failed. Please try again.";
+
+  if (errMsg.toLowerCase().includes("user already exists")) {
+    setErrors((prev) => ({ ...prev, email: errMsg }));  // attach to email field
+  } else {
+    setErrorMessage(errMsg);  // general error message
+  }
+}
   };
 
   return (

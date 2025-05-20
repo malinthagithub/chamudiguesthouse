@@ -3,7 +3,7 @@ import axios from "axios";
 import { FiStar, FiCalendar, FiDollarSign, FiUser, FiClock, FiX, FiEdit2 } from "react-icons/fi";
 import { FaHotel, FaRegSadTear } from "react-icons/fa";
 import "./ConfirmBooking.css";
-
+import { toast } from 'react-toastify';
 function ConfirmBooking() {
   const userData = JSON.parse(sessionStorage.getItem('userData'));
   const userRole = userData?.role;
@@ -124,7 +124,7 @@ function ConfirmBooking() {
         booking_id: selectedBooking.booking_id,
         refund_amount: refundAmount
       });
-      alert(response.data.message);
+      toast.success(response.data.message);
       setBookings(bookings.filter((booking) => booking.booking_id !== selectedBooking.booking_id));
       setShowCancelModal(false);
     } catch (error) {

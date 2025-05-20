@@ -273,7 +273,7 @@ function RoomSelection() {
             </div>
 
             {/* Additional room details */}
-            <p className='rty'><strong>Room type:</strong> {modalRoom.roomtype} </p>
+            <p className='rty'><strong>Room type:</strong> {modalRoom.room_type} </p>
             <p className='rty'><strong >Price:</strong> ${modalRoom.rentperday}/night</p>
             
             {/* If you have description or other data, add here */}

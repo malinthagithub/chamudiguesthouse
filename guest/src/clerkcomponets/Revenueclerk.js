@@ -249,7 +249,7 @@ const Revenue = () => {
               <button style={{ marginBottom: '10px', position: "relative", top: "80px" }} onClick={handleDownload}>Online Booking Report</button>
             </div>
             <div>
-              <button style={{ marginBottom: '10px', position: "relative", top: "80px" }} onClick={handleDownloadwalk}>walk Report</button>
+              <button style={{ marginBottom: '10px', position: "relative", top: "80px" }} onClick={handleDownloadwalk}>Manual Guest Report</button>
             </div>
 
           </ul>

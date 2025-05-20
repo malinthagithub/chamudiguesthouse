@@ -112,7 +112,6 @@ const WalkinBookings = () => {
           <table className="walkin-table">
             <thead>
               <tr>
-                <th>Booking ID</th>
                 <th>Guest Name</th>
                 <th>Phone</th>
                 <th>Email</th>
@@ -127,7 +126,6 @@ const WalkinBookings = () => {
             <tbody>
               {bookings.map((booking) => (
                 <tr key={booking.booking_id}>
-                  <td>{booking.booking_id}</td>
                   <td>{booking.name}</td>
                   <td>{booking.phone}</td>
                   <td>{booking.email}</td>

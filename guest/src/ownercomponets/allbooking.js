@@ -152,7 +152,7 @@ const AllBookings = () => {
               <table className="bookings-table">
                 <thead>
                   <tr>
-                    <th onClick={() => handleSort('booking_id')}>Booking ID</th>
+                    
                     <th onClick={() => handleSort('room_name')}>Room</th>
                     <th onClick={() => handleSort('username')}>Guest</th>
                     <th onClick={() => handleSort('checkin_date')}>Check-In</th>
@@ -166,7 +166,7 @@ const AllBookings = () => {
                 <tbody>
                   {currentBookings.map((booking) => (
                     <tr key={booking.booking_id}>
-                      <td>{booking.booking_id}</td>
+                     
                       <td>{booking.room_name}</td>
                       <td>
                         <div className="guest-info">

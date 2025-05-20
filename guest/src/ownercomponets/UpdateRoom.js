@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import Swal from 'sweetalert2';
 import './UpdateRoom.css';
 
 const UpdateRoom = () => {
@@ -146,7 +147,13 @@ const UpdateRoom = () => {
             });
             
             console.log('Update response:', response.data); // Debug line
-            alert('Room updated successfully!');
+            Swal.fire({
+  title: 'Success!',
+  text: 'Room updated successfully!',
+  icon: 'success',
+  confirmButtonText: 'OK',
+  timer: 2000,
+});
             navigate('/dashboard');
         } catch (error) {
             console.error('Error updating room:', error);

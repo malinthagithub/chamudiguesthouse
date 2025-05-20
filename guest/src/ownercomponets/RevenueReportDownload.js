@@ -3,12 +3,33 @@ import React, { useState } from 'react';
 const ReportDownload = () => {
   const [year, setYear] = useState('');
   const [month, setMonth] = useState('');
+  const [error, setError] = useState('');
+
+  const validateInputs = () => {
+    const yearNum = parseInt(year);
+    const monthNum = parseInt(month);
+
+    if (!year || !month) {
+      setError('Please enter both year and month.');
+      return false;
+    }
+
+    if (isNaN(yearNum) || yearNum < 2000 || yearNum > 2050) {
+      setError('Year must be between 2000 and 2050.');
+      return false;
+    }
+
+    if (isNaN(monthNum) || monthNum < 1 || monthNum > 12) {
+      setError('Month must be between 1 and 12.');
+      return false;
+    }
+
+    setError('');
+    return true;
+  };
 
   const handleDownload = (reportType) => {
-    if (!year || !month) {
-      alert('Please select both year and month');
-      return;
-    }
+    if (!validateInputs()) return;
 
     const url = `http://localhost:5000/api/reports/download/${reportType}?year=${year}&month=${month}`;
 
@@ -31,8 +52,6 @@ const ReportDownload = () => {
           value={year}
           onChange={(e) => setYear(e.target.value)}
           placeholder="e.g. 2025"
-          min="2000"
-          max="2100"
         />
       </div>
 
@@ -44,11 +63,15 @@ const ReportDownload = () => {
             value={month}
             onChange={(e) => setMonth(e.target.value)}
             placeholder="1-12"
-            min="1"
-            max="12"
           />
         </label>
       </div>
+
+      {error && (
+        <div style={{ color: 'red', marginTop: '10px' }}>
+          {error}
+        </div>
+      )}
 
       <div style={{ marginTop: '10px' }}>
         <button
