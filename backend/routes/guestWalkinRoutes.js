@@ -3,14 +3,14 @@ const router = express.Router();
 const db = require('../db');
 const authenticateToken = require('../middleware/auth'); // import the middleware
 
-// ADD the middleware here ⬇️
+// ADD the middleware here ⬇
 router.post('/', authenticateToken, (req, res) => {
   console.log('Received guestWalkin payload:', req.body);
 
   const guestData = req.body.guest_walkin_data || {};
   const { name, phone, email, id_proof, country, created_at } = guestData;
 
-  // 🔐 Get clerk ID from token
+  //  Get clerk ID from token
   const ownerclerk_id = req.user?.id;
 
   if (!ownerclerk_id) {
