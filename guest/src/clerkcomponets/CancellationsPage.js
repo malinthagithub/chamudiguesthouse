@@ -102,7 +102,7 @@ const CancellationsPage = () => {
                 <th>Room</th>
                 <th>Email</th>
                 <th>Username</th>
-                <th>Amount</th>
+                <th>Refund Amount</th>
                 <th>Cancelled On</th>
                 <th>Status</th>
               </tr>

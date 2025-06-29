@@ -6,38 +6,52 @@ import Swal from "sweetalert2";
 import { motion } from "framer-motion";
 import { FiArrowLeft, FiDollarSign, FiCalendar, FiUser, FiPhone, FiVideo } from "react-icons/fi";
 import { FaBed } from "react-icons/fa";
+
+/**
+ * BookingPage Component
+ * Handles room booking process including:
+ * - Displaying booking details
+ * - Processing Stripe payments
+ * - Video tour preview
+ */
 const BookingPage = () => {
+  // Router hooks for navigation and accessing location state
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Destructure room and dates from location state
+  // Destructure room and dates from navigation state
   const { room, checkInDate, checkOutDate } = location.state || {};
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
-  
-  // Changed from localStorage to sessionStorage
+  // State management
+  const [isModalOpen, setIsModalOpen] = useState(false); // Controls video modal visibility
+  const [isLoading, setIsLoading] = useState(false);     // Loading state during payment processing
+
+  // Get user data from sessionStorage (more secure than localStorage)
   const user = JSON.parse(sessionStorage.getItem('userData'));
   const userId = user ? user.userId : null;
   
-  // Calculate the number of nights and total amount
+  // Calculate booking duration and total cost
   let numberOfNights = 0;
   let totalAmount = 0;
 
   if (room && checkInDate && checkOutDate) {
-  const checkIn = new Date(checkInDate);
-  const checkOut = new Date(checkOutDate);
-  const timeDifference = checkOut - checkIn;
-  numberOfNights = timeDifference > 0 ? Math.ceil(timeDifference / (1000 * 3600 * 24)) : 0;
-  const rentPerDay = Number(room.rentperday);
-  totalAmount = numberOfNights * rentPerDay;
-}
+    const checkIn = new Date(checkInDate);
+    const checkOut = new Date(checkOutDate);
+    const timeDifference = checkOut - checkIn;
+    // Calculate nights (rounding up for partial days)
+    numberOfNights = timeDifference > 0 ? Math.ceil(timeDifference / (1000 * 3600 * 24)) : 0;
+    const rentPerDay = Number(room.rentperday);
+    totalAmount = numberOfNights * rentPerDay;
+  }
 
-
-  // Handle Stripe Checkout token
+  /**
+   * Handles Stripe payment token
+   * @param {Object} token - Stripe payment token
+   */
   const onToken = async (token) => {
     setIsLoading(true);
     
+    // Validate payment token
     if (!token || !token.id) {
       Swal.fire({
         title: "Payment Error",
@@ -49,9 +63,11 @@ const BookingPage = () => {
     }
 
     try {
+      // Convert dollars to cents for Stripe
       const totalAmountInCents = totalAmount;
 
-      const response = await fetch("http://localhost:5000/api/stripe/book-room", {
+      // Send booking data to backend
+      const response = await fetch("http://localhost:5000/api/book-room", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -67,6 +83,7 @@ const BookingPage = () => {
       const data = await response.json();
 
       if (response.ok) {
+        // Show success message with fun animation
         Swal.fire({
           title: "Success!",
           text: "Your booking has been confirmed.",
@@ -81,6 +98,7 @@ const BookingPage = () => {
           `
         }).then(() => navigate("/confirm"));
       } else {
+        // Show payment failure message
         Swal.fire({
           title: "Payment Failed",
           text: data.message || "Please try again.",
@@ -99,6 +117,9 @@ const BookingPage = () => {
     }
   };
 
+  /**
+   * Opens video modal if video exists
+   */
   const handleViewVideo = () => {
     if (room && room.video_url) {
       setIsModalOpen(true);
@@ -111,11 +132,12 @@ const BookingPage = () => {
     }
   };
 
+  // Close video modal
   const closeModal = () => {
     setIsModalOpen(false);
   };
 
-  // If no room or dates are provided, display an error message
+  // Guard clause - redirect if missing booking data
   if (!room || !checkInDate || !checkOutDate) {
     return (
       <div className="booking-error">
@@ -135,13 +157,14 @@ const BookingPage = () => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
+      {/* Page Header */}
       <div className="booking-header">
         <h1>Complete Your Booking</h1>
         <p className="booking-subtitle">Review your reservation details before payment</p>
       </div>
 
       <div className="booking-layout">
-        {/* Room Details Card */}
+        {/* Left Column - Room Details */}
         <div className="room-details-card">
           <div className="room-image-container">
             <img 
@@ -173,21 +196,24 @@ const BookingPage = () => {
           </div>
         </div>
 
-        {/* Booking Summary Card */}
+        {/* Right Column - Booking Summary */}
         <div className="booking-summary-card">
           <h3 className="summary-title">Booking Summary</h3>
           
+          {/* Date Display */}
           <div className="summary-dates">
             <div className="date-item">
               <FiCalendar className="date-icon" />
               <div>
                 <p className="date-label">Check-in</p>
-                <p className="date-value">{new Date(checkInDate).toLocaleDateString('en-US', { 
-                  weekday: 'short', 
-                  month: 'short', 
-                  day: 'numeric',
-                  year: 'numeric'
-                })}</p>
+                <p className="date-value">
+                  {new Date(checkInDate).toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                </p>
               </div>
             </div>
             
@@ -195,16 +221,19 @@ const BookingPage = () => {
               <FiCalendar className="date-icon" />
               <div>
                 <p className="date-label">Check-out</p>
-                <p className="date-value">{new Date(checkOutDate).toLocaleDateString('en-US', { 
-                  weekday: 'short', 
-                  month: 'short', 
-                  day: 'numeric',
-                  year: 'numeric'
-                })}</p>
+                <p className="date-value">
+                  {new Date(checkOutDate).toLocaleDateString('en-US', { 
+                    weekday: 'short', 
+                    month: 'short', 
+                    day: 'numeric',
+                    year: 'numeric'
+                  })}
+                </p>
               </div>
             </div>
           </div>
 
+          {/* Price Breakdown */}
           <div className="price-breakdown">
             <div className="price-item">
               <span>${room.rentperday} x {numberOfNights} nights</span>
@@ -216,16 +245,18 @@ const BookingPage = () => {
             </div>
           </div>
 
+          {/* Total Price */}
           <div className="total-price">
             <span>Total</span>
             <span className="total-amount">${totalAmount.toFixed(2)}</span>
           </div>
 
+          {/* Payment Actions */}
           <div className="payment-actions">
             <StripeCheckout
               token={onToken}
               stripeKey="pk_test_51QwQDmEE05ueOOCKzSNPSRQgBaePuf5CZOibhqOKrcxgw8JGtv5JW7iJWYmzWiRSZ4UvjX3FgNZ8omZS1tDduvFG00P1Xd2j5Y"
-              amount={totalAmount * 100}
+              amount={totalAmount * 100} // Stripe uses cents
               name={room.name}
               description={`${numberOfNights} nights at ${room.name}`}
               currency="USD"

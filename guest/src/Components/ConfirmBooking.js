@@ -191,6 +191,7 @@ function ConfirmBooking() {
     <>
       <FiDollarSign className="icon" style={{ marginLeft: '10px' }} />
       <span>Refund: ${refundAmount}</span>
+
     </>
   )}
 </div>

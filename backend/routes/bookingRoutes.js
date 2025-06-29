@@ -98,17 +98,24 @@ router.get("/:user_id", async (req, res) => {
 
     try {
         const query = `
-            SELECT b.booking_id, b.room_id, 
-                   DATE_FORMAT(b.checkin_date, '%Y-%m-%d') AS checkin_date,
-                   DATE_FORMAT(b.checkout_date, '%Y-%m-%d') AS checkout_date,
-                   b.total_amount, b.status, b.created_at, 
-                   r.name AS room_name, 
-                   u.username AS user_name
-            FROM bookings b
-            JOIN rooms r ON b.room_id = r.room_id
-            JOIN users u ON b.user_id = u.id  -- Correct column name 'id' in 'users' table
-            WHERE b.user_id = ?
-            ORDER BY b.created_at DESC
+            SELECT 
+    b.booking_id, 
+    b.room_id, 
+    DATE_FORMAT(b.checkin_date, '%Y-%m-%d') AS checkin_date,
+    DATE_FORMAT(b.checkout_date, '%Y-%m-%d') AS checkout_date,
+    b.total_amount, 
+    b.status, 
+    b.created_at, 
+    r.name AS room_name, 
+    u.username AS user_name,
+    c.refund_amount
+FROM bookings b
+JOIN rooms r ON b.room_id = r.room_id
+JOIN users u ON b.user_id = u.id
+LEFT JOIN cancellations c ON b.booking_id = c.booking_id
+WHERE b.user_id = ?
+ORDER BY b.created_at DESC;
+
         `;
 
         db.query(query, [user_id], (err, results) => {
